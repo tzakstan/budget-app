@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="theme-color" content="#0f2027"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<title>35k Budget Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --navy:#0f2027;--navy2:#1a3040;--teal:#00b09b;--teal2:#05a88a;--gold:#f7c35f;
+  --red:#ff6b6b;--green:#51cf66;--purple:#c084fc;--orange:#fb923c;--blue:#60a5fa;
+  --surface:#162330;--surface2:#1e3045;--border:rgba(255,255,255,0.08);
+  --text:#e2eaf0;--muted:#7a9ab0;--radius:14px;--radius-sm:8px;
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
+}
+html{background:var(--navy);color:var(--text);font-family:var(--fb);height:100%}
+body{min-height:100%;max-width:520px;margin:0 auto;padding:0 0 80px}
+
+/* ── MIGRATION BANNER ── */
+#mig-banner{display:none;background:linear-gradient(135deg,#1a3a2a,#0f2820);
+  border:1px solid rgba(81,207,102,.3);border-radius:var(--radius);margin:12px 16px;padding:16px}
+.mig-title{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--green);margin-bottom:5px}
+.mig-body{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6}
+.mig-btns{display:flex;gap:8px}
+.mig-btn{flex:1;padding:10px;border-radius:var(--radius-sm);border:none;font-family:var(--fh);font-size:13px;font-weight:700;cursor:pointer}
+.mig-btn.p{background:var(--green);color:#0f2027}
+.mig-btn.s{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+
+/* ── TAB BAR ── */
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;
+  background:var(--navy2);border-top:1px solid var(--border);display:flex;z-index:100;padding:6px 0 10px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;
+  cursor:pointer;border:none;background:none;color:var(--muted);font-family:var(--fb);
+  font-size:9px;letter-spacing:.3px;text-transform:uppercase;transition:color .2s}
+.tab svg{width:21px;height:21px;stroke-width:1.8}
+.tab.active{color:var(--teal)}
+
+/* ── PAGES ── */
+.page{display:none}.page.active{display:block}
+.page-header{background:linear-gradient(135deg,var(--navy2),#0d2535);
+  padding:22px 20px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.page-header h1{font-family:var(--fh);font-size:21px;font-weight:800}
+.page-header p{color:var(--muted);font-size:13px;margin-top:3px}
+
+/* ── MONTH NAV ── */
+.mnav{display:flex;align-items:center;gap:10px;margin-top:13px}
+.mnav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px}
+.mlabel{flex:1;text-align:center;background:var(--surface2);padding:6px 10px;border-radius:20px;border:1px solid var(--border)}
+.h-main{font-family:var(--fh);font-size:14px;font-weight:700;display:block}
+.h-sub{font-size:10px;color:var(--muted);font-family:var(--fm);display:block;margin-top:1px}
+
+/* ── CARDS & TILES ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:0 16px 12px}
+.ctitle{font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 16px 0}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px}
+.tlabel{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-family:var(--fm)}
+.tval{font-family:var(--fm);font-size:19px;font-weight:500;margin-top:4px}
+.tval.good{color:var(--green)}.tval.bad{color:var(--red)}.tval.gold{color:var(--gold)}
+.tval.orange{color:var(--orange)}.tval.blue{color:var(--blue)}
+.tile.wide{grid-column:1/-1}
+.prog{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-top:5px}
+.prog-fill{height:100%;border-radius:3px;transition:width .5s;background:var(--teal)}
+.prog-fill.warn{background:var(--gold)}.prog-fill.over{background:var(--red)}
+.plabel{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:8px;margin-bottom:2px}
+
+/* ── INCOME BANNER in Dashboard ── */
+.income-row{display:flex;justify-content:space-between;align-items:center;
+  padding:9px 12px;background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.2);
+  border-radius:var(--radius-sm);margin-bottom:10px;font-size:12px}
+.income-row .lbl{color:var(--orange)}
+.income-row .val{font-family:var(--fm);color:var(--orange);font-weight:500}
+
+/* ── WEEK ROWS ── */
+.wrow{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:8px}
+.wrow:last-child{border-bottom:none}
+.wdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.wname{font-size:12px;font-weight:500;min-width:52px}
+.whijri{font-size:10px;color:var(--muted);font-family:var(--fm);min-width:56px}
+.wbar{flex:1}
+.wmeta{font-family:var(--fm);font-size:11px;color:var(--muted);text-align:right;min-width:94px}
+
+/* ── CAT GRID ── */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.citem{background:var(--surface2);border-radius:var(--radius-sm);padding:10px;border:1px solid var(--border)}
+.cname{font-size:11px;color:var(--muted);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.camt{font-family:var(--fm);font-size:14px;font-weight:500}
+.cbadge{font-size:9px;padding:2px 6px;border-radius:10px;margin-top:4px;display:inline-block;font-family:var(--fm)}
+.bok{background:rgba(81,207,102,.15);color:var(--green)}
+.bover{background:rgba(255,107,107,.15);color:var(--red)}
+.bcc{background:rgba(192,132,252,.15);color:var(--purple)}
+.binc{background:rgba(251,146,60,.15);color:var(--orange)}
+
+/* ── FORM ── */
+.fsec{padding:16px 16px 0}
+.fsec h2{font-family:var(--fh);font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--muted);
+  text-transform:uppercase;margin-bottom:11px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:5px;font-family:var(--fm)}
+.field input,.field select,.field textarea{width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:15px;
+  padding:11px 13px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,176,155,.12)}
+.field textarea{resize:none;height:64px;font-size:13px;font-family:var(--fb)}
+.field select option{background:var(--navy2)}
+
+/* ── HIJRI PICKER ── */
+.hpick{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:13px}
+.hpick-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:9px;font-family:var(--fm)}
+.hrow{display:flex;gap:7px}
+.hrow select{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--text);font-family:var(--fm);font-size:14px;padding:9px 8px;outline:none;-webkit-appearance:none}
+.hrow select:focus{border-color:var(--teal)}
+.gpreview{font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:8px;text-align:center;
+  padding:6px;background:var(--surface2);border-radius:var(--radius-sm)}
+
+/* ── HIJRI DATE EDITOR (Feature 1) ── */
+.date-edit-box{background:var(--surface2);border:1px solid rgba(247,195,95,.2);
+  border-radius:var(--radius);padding:12px;margin-bottom:12px}
+.date-edit-title{font-size:11px;color:var(--gold);font-family:var(--fm);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
+
+/* ── CAT BUTTONS ── */
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
+.catbtn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 5px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text);font-family:var(--fb)}
+.catbtn .ic{font-size:18px;display:block;margin-bottom:2px}
+.catbtn .lb{font-size:10px;color:var(--muted);display:block}
+.catbtn.sel{border-color:var(--teal);background:rgba(0,176,155,.12);color:var(--teal)}
+.catbtn.cc.sel{border-color:var(--purple);background:rgba(192,132,252,.12);color:var(--purple)}
+.catbtn.inc.sel{border-color:var(--orange);background:rgba(251,146,60,.12);color:var(--orange)}
+.cctag{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:4px 10px;border-radius:10px;font-family:var(--fm);margin-bottom:10px}
+.cctag.cc{background:rgba(192,132,252,.15);color:var(--purple)}
+.cctag.inc{background:rgba(251,146,60,.15);color:var(--orange)}
+
+/* ── BTNS ── */
+.btn-p{width:100%;padding:14px;background:linear-gradient(135deg,var(--teal),var(--teal2));
+  border:none;border-radius:var(--radius);color:#fff;font-family:var(--fh);font-size:16px;font-weight:700;cursor:pointer;margin-top:8px}
+.btn-p:active{opacity:.85}
+.btn-s{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--text);font-family:var(--fb);font-size:13px;padding:8px 14px;cursor:pointer}
+.btn-s:active{opacity:.8}
+
+/* ── LOG ── */
+.lday{margin:0 16px 10px}
+.ldh{font-size:11px;font-weight:700;color:var(--muted);padding:8px 0 6px;
+  border-bottom:1px solid var(--border);margin-bottom:6px;display:flex;align-items:baseline;gap:6px}
+.lhijri{color:var(--teal);font-family:var(--fh);font-size:13px}
+.lgreg{font-size:10px;color:var(--muted);font-family:var(--fm)}
+.lentry{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--surface);
+  border-radius:var(--radius-sm);margin-bottom:6px;border:1px solid var(--border);cursor:pointer}
+.lentry:active{border-color:var(--teal)}
+.lic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ltxt{flex:1;overflow:hidden}
+.lcat{font-size:12px;font-weight:500}
+.lnote{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lamt{font-family:var(--fm);font-size:14px;font-weight:500}
+.lamt.cc{color:var(--purple)}.lamt.inc{color:var(--orange)}
+
+/* ── MODAL ── */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.ov.hidden{display:none}
+.modal{background:var(--navy2);border-radius:20px 20px 0 0;padding:20px 20px 40px;
+  width:100%;max-width:520px;max-height:82vh;overflow-y:auto;border-top:1px solid var(--border)}
+.mhandle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.mtitle{font-family:var(--fh);font-size:16px;font-weight:800;margin-bottom:14px}
+.drow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;gap:10px}
+.drow:last-child{border-bottom:none}
+.drow .k{color:var(--muted);flex-shrink:0}.drow .v{font-family:var(--fm);font-weight:500;text-align:right}
+.del-btn{width:100%;margin-top:14px;padding:12px;background:rgba(255,107,107,.15);
+  border:1px solid rgba(255,107,107,.3);border-radius:var(--radius-sm);color:var(--red);font-family:var(--fb);font-size:14px;cursor:pointer}
+
+/* ── EXPORT MODAL ── */
+.exp-section{margin-bottom:16px}
+.exp-section h3{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.exp-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.exp-opt{padding:12px 10px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;text-align:center;transition:all .15s}
+.exp-opt:hover,.exp-opt.sel{border-color:var(--teal);background:rgba(0,176,155,.1)}
+.exp-opt .eic{font-size:20px;margin-bottom:4px}
+.exp-opt .elb{font-size:12px;font-weight:500}
+.exp-opt .esub{font-size:10px;color:var(--muted);margin-top:2px;font-family:var(--fm)}
+.date-range{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+
+/* ── SETTINGS ── */
+.srow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.srow:last-child{border-bottom:none}
+.slbl{font-size:14px}.ssub{font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--fm)}
+.bi{width:100px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--text);font-family:var(--fm);font-size:14px;padding:6px 10px;text-align:right;outline:none}
+.bi:focus{border-color:var(--teal)}
+
+/* ── HIJRI CORRECTION PANEL (Feature 1) ── */
+.hcorr{background:rgba(247,195,95,.06);border:1px solid rgba(247,195,95,.2);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.hcorr-title{font-size:12px;color:var(--gold);font-family:var(--fh);font-weight:700;margin-bottom:8px}
+.hcorr-body{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.offset-row{display:flex;align-items:center;gap:10px}
+.offset-row label{font-size:12px;color:var(--text);flex:1}
+.offset-btns{display:flex;gap:6px}
+.obtn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);
+  color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.oval{font-family:var(--fm);font-size:16px;min-width:32px;text-align:center;color:var(--gold)}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:var(--teal);color:#fff;padding:10px 22px;border-radius:30px;
+  font-size:13px;font-weight:500;z-index:300;transition:transform .3s;font-family:var(--fm);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+.empty{text-align:center;padding:44px 20px;color:var(--muted)}
+.empty p{font-size:14px;margin-top:12px}
+@media(min-width:600px){body{border-left:1px solid var(--border);border-right:1px solid var(--border)}}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- MIGRATION BANNER -->
+<div id="mig-banner">
+  <div class="mig-title">📦 Old entries detected!</div>
+  <div class="mig-body"><strong id="mig-count" style="color:var(--green)">?</strong> entries found from your previous app. Tap <strong style="color:var(--green)">Migrate Now</strong> — Hijri dates will be calculated automatically. On a different device? Use the JSON you exported.</div>
+  <div class="mig-btns">
+    <button class="mig-btn p" onclick="doMigrate()">Migrate Now</button>
+    <label class="mig-btn s" style="text-align:center;cursor:pointer">Use JSON<input type="file" accept=".json" onchange="migrateJSON(this)" style="display:none"/></label>
+  </div>
+</div>
+
+<!-- ENTRY DETAIL MODAL -->
+<div class="ov hidden" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mtitle" id="modal-title"></div>
+    <div id="modal-body"></div>
+    <button class="del-btn" id="modal-del">Delete entry</button>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="ov hidden" id="exp-modal" onclick="closeExpModal(event)">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mtitle">📤 Export Data</div>
+
+    <div class="exp-section">
+      <h3>What to include</h3>
+      <div class="exp-options" id="exp-scope">
+        <div class="exp-opt sel" id="exp-cur" onclick="setExpScope('current',this)">
+          <div class="eic">📅</div>
+          <div class="elb">Current Month</div>
+          <div class="esub" id="exp-cur-lbl">—</div>
+        </div>
+        <div class="exp-opt" id="exp-all" onclick="setExpScope('all',this)">
+          <div class="eic">📚</div>
+          <div class="elb">All Months</div>
+          <div class="esub" id="exp-all-lbl">—</div>
+        </div>
+        <div class="exp-opt" id="exp-range" onclick="setExpScope('range',this)">
+          <div class="eic">🗓️</div>
+          <div class="elb">Date Range</div>
+          <div class="esub">Custom period</div>
+        </div>
+        <div class="exp-opt" id="exp-month" onclick="setExpScope('month',this)">
+          <div class="eic">☪️</div>
+          <div class="elb">Pick Month</div>
+          <div class="esub">Choose any Hijri month</div>
+        </div>
+      </div>
+      <div class="date-range" id="exp-range-inputs" style="display:none">
+        <div class="field" style="margin:0"><label>From</label><input type="date" id="exp-from" style="color-scheme:dark"/></div>
+        <div class="field" style="margin:0"><label>To</label><input type="date" id="exp-to" style="color-scheme:dark"/></div>
+      </div>
+      <div style="margin-top:10px;display:none" id="exp-month-pick">
+        <div class="field" style="margin:0"><label>Select Hijri Month</label>
+          <select id="exp-mo-sel" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:14px;padding:9px 10px;width:100%;outline:none"></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-section">
+      <h3>Format</h3>
+      <div class="exp-options" id="exp-fmt">
+          <div class="eic">📊</div>
+          <div class="elb">Excel (.xlsx)</div>
+          <div class="esub">Full formatted sheet</div>
+        </div>
+        <div class="exp-opt" id="fmt-csv" onclick="setExpFmt('csv',this)">
+          <div class="eic">📄</div>
+          <div class="elb">CSV</div>
+          <div class="esub">Google Sheets ready</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-p" onclick="doExport()" style="margin-top:4px">Download File</button>
+    <div style="height:8px"></div>
+    <button class="btn-s" style="width:100%" onclick="document.getElementById('exp-modal').classList.add('hidden')">Cancel</button>
+    <div style="height:10px"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ DASHBOARD ══════════════════ -->
+<div class="page active" id="page-dash">
+  <div class="page-header">
+    <h1>Budget Tracker</h1>
+    <p id="dash-sub">Monthly overview</p>
+    <div class="mnav">
+      <button onclick="changeMonth(-1)">&#8249;</button>
+      <div class="mlabel"><span class="h-main" id="dash-hn">—</span><span class="h-sub" id="dash-hr">—</span></div>
+      <button onclick="changeMonth(1)">&#8250;</button>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="tlabel">Salary Budget</div><div class="tval gold" id="t-bud">₹0</div></div>
+    <div class="tile"><div class="tlabel">Extra Income</div><div class="tval orange" id="t-inc">₹0</div></div>
+    <div class="tile"><div class="tlabel">Spent</div><div class="tval bad" id="t-spent">₹0</div></div>
+    <div class="tile"><div class="tlabel">Remaining</div><div class="tval good" id="t-rem">₹0</div></div>
+    <div class="tile"><div class="tlabel">Effective Budget</div><div class="tval blue" id="t-eff">₹0</div></div>
+    <div class="tile"><div class="tlabel">Avg / Day</div><div class="tval" id="t-avg">₹0</div></div>
+    <div class="tile wide">
+      <div class="tlabel">Monthly Progress</div>
+      <div class="plabel"><span id="prog-pct">0%</span><span id="prog-days"></span></div>
+      <div class="prog"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div style="height:14px"></div>
+
+  <div class="card" id="inc-card" style="display:none">
+    <div class="ctitle">💰 Additional Income This Month</div>
+    <div id="inc-rows"></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Weekly Breakdown</div>
+    <div id="week-rows"></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">Category Snapshot</div>
+    <div class="cgrid" id="cat-grid"></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">Credit Cards <span class="cctag cc" style="float:right;margin-top:-2px;font-size:9px">Not in expense total</span></div>
+    <div class="cgrid" id="cc-grid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ ADD ENTRY ══════════════════ -->
+<div class="page" id="page-add">
+  <div class="page-header"><h1>Add Entry</h1><p>Expense or income</p></div>
+  <div class="fsec">
+    <h2>Hijri Date</h2>
+    <div class="hpick">
+      <div class="hpick-lbl">Select date</div>
+      <div class="hrow">
+        <select id="pd" onchange="updPreview()"></select>
+        <select id="pm" onchange="updPreview()"></select>
+        <select id="py" onchange="updPreview()"></select>
+      </div>
+      <div class="gpreview" id="gp">—</div>
+    </div>
+
+    <h2>Type & Category</h2>
+    <div class="agrid" id="cat-btns"></div>
+    <div id="cc-ind"  style="display:none"><div class="cctag cc">💳 Credit Card — not counted in weekly total</div></div>
+    <div id="inc-ind" style="display:none"><div class="cctag inc">💰 Income — adds to your effective budget</div></div>
+
+    <div class="field"><label>Amount (₹)</label>
+      <input type="number" id="amt" inputmode="decimal" placeholder="0" min="0"/></div>
+
+    <h2 style="margin-top:4px">Details</h2>
+    <div class="field"><label>Where / Source</label>
+      <input type="text" id="where" placeholder="e.g. Dmart, Salary bonus, freelance…"/></div>
+    <div class="field"><label>What / Description</label>
+      <input type="text" id="what" placeholder="e.g. groceries, tuition payment, project fee…"/></div>
+    <div class="field"><label>Quantity / Units</label>
+      <input type="text" id="qty" placeholder="e.g. 2 kg, 1 bottle, one-time…"/></div>
+    <div class="field"><label>Notes (optional)</label>
+      <textarea id="notes" placeholder="Any extra detail, reminder, reason…"></textarea></div>
+
+    <button class="btn-p" onclick="saveEntry()">💾  Save Entry</button>
+    <div style="height:8px"></div>
+    <button class="btn-s" style="width:100%" onclick="clearForm()">Clear</button>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ LOG ══════════════════ -->
+<div class="page" id="page-log">
+  <div class="page-header">
+    <h1>Expense Log</h1>
+    <p id="log-sub">All entries</p>
+    <div class="mnav">
+      <button onclick="changeMonth(-1)">&#8249;</button>
+      <div class="mlabel"><span class="h-main" id="log-hn">—</span><span class="h-sub" id="log-hr">—</span></div>
+      <button onclick="changeMonth(1)">&#8250;</button>
+    </div>
+  </div>
+  <div style="height:12px"></div>
+  <div id="log-list"></div>
+</div>
+
+<!-- ══════════════════ SETTINGS ══════════════════ -->
+<div class="page" id="page-settings">
+  <div class="page-header"><h1>Settings</h1><p>Budgets, calendar & data</p></div>
+
+  <!-- FEATURE 1: Dawoodi Bohra Hijri correction -->
+  <div class="card" style="margin-top:16px">
+    <div class="ctitle">☪️ Dawoodi Bohra Calendar Adjustment</div>
+    <div class="hcorr">
+      <div class="hcorr-title">Hijri Date Correction</div>
+      <div class="hcorr-body">The Dawoodi Bohra Hijri calendar sometimes differs from the standard calculated Hijri calendar by ±1 or ±2 days. Set an offset below — all Hijri date displays in the app will adjust accordingly.</div>
+      <div class="offset-row">
+        <label>Day offset: <span id="offset-display" class="oval">0</span></label>
+        <div class="offset-btns">
+          <button class="obtn" onclick="changeOffset(-1)">−</button>
+          <button class="obtn" onclick="changeOffset(1)">+</button>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;font-family:var(--fm)">
+        Today shows as: <span id="offset-preview" style="color:var(--gold)"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUDGETS -->
+  <div class="card">
+    <div class="ctitle">Monthly Budgets — <span id="set-mo-name" style="color:var(--teal)"></span></div>
+    <div class="srow">
+      <div><div class="slbl">Salary / Base budget</div><div class="ssub">Core monthly amount</div></div>
+      <input class="bi" type="number" id="set-total" oninput="saveTotBud()"/>
+    </div>
+    <div id="wbud-rows"></div>
+  </div>
+
+  <!-- CATEGORY TARGETS -->
+  <div class="card">
+    <div class="ctitle">Category Targets</div>
+    <div id="cat-targets"></div>
+  </div>
+
+  <!-- HIJRI MONTHS -->
+  <div class="card">
+    <div class="ctitle">Hijri Months</div>
+    <div id="month-list"></div>
+  </div>
+
+  <!-- ADD MONTH -->
+  <div class="card">
+    <div class="ctitle">Add New Month</div>
+    <div class="field"><label>Month name</label><input type="text" id="nm-name" placeholder="e.g. Zilhaj, Muharram…"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="field"><label>Hijri Year</label><input type="number" id="nm-hy" placeholder="1448"/></div>
+      <div class="field"><label>Total Budget (₹)</label><input type="number" id="nm-total" placeholder="45000"/></div>
+      <div class="field"><label>Greg. Start</label><input type="date" id="nm-gs" style="color-scheme:dark"/></div>
+      <div class="field"><label>Greg. End</label><input type="date" id="nm-ge" style="color-scheme:dark"/></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500">Week budgets (₹)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div class="field" style="margin:0"><label>W1 — Days 1–7</label><input class="bi" style="width:100%" type="number" id="nm-w1" placeholder="14000"/></div>
+      <div class="field" style="margin:0"><label>W2 — Days 8–14</label><input class="bi" style="width:100%" type="number" id="nm-w2" placeholder="17000"/></div>
+      <div class="field" style="margin:0"><label>W3 — Days 15–22</label><input class="bi" style="width:100%" type="number" id="nm-w3" placeholder="7000"/></div>
+      <div class="field" style="margin:0"><label>W4 — Days 23–end</label><input class="bi" style="width:100%" type="number" id="nm-w4" placeholder="7000"/></div>
+    </div>
+    <button class="btn-p" onclick="addMonth()">Add Month</button>
+    <div style="height:10px"></div>
+  </div>
+
+  <!-- DATA -->
+  <div class="card">
+    <div class="ctitle">Data</div>
+    <div class="srow">
+      <div><div class="slbl">Export to Excel / CSV</div><div class="ssub">Analyse in Google Sheets</div></div>
+      <button class="btn-s" onclick="openExpModal()">Export</button>
+    </div>
+    <div class="srow">
+      <div><div class="slbl">JSON Backup</div><div class="ssub">Full data backup</div></div>
+      <button class="btn-s" onclick="exportJSON()">Backup</button>
+    </div>
+    <div class="srow">
+      <div><div class="slbl">Import / Migrate</div><div class="ssub">Restore from JSON</div></div>
+      <label class="btn-s" style="cursor:pointer">Import<input type="file" accept=".json" onchange="migrateJSON(this)" style="display:none"/></label>
+    </div>
+    <div class="srow">
+      <div><div class="slbl" style="color:var(--red)">Clear all entries</div><div class="ssub">Cannot be undone</div></div>
+      <button class="btn-s" style="border-color:rgba(255,107,107,.3);color:var(--red)" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab active" onclick="showPage('dash',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard
+  </button>
+  <button class="tab" onclick="showPage('add',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add
+  </button>
+  <button class="tab" onclick="showPage('log',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Log
+  </button>
+  <button class="tab" onclick="openExpModal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+  </button>
+  <button class="tab" onclick="showPage('settings',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+  </button>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// HIJRI ENGINE
+// ══════════════════════════════════════════════
+const HM=['Muharram','Safar','Rabi ul Awwal','Rabi ul Aakhar',
+          'Jumada ul Awwal','Jumada ul Aakhar','Rajab',"Sha'ban",
+          'Ramadan','Shawwal','Zilqad','Zilhaj'];
+
+function hijriToGreg(hy,hm,hd){
+  const N=hd+Math.ceil(29.5001*(hm-1))+(hy-1)*354+Math.floor((3+11*hy)/30)+1948440-385;
+  let l=N+68569;const n=Math.floor(4*l/146097);
+  l=l-Math.floor((146097*n+3)/4);const i=Math.floor(4000*(l+1)/1461001);
+  l=l-Math.floor(1461*i/4)+31;const j=Math.floor(80*l/2447);
+  const day=l-Math.floor(2447*j/80);const lx=Math.floor(j/11);
+  return new Date(100*(n-49)+i+lx,j+2-12*lx-1,day);
+}
+function gregToHijri(g){
+  const Y=g.getFullYear(),M=g.getMonth()+1,D=g.getDate();
+  const JD=Math.floor((1461*(Y+4800+Math.floor((M-14)/12)))/4)+
+            Math.floor((367*(M-2-12*Math.floor((M-14)/12)))/12)-
+            Math.floor((3*Math.floor((Y+4900+Math.floor((M-14)/12))/100))/4)+D-32075;
+  const l=JD-1948440+10632,n=Math.floor((l-1)/10631),ll=l-10631*n+354;
+  const j=Math.floor((10985-ll)/5316)*Math.floor((50*ll)/17719)+Math.floor(ll/5670)*Math.floor((43*ll)/15238);
+  const lll=ll-Math.floor((30-j)/15)*Math.floor((17719*j)/50)-Math.floor(j/16)*Math.floor((15238*j)/43)+29;
+  const hMo=Math.floor((24*lll)/709),hD=lll-Math.floor((709*hMo)/24),hY=30*n+j-30;
+  return{y:hY,m:hMo,d:hD};
+}
+function applyOffset(h){
+  // Apply Dawoodi Bohra calendar offset to a {y,m,d} hijri object
+  const off=hijriOffset;if(off===0)return h;
+  const g=hijriToGreg(h.y,h.m,h.d);
+  g.setDate(g.getDate()+off);
+  return gregToHijri(g);
+}
+function gregToHijriDisplay(gDate){
+  const raw=gregToHijri(gDate);return applyOffset(raw);
+}
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function parseYMD(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r}
+
+// ══════════════════════════════════════════════
+// CATEGORIES (expenses + income)
+// ══════════════════════════════════════════════
+const CATS=[
+  {id:'milk',      label:'Milk',         icon:'🥛', type:'exp'},
+  {id:'eggs',      label:'Eggs & Chkn',  icon:'🥚', type:'exp'},
+  {id:'fv',        label:'Fruits & Veg', icon:'🥦', type:'exp'},
+  {id:'staples',   label:'Staples',      icon:'🛒', type:'exp'},
+  {id:'medical',   label:'Medical',      icon:'💊', type:'exp'},
+  {id:'avoidable', label:'Avoidable',    icon:'🍽️', type:'exp'},
+  {id:'unexpected',label:'Unexpected',   icon:'⚡', type:'exp'},
+  {id:'recurring', label:'Recurring',    icon:'🔄', type:'exp'},
+  {id:'travel',    label:'Travel/Fuel',  icon:'🚗', type:'exp'},
+  {id:'misc',      label:'Misc',         icon:'📦', type:'exp'},
+  {id:'hdfc',      label:'HDFC Swiggy',  icon:'💳', type:'cc'},
+  {id:'amazon',    label:'Amazon',       icon:'🛍️', type:'cc'},
+  {id:'scapia',    label:'Scapia',       icon:'💳', type:'cc'},
+  {id:'othercc',   label:'Other CC',     icon:'💳', type:'cc'},
+  // INCOME CATEGORIES
+  {id:'inc-freelance', label:'Freelance', icon:'💼', type:'income'},
+  {id:'inc-gift',      label:'Gift/Bonus',icon:'🎁', type:'income'},
+  {id:'inc-other',     label:'Other Inc.', icon:'💰', type:'income'},
+];
+function catById(id){return CATS.find(c=>c.id===id)||{label:id,icon:'📌',type:'exp'}}
+
+// ══════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════
+function ls(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+
+const DEF_MONTHS=[{
+  id:'zilqad-1447',name:'Zilqad',hijriYear:1447,
+  gregStart:'2026-04-17',gregEnd:'2026-05-16',totalDays:30,totalBudget:45000,
+  weeks:[
+    {label:'Week 1',hijriDays:'1 – 7',  gStart:'2026-04-17',gEnd:'2026-04-23',budget:14000},
+    {label:'Week 2',hijriDays:'8 – 14', gStart:'2026-04-24',gEnd:'2026-04-30',budget:17000},
+    {label:'Week 3',hijriDays:'15 – 22',gStart:'2026-05-01',gEnd:'2026-05-08',budget:7000},
+    {label:'Week 4',hijriDays:'23 – 30',gStart:'2026-05-09',gEnd:'2026-05-16',budget:7000},
+  ]
+}];
+const DEF_CATBUD={milk:2500,eggs:1500,fv:1000,staples:5000,medical:8000,
+  avoidable:5000,unexpected:2000,recurring:10000,travel:3000,misc:2000,
+  hdfc:5000,amazon:1000,scapia:1000,othercc:1000};
+
+let entries    = ls('bt3_entries',[]);
+let months     = ls('bt3_months', DEF_MONTHS);
+let catBud     = ls('bt3_catbud', DEF_CATBUD);
+let hijriOffset= ls('bt3_offset', 0);  // Feature 1: DB calendar offset
+let curMoIdx   = 0;
+
+function curMo(){return months[curMoIdx]||months[0]}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function fmt(n){return '₹'+Math.round(n).toLocaleString('en-IN')}
+function pct(s,b){return b>0?Math.min(100,Math.round(s/b*100)):0}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function showPage(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='dash')renderDash();
+  if(name==='log')renderLog();
+  if(name==='settings')renderSettings();
+  if(name==='add')syncPicker();
+}
+function changeMonth(dir){
+  curMoIdx=Math.max(0,Math.min(months.length-1,curMoIdx+dir));
+  renderDash();renderLog();
+}
+function setHdr(nameId,rangeId){
+  const m=curMo();
+  document.getElementById(nameId).textContent=m.name+' '+m.hijriYear+' AH';
+  const s=parseYMD(m.gregStart),e=parseYMD(m.gregEnd);
+  const f=d=>d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  document.getElementById(rangeId).textContent=f(s)+' – '+f(e)+' '+s.getFullYear();
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════
+function moEntries(){const m=curMo();return entries.filter(e=>e.date>=m.gregStart&&e.date<=m.gregEnd)}
+
+function renderDash(){
+  const m=curMo(),me=moEntries();
+  const expEntries=me.filter(e=>catById(e.cat).type==='exp');
+  const incEntries=me.filter(e=>catById(e.cat).type==='income');
+  const spent=expEntries.reduce((s,e)=>s+e.amt,0);
+  const income=incEntries.reduce((s,e)=>s+e.amt,0);
+  const effBud=m.totalBudget+income;
+  const rem=effBud-spent;
+
+  const today=new Date();today.setHours(0,0,0,0);
+  const start=parseYMD(m.gregStart),end=parseYMD(m.gregEnd);
+  const elapsed=Math.max(1,Math.min(m.totalDays,Math.round((Math.min(today,end)-start)/86400000)+1));
+
+  setHdr('dash-hn','dash-hr');
+  document.getElementById('dash-sub').textContent=me.length+' entries · '+m.name+' '+m.hijriYear+' AH';
+  document.getElementById('t-bud').textContent=fmt(m.totalBudget);
+  document.getElementById('t-inc').textContent=fmt(income);
+  document.getElementById('t-spent').textContent=fmt(spent);
+  document.getElementById('t-eff').textContent=fmt(effBud);
+  const re=document.getElementById('t-rem');re.textContent=fmt(rem);re.className='tval '+(rem<0?'bad':'good');
+  document.getElementById('t-avg').textContent=fmt(spent/elapsed);
+
+  const pv=pct(spent,effBud);
+  const pb=document.getElementById('prog-bar');
+  pb.style.width=pv+'%';pb.className='prog-fill'+(pv>=100?' over':pv>=80?' warn':'');
+  document.getElementById('prog-pct').textContent=pv+'%';
+  document.getElementById('prog-days').textContent='Day '+elapsed+' of '+m.totalDays;
+
+  // Income card
+  const ic=document.getElementById('inc-card');
+  if(incEntries.length){
+    ic.style.display='block';
+    document.getElementById('inc-rows').innerHTML=incEntries.map(e=>`
+      <div class="income-row">
+        <span class="lbl">${catById(e.cat).icon} ${e.what||catById(e.cat).label}${e.where?' · '+e.where:''}</span>
+        <span class="val">${fmt(e.amt)}</span>
+      </div>`).join('');
+  }else ic.style.display='none';
+
+  // Weeks (expense only — cc excluded)
+  const nonCC=expEntries;
+  const wc=['#00b09b','#f7c35f','#74c7ec','#c084fc'];
+  document.getElementById('week-rows').innerHTML=m.weeks.map((wk,i)=>{
+    const ws=nonCC.filter(e=>e.date>=wk.gStart&&e.date<=wk.gEnd).reduce((s,e)=>s+e.amt,0);
+    const wp=pct(ws,wk.budget),cl=wp>=100?'over':wp>=80?'warn':'',col=wc[i]||wc[3];
+    return`<div class="wrow">
+      <div class="wdot" style="background:${col}"></div>
+      <div class="wname">${wk.label}</div>
+      <div class="whijri">${wk.hijriDays}</div>
+      <div class="wbar"><div class="prog"><div class="prog-fill ${cl}" style="width:${wp}%;background:${col}"></div></div></div>
+      <div class="wmeta">${fmt(ws)} / ${fmt(wk.budget)}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('cat-grid').innerHTML=CATS.filter(c=>c.type==='exp').map(cat=>{
+    const s=me.filter(e=>e.cat===cat.id).reduce((a,e)=>a+e.amt,0);
+    const b=catBud[cat.id]||0,ok=s<=b;
+    return`<div class="citem"><div class="cname">${cat.icon} ${cat.label}</div>
+      <div class="camt" style="color:${ok?'var(--green)':'var(--red)'}">${fmt(s)}</div>
+      <div class="cbadge ${ok?'bok':'bover'}">${ok?'✓ OK':'↑ Over'} ${fmt(b)}</div></div>`;
+  }).join('');
+
+  document.getElementById('cc-grid').innerHTML=CATS.filter(c=>c.type==='cc').map(cat=>{
+    const s=me.filter(e=>e.cat===cat.id).reduce((a,e)=>a+e.amt,0);
+    return`<div class="citem"><div class="cname">${cat.icon} ${cat.label}</div>
+      <div class="camt" style="color:var(--purple)">${fmt(s)}</div>
+      <div class="cbadge bcc">CC</div></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// HIJRI PICKER
+// ══════════════════════════════════════════════
+function buildPicker(){
+  document.getElementById('pd').innerHTML=Array.from({length:30},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+  document.getElementById('pm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');
+  document.getElementById('py').innerHTML=Array.from({length:21},(_,i)=>`<option value="${1440+i}">${1440+i} AH</option>`).join('');
+  const h=gregToHijriDisplay(new Date());
+  document.getElementById('pd').value=h.d;document.getElementById('pm').value=h.m;document.getElementById('py').value=h.y;
+  updPreview();
+}
+function syncPicker(){
+  const h=gregToHijriDisplay(parseYMD(curMo().gregStart));
+  document.getElementById('pm').value=h.m;document.getElementById('py').value=h.y;updPreview();
+}
+function updPreview(){
+  const d=+document.getElementById('pd').value,m=+document.getElementById('pm').value,y=+document.getElementById('py').value;
+  try{
+    // Convert picker Hijri (with offset already applied) back to Gregorian for display
+    // The picker shows DB calendar dates, so we need to reverse-apply offset
+    const g=hijriToGreg(y,m,d);
+    g.setDate(g.getDate()-hijriOffset);
+    document.getElementById('gp').textContent='📅 '+g.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  }catch{document.getElementById('gp').textContent='Invalid date';}
+}
+function getPickedGreg(){
+  const d=+document.getElementById('pd').value,m=+document.getElementById('pm').value,y=+document.getElementById('py').value;
+  const g=hijriToGreg(y,m,d);g.setDate(g.getDate()-hijriOffset);return ymd(g);
+}
+
+// ══════════════════════════════════════════════
+// CATEGORY BUTTONS
+// ══════════════════════════════════════════════
+let selCat=null;
+function buildCatBtns(){
+  document.getElementById('cat-btns').innerHTML=CATS.map(c=>`
+    <button class="catbtn${c.type==='cc'?' cc':c.type==='income'?' inc':''}" onclick="selCatFn('${c.id}',this)">
+      <span class="ic">${c.icon}</span><span class="lb">${c.label}</span>
+    </button>`).join('');
+}
+function selCatFn(id,btn){
+  document.querySelectorAll('.catbtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');selCat=id;
+  const t=catById(id).type;
+  document.getElementById('cc-ind').style.display=t==='cc'?'block':'none';
+  document.getElementById('inc-ind').style.display=t==='income'?'block':'none';
+}
+function clearForm(){
+  ['amt','where','what','qty','notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cc-ind').style.display='none';
+  document.getElementById('inc-ind').style.display='none';
+  document.querySelectorAll('.catbtn').forEach(b=>b.classList.remove('sel'));
+  selCat=null;buildPicker();syncPicker();
+}
+
+// ══════════════════════════════════════════════
+// SAVE ENTRY
+// ══════════════════════════════════════════════
+function saveEntry(){
+  if(!selCat){showToast('Select a category');return}
+  const amt=parseFloat(document.getElementById('amt').value);
+  if(!amt||amt<=0){showToast('Enter a valid amount');return}
+  const gregDate=getPickedGreg();
+  const hd=gregToHijriDisplay(parseYMD(gregDate));
+  const hijriLabel=`${hd.d} ${HM[hd.m-1]} ${hd.y} AH`;
+  const cat=catById(selCat);
+  entries.unshift({
+    id:uid(),date:gregDate,hijri:hijriLabel,
+    hijriDay:hd.d,hijriMonth:hd.m,hijriYear:hd.y,
+    cat:selCat,amt,type:cat.type,
+    where:document.getElementById('where').value.trim(),
+    what:document.getElementById('what').value.trim(),
+    qty:document.getElementById('qty').value.trim(),
+    notes:document.getElementById('notes').value.trim(),
+  });
+  ss('bt3_entries',entries);
+  showToast((cat.type==='income'?'💰 Income':'✓ Saved')+' — '+hijriLabel);
+  clearForm();
+}
+
+// ══════════════════════════════════════════════
+// LOG
+// ══════════════════════════════════════════════
+function renderLog(){
+  setHdr('log-hn','log-hr');
+  const m=curMo(),me=moEntries();
+  document.getElementById('log-sub').textContent=me.length+' entries · '+m.name+' '+m.hijriYear+' AH';
+  if(!me.length){
+    document.getElementById('log-list').innerHTML=`<div class="empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <p>No entries for ${m.name} ${m.hijriYear} AH</p></div>`;return;
+  }
+  const byDate={};
+  me.forEach(e=>{(byDate[e.date]=byDate[e.date]||[]).push(e)});
+  document.getElementById('log-list').innerHTML=Object.keys(byDate).sort((a,b)=>b.localeCompare(a)).map(d=>{
+    const hd=gregToHijriDisplay(parseYMD(d));
+    const hs=`${hd.d} ${HM[hd.m-1]}`;
+    const gs=parseYMD(d).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+    const dt=byDate[d].reduce((s,e)=>s+e.amt,0);
+    return`<div class="lday">
+      <div class="ldh"><span class="lhijri">${hs}</span><span class="lgreg">${gs}</span>
+        <span style="margin-left:auto;color:var(--muted);font-family:var(--fm);font-size:11px">${fmt(dt)}</span></div>
+      ${byDate[d].map(e=>{
+        const cat=catById(e.cat);const isInc=cat.type==='income';const isCC=cat.type==='cc';
+        const sub=[e.what,e.qty,e.where].filter(Boolean).join(' · ');
+        return`<div class="lentry" onclick="openDetail('${e.id}')">
+          <div class="lic" style="background:${isCC?'rgba(192,132,252,.15)':isInc?'rgba(251,146,60,.15)':'rgba(0,176,155,.1)'}">${cat.icon}</div>
+          <div class="ltxt">
+            <div class="lcat">${cat.label}${e.where?` <span style="color:var(--muted);font-weight:400">· ${e.where}</span>`:''}</div>
+            <div class="lnote">${sub||'—'}</div>
+          </div>
+          <div class="lamt${isCC?' cc':isInc?' inc':''}">${isInc?'+':''}${fmt(e.amt)}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+function openDetail(id){
+  const e=entries.find(x=>x.id===id);if(!e)return;
+  const cat=catById(e.cat);
+  document.getElementById('modal-title').textContent=cat.icon+' '+cat.label;
+  document.getElementById('modal-body').innerHTML=[
+    ['Hijri Date',e.hijri||'—'],
+    ['Gregorian',parseYMD(e.date).toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})],
+    ['Type',e.type==='income'?'💰 Income':e.type==='cc'?'💳 Credit Card':'💸 Expense'],
+    ['Amount',(e.type==='income'?'+':'')+fmt(e.amt)],
+    ['From / Where',e.where||'—'],['What',e.what||'—'],['Quantity',e.qty||'—'],['Notes',e.notes||'—'],
+  ].map(([k,v])=>`<div class="drow"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+  document.getElementById('modal-del').onclick=()=>delEntry(id);
+  document.getElementById('modal').classList.remove('hidden');
+}
+function closeModal(e){if(e.target===document.getElementById('modal'))document.getElementById('modal').classList.add('hidden')}
+function delEntry(id){
+  if(!confirm('Delete this entry?'))return;
+  entries=entries.filter(e=>e.id!==id);ss('bt3_entries',entries);
+  document.getElementById('modal').classList.add('hidden');
+  renderDash();renderLog();showToast('Deleted');
+}
+
+// ══════════════════════════════════════════════
+// FEATURE 1: HIJRI OFFSET (DB Calendar)
+// ══════════════════════════════════════════════
+function changeOffset(dir){
+  hijriOffset=Math.max(-3,Math.min(3,hijriOffset+dir));
+  ss('bt3_offset',hijriOffset);
+  document.getElementById('offset-display').textContent=(hijriOffset>0?'+':'')+hijriOffset;
+  updateOffsetPreview();
+}
+function updateOffsetPreview(){
+  document.getElementById('offset-display').textContent=(hijriOffset>0?'+':'')+hijriOffset;
+  const h=gregToHijriDisplay(new Date());
+  document.getElementById('offset-preview').textContent=`${h.d} ${HM[h.m-1]} ${h.y} AH`;
+}
+
+// ══════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════
+function renderSettings(){
+  const m=curMo();
+  document.getElementById('set-mo-name').textContent=m.name+' '+m.hijriYear+' AH';
+  document.getElementById('set-total').value=m.totalBudget;
+  updateOffsetPreview();
+  document.getElementById('wbud-rows').innerHTML=m.weeks.map((wk,i)=>`
+    <div class="srow">
+      <div><div class="slbl">${wk.label}</div><div class="ssub">${m.name} ${wk.hijriDays}</div></div>
+      <input class="bi" type="number" value="${wk.budget}" oninput="updWkBud(${i},+this.value)"/>
+    </div>`).join('');
+  document.getElementById('cat-targets').innerHTML=CATS.filter(c=>c.type==='exp').map(cat=>`
+    <div class="srow"><div><div class="slbl">${cat.icon} ${cat.label}</div></div>
+      <input class="bi" type="number" value="${catBud[cat.id]||0}" oninput="catBud['${cat.id}']=+this.value;ss('bt3_catbud',catBud)"/>
+    </div>`).join('');
+  document.getElementById('month-list').innerHTML=months.map((mo,i)=>`
+    <div class="srow">
+      <div><div class="slbl" style="${i===curMoIdx?'color:var(--teal)':''}">${mo.name} ${mo.hijriYear} AH</div>
+        <div class="ssub">${mo.gregStart} → ${mo.gregEnd}</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-s" onclick="curMoIdx=${i};renderDash();renderLog();showToast('Viewing ${mo.name}')">View</button>
+        ${months.length>1?`<button class="btn-s" style="color:var(--red);border-color:rgba(255,107,107,.3)" onclick="delMonth(${i})">✕</button>`:''}
+      </div>
+    </div>`).join('');
+}
+function saveTotBud(){curMo().totalBudget=+document.getElementById('set-total').value||45000;ss('bt3_months',months)}
+function updWkBud(i,v){curMo().weeks[i].budget=v;ss('bt3_months',months)}
+function addMonth(){
+  const name=document.getElementById('nm-name').value.trim();
+  const hy=+document.getElementById('nm-hy').value;
+  const gs=document.getElementById('nm-gs').value;
+  const ge=document.getElementById('nm-ge').value;
+  const w1=+document.getElementById('nm-w1').value||14000;
+  const w2=+document.getElementById('nm-w2').value||17000;
+  const w3=+document.getElementById('nm-w3').value||7000;
+  const w4=+document.getElementById('nm-w4').value||7000;
+  if(!name||!hy||!gs||!ge){showToast('Fill all fields');return}
+  const sd=parseYMD(gs);
+  months.push({id:name.toLowerCase().replace(/\s+/g,'-')+'-'+hy,name,hijriYear:hy,gregStart:gs,gregEnd:ge,
+    totalDays:Math.round((parseYMD(ge)-sd)/86400000)+1,totalBudget:w1+w2+w3+w4,
+    weeks:[
+      {label:'Week 1',hijriDays:'1 – 7',  gStart:gs,               gEnd:ymd(addDays(sd,6)),  budget:w1},
+      {label:'Week 2',hijriDays:'8 – 14', gStart:ymd(addDays(sd,7)),gEnd:ymd(addDays(sd,13)),budget:w2},
+      {label:'Week 3',hijriDays:'15 – 22',gStart:ymd(addDays(sd,14)),gEnd:ymd(addDays(sd,21)),budget:w3},
+      {label:'Week 4',hijriDays:'23 – end',gStart:ymd(addDays(sd,22)),gEnd:ge,               budget:w4},
+    ]});
+  curMoIdx=months.length-1;ss('bt3_months',months);
+  showToast(name+' '+hy+' added!');
+  ['nm-name','nm-hy','nm-gs','nm-ge','nm-total','nm-w1','nm-w2','nm-w3','nm-w4'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  renderSettings();
+}
+function delMonth(i){
+  if(!confirm('Delete '+months[i].name+'?'))return;
+  months.splice(i,1);curMoIdx=Math.min(curMoIdx,months.length-1);
+  ss('bt3_months',months);renderSettings();
+}
+
+// ══════════════════════════════════════════════
+// FEATURE 2: EXPORT (CSV + XLSX-compatible CSV)
+// ══════════════════════════════════════════════
+let expScope='current',expFmt='xlsx';
+
+function openExpModal(){
+  document.getElementById('exp-cur-lbl').textContent=curMo().name+' '+curMo().hijriYear+' AH';
+  document.getElementById('exp-all-lbl').textContent=months.length+' months total';
+  // Populate month picker
+  document.getElementById('exp-mo-sel').innerHTML=months.map((m,i)=>`<option value="${i}">${m.name} ${m.hijriYear} AH</option>`).join('');
+  document.getElementById('exp-modal').classList.remove('hidden');
+}
+function closeExpModal(e){if(e.target===document.getElementById('exp-modal'))document.getElementById('exp-modal').classList.add('hidden')}
+
+function setExpScope(s,el){
+  expScope=s;
+  document.querySelectorAll('#exp-scope .exp-opt').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('exp-range-inputs').style.display=s==='range'?'grid':'none';
+  document.getElementById('exp-month-pick').style.display=s==='month'?'block':'none';
+}
+function setExpFmt(f,el){
+  expFmt=f;
+  document.querySelectorAll('#exp-fmt .exp-opt').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function getExpEntries(){
+  let pool=entries;
+  if(expScope==='current'){const m=curMo();pool=entries.filter(e=>e.date>=m.gregStart&&e.date<=m.gregEnd)}
+  else if(expScope==='month'){const idx=+document.getElementById('exp-mo-sel').value;const m=months[idx];pool=entries.filter(e=>e.date>=m.gregStart&&e.date<=m.gregEnd)}
+  else if(expScope==='range'){const f=document.getElementById('exp-from').value,t=document.getElementById('exp-to').value;if(!f||!t){showToast('Select date range');return null}pool=entries.filter(e=>e.date>=f&&e.date<=t)}
+  return pool.sort((a,b)=>a.date.localeCompare(b.date));
+}
+
+function doExport(){
+  const pool=getExpEntries();if(!pool)return;
+  if(!pool.length){showToast('No entries in selected range');return}
+  if(expFmt==='csv')exportCSV(pool);
+  else exportXLSXasCSV(pool);
+  document.getElementById('exp-modal').classList.add('hidden');
+}
+
+function escCSV(v){if(v==null)return'';const s=String(v);return(s.includes(',')||s.includes('"')||s.includes('\n'))?'"'+s.replace(/"/g,'""')+'"':s}
+
+function buildRows(pool){
+  const hdr=['Hijri Date','Gregorian Date','Day','Category','Type','Amount (₹)','Where/Source','What/Description','Quantity','Notes','Week','Hijri Month','Hijri Year'];
+  const rows=pool.map(e=>{
+    const cat=catById(e.cat);
+    const g=parseYMD(e.date);
+    const hd=gregToHijriDisplay(g);
+    const day=g.toLocaleDateString('en-IN',{weekday:'long'});
+    const gstr=g.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    const hstr=`${hd.d} ${HM[hd.m-1]} ${hd.y}`;
+    // find week
+    let week='';
+    months.forEach(m=>{m.weeks.forEach(wk=>{if(e.date>=wk.gStart&&e.date<=wk.gEnd)week=wk.label})});
+    const mo=months.find(m=>e.date>=m.gregStart&&e.date<=m.gregEnd);
+    return[hstr,gstr,day,cat.label,
+      cat.type==='income'?'Income':cat.type==='cc'?'Credit Card':'Expense',
+      e.amt,e.where||'',e.what||'',e.qty||'',e.notes||'',
+      week,mo?mo.name:'',mo?mo.hijriYear:''];
+  });
+  return{hdr,rows};
+}
+
+function exportCSV(pool){
+  const{hdr,rows}=buildRows(pool);
+  const csv=[hdr,...rows].map(r=>r.map(escCSV).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='budget-export-'+ymd(new Date())+'.csv';a.click();
+  showToast('CSV downloaded — open in Google Sheets');
+}
+
+function exportXLSXasCSV(pool){
+  // Build a rich TSV that Excel opens natively with formatting hints via BOM
+  const{hdr,rows}=buildRows(pool);
+
+  // Build summary rows
+  const expRows=pool.filter(e=>catById(e.cat).type==='exp');
+  const incRows=pool.filter(e=>catById(e.cat).type==='income');
+  const ccRows =pool.filter(e=>catById(e.cat).type==='cc');
+  const totalExp=expRows.reduce((s,e)=>s+e.amt,0);
+  const totalInc=incRows.reduce((s,e)=>s+e.amt,0);
+  const totalCC =ccRows.reduce((s,e)=>s+e.amt,0);
+
+  // Cat breakdown
+  const catSummary=CATS.filter(c=>c.type==='exp').map(cat=>{
+    const s=pool.filter(e=>e.cat===cat.id).reduce((a,e)=>a+e.amt,0);
+    return[cat.icon+' '+cat.label,s,catBud[cat.id]||0,s-(catBud[cat.id]||0)];
+  });
+
+  let csv='';
+  // Title
+  csv+='35K BUDGET TRACKER — EXPORT\n';
+  csv+='Generated:,'+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})+'\n\n';
+
+  // Summary
+  csv+='SUMMARY\n';
+  csv+='Total Expenses,₹'+totalExp.toLocaleString('en-IN')+'\n';
+  csv+='Total Income (other),₹'+totalInc.toLocaleString('en-IN')+'\n';
+  csv+='Total Credit Card,₹'+totalCC.toLocaleString('en-IN')+'\n';
+  csv+='Net (Expenses − Income),₹'+(totalExp-totalInc).toLocaleString('en-IN')+'\n\n';
+
+  // Category summary
+  csv+='CATEGORY BREAKDOWN\n';
+  csv+='Category,Spent (₹),Target (₹),Over/Under (₹)\n';
+  catSummary.forEach(r=>csv+=r.map(escCSV).join(',')+'\n');
+  csv+='\n';
+
+  // Daily log
+  csv+='DAILY LOG\n';
+  csv+=[hdr,...rows].map(r=>r.map(escCSV).join(',')).join('\n');
+
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='budget-export-'+ymd(new Date())+'.csv';a.click();
+  showToast('File ready — open in Excel or Google Sheets');
+}
+
+// ══════════════════════════════════════════════
+// MIGRATION
+// ══════════════════════════════════════════════
+function enrich(e){
+  try{
+    const hd=gregToHijriDisplay(parseYMD(e.date));
+    return{...e,id:e.id||uid(),
+      hijri:`${hd.d} ${HM[hd.m-1]} ${hd.y} AH`,
+      hijriDay:hd.d,hijriMonth:hd.m,hijriYear:hd.y,
+      qty:e.qty||'',type:e.type||(e.cc?'cc':'exp')};
+  }catch{return e;}
+}
+function merge(incoming){
+  const ids=new Set(entries.map(e=>e.id));
+  const add=incoming.filter(e=>!ids.has(e.id));
+  entries=[...add,...entries];ss('bt3_entries',entries);return add.length;
+}
+function doMigrate(){
+  // Try both old storage keys
+  let raw=localStorage.getItem('bt_entries')||localStorage.getItem('bt2_entries');
+  if(!raw){showToast('No old data found');return}
+  try{const n=merge(JSON.parse(raw).map(enrich));localStorage.setItem('bt3_migrated','1');
+    document.getElementById('mig-banner').style.display='none';showToast('✓ '+n+' entries migrated!');renderDash();renderLog();}
+  catch{showToast('Migration failed — use JSON import');}
+}
+function migrateJSON(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      const raw=Array.isArray(data)?data:(data.entries||[]);
+      if(!raw.length){showToast('No entries found');return}
+      const n=merge(raw.map(enrich));
+      if(data.months){months=data.months;ss('bt3_months',months)}
+      if(data.catBud||data.catBudgets){catBud=data.catBud||data.catBudgets;ss('bt3_catbud',catBud)}
+      localStorage.setItem('bt3_migrated','1');
+      document.getElementById('mig-banner').style.display='none';
+      showToast('✓ '+n+' entries imported!');renderDash();renderLog();
+    }catch{showToast('Could not read file');}
+  };reader.readAsText(file);
+}
+function exportJSON(){
+  const a=document.createElement('a');
+  a.href='data:application/json,'+encodeURIComponent(JSON.stringify({entries,months,catBud,hijriOffset,exported:new Date().toISOString()},null,2));
+  a.download='budget-backup-'+ymd(new Date())+'.json';a.click();
+}
+function clearAll(){
+  if(!confirm('Delete ALL entries?'))return;
+  entries=[];ss('bt3_entries',entries);showToast('Cleared');renderDash();renderLog();
+}
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+let _tt;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2600)}
+
+// ══════════════════════════════════════════════
+// CHECK OLD DATA → show migration banner
+// ══════════════════════════════════════════════
+function checkOld(){
+  if(localStorage.getItem('bt3_migrated'))return;
+  const raw=localStorage.getItem('bt_entries')||localStorage.getItem('bt2_entries');
+  if(!raw)return;
+  try{const old=JSON.parse(raw);if(!old||!old.length)return;
+    document.getElementById('mig-count').textContent=old.length;
+    document.getElementById('mig-banner').style.display='block';}catch{}
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+buildCatBtns();
+buildPicker();
+renderDash();
+checkOld();
+</script>
+</body>
+</html>
