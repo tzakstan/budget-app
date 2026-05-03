@@ -355,15 +355,11 @@ body{min-height:100%;max-width:520px;margin:0 auto;padding:0 0 80px}
 <div class="page" id="page-add">
   <div class="page-header"><h1>Add Entry</h1><p>Expense or income</p></div>
   <div class="fsec">
-    <h2>Hijri Date</h2>
+    <h2>Date</h2>
     <div class="hpick">
-      <div class="hpick-lbl">Select date</div>
-      <div class="hrow">
-        <select id="pd" onchange="updPreview()"></select>
-        <select id="pm" onchange="updPreview()"></select>
-        <select id="py" onchange="updPreview()"></select>
-      </div>
-      <div class="gpreview" id="gp">—</div>
+      <div class="hpick-lbl">Select Gregorian date</div>
+      <input type="date" id="entry-date" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:16px;padding:11px 13px;outline:none;color-scheme:dark" oninput="updPreview()"/>
+      <div class="gpreview" id="gp" style="margin-top:8px">—</div>
     </div>
 
     <h2>Type & Category</h2>
@@ -541,15 +537,11 @@ function gregToHijri(g){
   const hMo=Math.floor((24*lll)/709),hD=lll-Math.floor((709*hMo)/24),hY=30*n+j-30;
   return{y:hY,m:hMo,d:hD};
 }
-function applyOffset(h){
-  // Apply Dawoodi Bohra calendar offset to a {y,m,d} hijri object
-  const off=hijriOffset;if(off===0)return h;
-  const g=hijriToGreg(h.y,h.m,h.d);
-  g.setDate(g.getDate()+off);
-  return gregToHijri(g);
-}
 function gregToHijriDisplay(gDate){
-  const raw=gregToHijri(gDate);return applyOffset(raw);
+  // Shift by DB calendar offset on the Gregorian side, then convert — avoids boundary bugs
+  const shifted=new Date(gDate);
+  shifted.setDate(shifted.getDate()+hijriOffset);
+  return gregToHijri(shifted);
 }
 function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function parseYMD(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
@@ -712,33 +704,31 @@ function renderDash(){
 }
 
 // ══════════════════════════════════════════════
-// HIJRI PICKER
+// DATE PICKER — Gregorian input, Hijri shown as preview
 // ══════════════════════════════════════════════
 function buildPicker(){
-  document.getElementById('pd').innerHTML=Array.from({length:30},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
-  document.getElementById('pm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');
-  document.getElementById('py').innerHTML=Array.from({length:21},(_,i)=>`<option value="${1440+i}">${1440+i} AH</option>`).join('');
-  const h=gregToHijriDisplay(new Date());
-  document.getElementById('pd').value=h.d;document.getElementById('pm').value=h.m;document.getElementById('py').value=h.y;
+  const el=document.getElementById('entry-date');
+  if(!el.value) el.value=ymd(new Date());
   updPreview();
 }
 function syncPicker(){
-  const h=gregToHijriDisplay(parseYMD(curMo().gregStart));
-  document.getElementById('pm').value=h.m;document.getElementById('py').value=h.y;updPreview();
+  const el=document.getElementById('entry-date');
+  if(!el.value) el.value=ymd(new Date());
+  updPreview();
 }
 function updPreview(){
-  const d=+document.getElementById('pd').value,m=+document.getElementById('pm').value,y=+document.getElementById('py').value;
+  const val=document.getElementById('entry-date').value;
+  if(!val){document.getElementById('gp').textContent='—';return;}
   try{
-    // Convert picker Hijri (with offset already applied) back to Gregorian for display
-    // The picker shows DB calendar dates, so we need to reverse-apply offset
-    const g=hijriToGreg(y,m,d);
-    g.setDate(g.getDate()-hijriOffset);
-    document.getElementById('gp').textContent='📅 '+g.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const g=parseYMD(val);
+    const h=gregToHijriDisplay(g);
+    const gregStr=g.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const hijriStr=h.d+' '+HM[h.m-1]+' '+h.y+' AH';
+    document.getElementById('gp').textContent='📅 '+gregStr+'  ·  ☪️ '+hijriStr;
   }catch{document.getElementById('gp').textContent='Invalid date';}
 }
 function getPickedGreg(){
-  const d=+document.getElementById('pd').value,m=+document.getElementById('pm').value,y=+document.getElementById('py').value;
-  const g=hijriToGreg(y,m,d);g.setDate(g.getDate()-hijriOffset);return ymd(g);
+  return document.getElementById('entry-date').value||ymd(new Date());
 }
 
 // ══════════════════════════════════════════════
@@ -760,10 +750,11 @@ function selCatFn(id,btn){
 }
 function clearForm(){
   ['amt','where','what','qty','notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('entry-date').value=ymd(new Date());
   document.getElementById('cc-ind').style.display='none';
   document.getElementById('inc-ind').style.display='none';
   document.querySelectorAll('.catbtn').forEach(b=>b.classList.remove('sel'));
-  selCat=null;buildPicker();syncPicker();
+  selCat=null; updPreview();
 }
 
 // ══════════════════════════════════════════════
@@ -858,13 +849,15 @@ function delEntry(id){
 function changeOffset(dir){
   hijriOffset=Math.max(-3,Math.min(3,hijriOffset+dir));
   ss('bt3_offset',hijriOffset);
-  document.getElementById('offset-display').textContent=(hijriOffset>0?'+':'')+hijriOffset;
   updateOffsetPreview();
+  updPreview(); // also refresh the date preview on Add tab if open
 }
 function updateOffsetPreview(){
   document.getElementById('offset-display').textContent=(hijriOffset>0?'+':'')+hijriOffset;
   const h=gregToHijriDisplay(new Date());
-  document.getElementById('offset-preview').textContent=`${h.d} ${HM[h.m-1]} ${h.y} AH`;
+  const today=new Date();
+  const gregStr=today.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('offset-preview').textContent=gregStr+' = '+h.d+' '+HM[h.m-1]+' '+h.y+' AH';
 }
 
 // ══════════════════════════════════════════════
@@ -1127,4 +1120,3 @@ checkOld();
 </script>
 </body>
 </html>
-
