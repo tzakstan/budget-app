@@ -624,7 +624,7 @@ function saveAllData(){
 // BACKEND SYNC (Google Apps Script)
 // ══════════════════════════════════════════════
 async function pushToBackend(){
-  if(!BACKEND_URL || BACKEND_URL.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
+  if(!BACKEND_URL || BACKEND_URL.includes('https://script.google.com/macros/s/AKfycbzU_amcBVVtkRgl-cilYQT69LvqAyy2OTHyjUeg_IsoqlX8Qm9wfLEGvwoYCVt6s3E/exec')) {
     setSyncStatus('☁️','No backend');
     return;
   }
