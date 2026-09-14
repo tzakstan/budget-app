@@ -361,7 +361,20 @@ h1,h2,h3,.ctitle,.mig-title,.mtitle{font-family:var(--fh);}
       </div>
       <button class="btn-s" onclick="confirmSavings()" style="background:linear-gradient(135deg,var(--green),#3db85f);border:none;color:#0f2027;font-weight:700;padding:10px 16px">✅ Transferred</button>
     </div>
-    <div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:4px" id="savings-last-confirmed"></div>
+    <!-- Transfer History -->
+    <div id="savings-history-section" style="border-top:1px solid var(--border);margin-top:4px;padding-top:12px;display:none">
+      <div style="font-size:11px;color:var(--muted);font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Transfer History</div>
+      <div id="savings-history-rows"></div>
+      <!-- Grand Total -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;margin-top:8px;background:linear-gradient(135deg,rgba(6,214,160,0.1),rgba(76,201,240,0.05));border:1px solid rgba(6,214,160,0.2);border-radius:10px">
+        <div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">Total Saved to Date</div>
+          <div style="font-size:24px;font-family:var(--fm);font-weight:500;color:var(--teal);margin-top:2px" id="grand-total-saved">₹0</div>
+        </div>
+        <div style="font-size:28px">🏦</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:8px" id="savings-last-confirmed"></div>
   </div>
   <div style="height:14px"></div>
   <div class="card" id="inc-card" style="display:none">
@@ -655,6 +668,8 @@ let catBud  = ls('bt3_catbud', DEF_CATBUD);
 let hijriOffset = ls('bt3_offset', 0);
 let pendingSavings = ls('bt3_pendingSavings', 0);
 let dailySavings   = ls('bt3_dailySavings', {total:0, lastDate:'', confirmedTotal:0});
+// savingsLog: array of {date, avoidable, daily, total} — one entry per confirmed transfer
+let savingsLog     = ls('bt3_savingsLog', []);
 let curMoIdx = 0;
 let isSyncing = false;
 
@@ -718,9 +733,8 @@ function saveAllData(){
   ss('bt3_offset', hijriOffset);
   ss('bt3_pendingSavings', pendingSavings);
   ss('bt3_dailySavings', dailySavings);
+  ss('bt3_savingsLog', savingsLog);
   ss('bt3_categories', categories);
-  // scheduleAutoPush is defined below in the auto-sync block.
-  // If it exists, use debounced push; otherwise direct push.
   if(typeof scheduleAutoPush === 'function') scheduleAutoPush();
   else pushToBackend();
 }
@@ -735,7 +749,7 @@ async function pushToBackend(){
   isSyncing = true;
   setSyncStatus('⏳','Syncing...');
   try{
-    const payload = { entries, months, catBud, hijriOffset, pendingSavings, dailySavings, categories };
+    const payload = { entries, months, catBud, hijriOffset, pendingSavings, dailySavings, savingsLog, categories };
     // GAS requires no-cors + text/plain to avoid CORS preflight
     await fetch(BACKEND_URL, {
       method: 'POST',
@@ -964,11 +978,43 @@ function renderDash(){
   document.getElementById('savings-amount').textContent = fmt(pendingSavings);
   document.getElementById('daily-savings-amount').textContent = fmt(dailySavings.total);
   document.getElementById('total-savings-amount').textContent = fmt(pendingSavings + dailySavings.total);
-  const lastConf = ls('bt3_lastConfirmed', null);
-  if(lastConf){
-    const d = new Date(lastConf);
-    document.getElementById('savings-last-confirmed').textContent =
-      'Last transferred: ' + d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+
+  // Transfer history + grand total
+  const histSection = document.getElementById('savings-history-section');
+  const histRows    = document.getElementById('savings-history-rows');
+  const grandTotal  = document.getElementById('grand-total-saved');
+  const lastConfEl  = document.getElementById('savings-last-confirmed');
+
+  if(savingsLog && savingsLog.length > 0){
+    histSection.style.display = 'block';
+
+    // Grand total = sum of all confirmed transfers
+    const grandAmt = savingsLog.reduce((s, r) => s + r.total, 0);
+    grandTotal.textContent = fmt(grandAmt);
+
+    // Show last 5 transfers (most recent first), with a summary line
+    const recent = [...savingsLog].reverse().slice(0, 5);
+    histRows.innerHTML = recent.map(r => `
+      <div style="display:flex;justify-content:space-between;align-items:center;
+        padding:7px 10px;background:var(--surface2);border-radius:8px;margin-bottom:6px;
+        border:1px solid var(--border)">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${r.dateLabel}</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:1px">
+            Avoidable: ${fmt(r.avoidable)}  ·  Daily: ${fmt(r.daily)}
+          </div>
+        </div>
+        <div style="font-family:var(--fm);font-size:14px;font-weight:500;color:var(--green)">+${fmt(r.total)}</div>
+      </div>`).join('');
+
+    // Last confirmed note
+    const last = savingsLog[savingsLog.length - 1];
+    lastConfEl.textContent = savingsLog.length > 5
+      ? `Showing last 5 of ${savingsLog.length} transfers`
+      : `Last transferred: ${last.dateLabel}`;
+  } else {
+    histSection.style.display = 'none';
+    lastConfEl.textContent = '';
   }
 }
 
@@ -976,10 +1022,23 @@ function renderDash(){
 // SAVINGS INTIMATOR
 // ══════════════════════════════════════════════
 function confirmSavings(){
-  const total = pendingSavings + dailySavings.total;
+  const avoidAmt  = pendingSavings;
+  const dailyAmt  = dailySavings.total;
+  const total     = avoidAmt + dailyAmt;
   if(total <= 0){ showToast('Nothing to transfer yet'); return; }
-  if(confirm(`Confirm you have transferred ${fmt(total)} to your savings account?\n\nBreakdown:\n• Avoidable 10%: ${fmt(pendingSavings)}\n• Daily ₹50: ${fmt(dailySavings.total)}\n\nThis will reset both pools to ₹0.`)){
-    pendingSavings = 0;
+  if(confirm(`Confirm you have transferred ${fmt(total)} to your savings account?\n\nBreakdown:\n• Avoidable 10%: ${fmt(avoidAmt)}\n• Daily ₹50: ${fmt(dailyAmt)}\n\nThis will reset both pools to ₹0.`)){
+    // Log this transfer to history
+    savingsLog.push({
+      date:        ymd(new Date()),
+      dateLabel:   new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),
+      avoidable:   avoidAmt,
+      daily:       dailyAmt,
+      total:       total
+    });
+    ss('bt3_savingsLog', savingsLog);
+
+    // Reset pools
+    pendingSavings     = 0;
     dailySavings.total = 0;
     // Keep lastDate so we don't re-accrue today
     saveAllData();
