@@ -719,7 +719,10 @@ function saveAllData(){
   ss('bt3_pendingSavings', pendingSavings);
   ss('bt3_dailySavings', dailySavings);
   ss('bt3_categories', categories);
-  pushToBackend();
+  // scheduleAutoPush is defined below in the auto-sync block.
+  // If it exists, use debounced push; otherwise direct push.
+  if(typeof scheduleAutoPush === 'function') scheduleAutoPush();
+  else pushToBackend();
 }
 
 // ══════════════════════════════════════════════
@@ -771,8 +774,14 @@ async function pullFromBackend(){
       if(data.months && data.months.length > 0){ months = data.months; ss('bt3_months', months); }
       if(data.catBud){ catBud = data.catBud; ss('bt3_catbud', catBud); }
       if(data.hijriOffset !== undefined){ hijriOffset = data.hijriOffset; ss('bt3_offset', hijriOffset); }
-      if(data.pendingSavings !== undefined){ pendingSavings = data.pendingSavings; ss('bt3_pendingSavings', pendingSavings); }
-      if(data.dailySavings !== undefined){ dailySavings = data.dailySavings; ss('bt3_dailySavings', dailySavings); }
+      // ── SAVINGS: never overwrite from sheet ──────────────────────────────
+      // pendingSavings and dailySavings are device-only accumulators.
+      // They only reset when the user taps "Transferred". If a pull overwrites
+      // them with an older/zero value from the sheet, the pool wipes out.
+      // The sheet stores a snapshot; local storage is always the truth.
+      // (We still push savings UP to the sheet so the sheet stays readable,
+      //  but we never pull savings DOWN.)
+      // ─────────────────────────────────────────────────────────────────────
       if(data.categories && data.categories.length > 0){ categories = data.categories; ss('bt3_categories', categories); }
       renderDash(); renderLog(); renderSettings();
       setSyncStatus('✅','Pulled from Sheet');
@@ -788,13 +797,58 @@ async function pullFromBackend(){
   }
 }
 
-// ── Auto-sync every minute ──
-setInterval(() => { if(navigator.onLine) pushToBackend(); }, 60000);
+// ════════════════════════════════════════════════
+// AUTOMATIC SYNC — no manual push/pull needed
+// ════════════════════════════════════════════════
 
+// Debounced push: 3 sec after last save, so rapid saves batch into one push
+let _pushTimer = null;
+function scheduleAutoPush(){
+  clearTimeout(_pushTimer);
+  _pushTimer = setTimeout(()=>{
+    if(navigator.onLine && BACKEND_URL) pushToBackend();
+  }, 3000);
+}
+
+// Smart pull on open: only if last pull was > 1 hour ago
+function smartPullOnOpen(){
+  if(!BACKEND_URL || !navigator.onLine) return;
+  const oneHour = 60 * 60 * 1000;
+  if(Date.now() - ls('bt3_lastPull', 0) > oneHour){
+    pullFromBackend();
+    ss('bt3_lastPull', Date.now());
+  }
+}
+
+// Background sync every 5 minutes — silent, no interruption
+setInterval(()=>{
+  if(navigator.onLine && BACKEND_URL){
+    pushToBackend();
+  }
+}, 5 * 60 * 1000);
+
+// Sync when you switch back to the app from another tab/app
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState === 'visible' && navigator.onLine && BACKEND_URL){
+    const thirtyMin = 30 * 60 * 1000;
+    if(Date.now() - ls('bt3_lastPull', 0) > thirtyMin){
+      pullFromBackend();
+      ss('bt3_lastPull', Date.now());
+    }
+  }
+});
+
+// On first load
 window.addEventListener('load', ()=>{
-  if(navigator.onLine) pullFromBackend();
-  window.addEventListener('online', ()=>{ setSyncStatus('⏳','Online'); pullFromBackend(); });
-  window.addEventListener('offline', ()=>{ setSyncStatus('📡','Offline'); });
+  smartPullOnOpen();
+  window.addEventListener('online', ()=>{
+    setSyncStatus('⏳','Back online — syncing...');
+    pushToBackend(); // push local changes that happened while offline
+    ss('bt3_lastPull', Date.now());
+  });
+  window.addEventListener('offline', ()=>{
+    setSyncStatus('📡','Offline — saved locally');
+  });
 });
 
 // ══════════════════════════════════════════════
