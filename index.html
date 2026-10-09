@@ -1,732 +1,1421 @@
 <!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+<!-- STITCH_THREEJS_START:ANIMATION_33 class="fixed inset-0 w-full h-full bg-transparent" -->
+<div class="fixed inset-0 w-full h-full bg-transparent" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_33" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_33');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<meta name="theme-color" content="#0f2027"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#f8faff"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="mobile-web-app-capable" content="yes"/>
-<title>35k Budget Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<title>35k Budget Tracker — Personal Wealth & Habit Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-/* ── RESET & ROOT ── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --navy:#070d15;--navy2:#0e1c2e;--teal:#06d6a0;--teal2:#05b88a;--gold:#ffd166;
-  --red:#ef476f;--green:#06d6a0;--purple:#b388ff;--orange:#ff9a3c;--blue:#4cc9f0;
-  --pink:#f72585;--cyan:#4cc9f0;
-  --surface:rgba(14,28,46,0.75);--surface2:rgba(20,38,60,0.8);--surface3:rgba(26,48,75,0.9);
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-  --glass:rgba(255,255,255,0.03);
-  --text:#dce8f5;--muted:#5a7a9a;--muted2:#8aa4be;
-  --radius:16px;--radius-sm:10px;--radius-xs:6px;
-  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
-  --shadow:0 8px 32px rgba(0,0,0,0.5);--shadow-sm:0 2px 12px rgba(0,0,0,0.3);
+/* ── DESIGN TOKENS & RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #f8faff;
+  --surface: #ffffff;
+  --surface-low: #f1f4fb;
+  --surface-subtle: #f8faff;
+  --border: #e2e8f0;
+  --border-focus: #4f46e5;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  
+  --emerald: #059669;
+  --emerald-bg: #ecfdf5;
+  --emerald-border: #a7f3d0;
+  
+  --indigo: #4f46e5;
+  --indigo-light: #eef2ff;
+  --indigo-border: #c7d2fe;
+  
+  --amber: #d97706;
+  --amber-bg: #fffbeb;
+  --amber-border: #fde68a;
+  
+  --rose: #e11d48;
+  --rose-bg: #fff1f2;
+  --rose-border: #fecdd3;
+  
+  --purple: #7c3aed;
+  --purple-bg: #f5f3ff;
+  --purple-border: #ddd6fe;
+
+  --font-serif: 'Newsreader', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
 }
-html{background:var(--navy);color:var(--text);font-family:var(--fb);height:100%}
-body{min-height:100%;max-width:520px;margin:0 auto;padding:0 0 80px;
-  background:radial-gradient(ellipse 120% 60% at 20% 0%,#0d2535 0%,#070d15 60%)}
 
-/* ── GLASSMORPHISM ── */
-.card,.tile,.hpick,.modal,.exp-opt,.catbtn,.lentry,.hcorr,.mig-banner,.sync-indicator{
-  background:var(--glass);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border:1px solid var(--border);
-  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+body {
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 0 88px;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
 }
-.tile{background:rgba(22,35,48,0.5); backdrop-filter:blur(8px);}
 
-/* ── TYPOGRAPHY ── */
-h1,h2,h3,.ctitle,.mig-title,.mtitle{font-family:var(--fh);}
-.tval,.tlabel,.plabel,.camt,.lamt,.bi,.btn-p,.btn-s{font-family:var(--fm);}
-
-/* ── LAYOUT & COMPONENTS ── */
-.page{display:none;padding-bottom:20px;}
-.page.active{display:block}
-.page-header{
-  background:linear-gradient(180deg,rgba(14,28,46,0.98) 0%,rgba(7,13,21,0.95) 100%);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  padding:22px 20px 18px;
-  border-bottom:1px solid var(--border2);
-  position:sticky;top:0;z-index:50;
+/* ── HEADER & PERSISTENT STATUS ── */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.page-header h1{font-size:22px;font-weight:800;
-  background:linear-gradient(135deg,var(--text) 30%,var(--teal) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.page-header p{color:var(--muted2);font-size:12px;margin-top:3px}
+.brand-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+}
+.brand-title {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.2px;
+  color: var(--text-main);
+}
+.sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  cursor: pointer;
+  background: var(--surface-low);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.sync-badge:hover { background: #e2e8f0; }
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--emerald);
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+}
+.pulse-dot.syncing { background-color: var(--amber); animation: pulse 1s infinite; }
+.pulse-dot.error { background-color: var(--rose); }
+@keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
-.mnav{display:flex;align-items:center;gap:10px;margin-top:13px}
-.mnav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);
-  width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px}
-.mlabel{flex:1;text-align:center;background:var(--surface2);padding:6px 10px;border-radius:20px;border:1px solid var(--border)}
-.h-main{font-family:var(--fh);font-size:14px;font-weight:700;display:block}
-.h-sub{font-size:10px;color:var(--muted);font-family:var(--fm);display:block;margin-top:1px}
+/* ── DATE BAR ── */
+.date-selector-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 16px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 6px 10px;
+  box-shadow: var(--shadow-sm);
+}
+.nav-arrow-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface-low);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+.nav-arrow-btn:active { transform: scale(0.92); background: #cbd5e1; }
+.cycle-info {
+  text-align: center;
+  flex: 1;
+}
+.cycle-hijri {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.cycle-span {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-top: 1px;
+}
+.badge-tag {
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 6px;
+  letter-spacing: 0.4px;
+}
+.tag-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.tag-indigo { background: var(--indigo-light); color: var(--indigo); border: 1px solid var(--indigo-border); }
 
-/* ── CARDS & TILES ── */
-.card{padding:16px;margin:0 16px 12px;border-radius:var(--radius);
-  background:var(--surface);border:1px solid var(--border2);box-shadow:var(--shadow-sm)}
-.ctitle{font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:1.2px;
-  text-transform:uppercase;color:var(--muted2);margin-bottom:12px;
-  display:flex;align-items:center;gap:6px}
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 16px 0}
-.tile{padding:14px;border-radius:var(--radius);position:relative;overflow:hidden;
-  background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
-  border:1px solid var(--border2);box-shadow:var(--shadow-sm)}
-.tile::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent)}
-.tlabel{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);font-family:var(--fm)}
-.tval{font-family:var(--fm);font-size:20px;font-weight:500;margin-top:5px;letter-spacing:-.5px}
-.tval.good{color:var(--green)}.tval.bad{color:var(--red)}.tval.gold{color:var(--gold)}
-.tval.orange{color:var(--orange)}.tval.blue{color:var(--blue)}.tval.teal{color:var(--teal)}
-.tile.wide{grid-column:1/-1}
-.prog{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:6px}
-.prog-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);
-  background:linear-gradient(90deg,var(--teal),var(--cyan))}
-.prog-fill.warn{background:linear-gradient(90deg,var(--gold),var(--orange))}
-.prog-fill.over{background:linear-gradient(90deg,var(--red),var(--pink))}
-.plabel{display:flex;justify-content:space-between;font-size:11px;color:var(--muted2);font-family:var(--fm);margin-top:9px;margin-bottom:2px}
+/* ── PAGES ── */
+.view-page { display: none; padding-top: 4px; animation: fadeIn 0.2s ease; }
+.view-page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-.income-row{display:flex;justify-content:space-between;align-items:center;
-  padding:9px 12px;background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.2);
-  border-radius:var(--radius-sm);margin-bottom:10px;font-size:12px}
-.income-row .lbl{color:var(--orange)}
-.income-row .val{font-family:var(--fm);color:var(--orange);font-weight:500}
+/* ── CARDS & METRICS ── */
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  margin: 0 16px 14px;
+  box-shadow: var(--shadow-sm);
+}
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.card-heading {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
-.wrow{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:8px}
-.wrow:last-child{border-bottom:none}
-.wdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.wname{font-size:12px;font-weight:500;min-width:52px}
-.whijri{font-size:10px;color:var(--muted);font-family:var(--fm);min-width:56px}
-.wbar{flex:1}
-.wmeta{font-family:var(--fm);font-size:11px;color:var(--muted);text-align:right;min-width:94px}
+/* ── HERO BUDGET CARD ── */
+.hero-budget-card {
+  background: linear-gradient(175deg, #ffffff 0%, #f7f9ff 100%);
+  border: 1px solid var(--indigo-border);
+  position: relative;
+  overflow: hidden;
+}
+.hero-budget-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; width: 140px; height: 140px;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.remaining-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--emerald);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.big-balance {
+  font-family: var(--font-serif);
+  font-size: 38px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: var(--text-main);
+  line-height: 1.1;
+  margin: 4px 0 12px;
+}
+.safe-spend-strip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.safe-spend-val {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--emerald);
+}
+.safe-spend-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.progress-rail {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0 10px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  background: linear-gradient(90deg, var(--indigo), var(--emerald));
+}
+.progress-fill.warn { background: linear-gradient(90deg, var(--amber), #f97316); }
+.progress-fill.danger { background: linear-gradient(90deg, var(--rose), #e11d48); }
 
-.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.citem{background:var(--surface2);border-radius:var(--radius-sm);padding:10px;border:1px solid var(--border)}
-.cname{font-size:11px;color:var(--muted);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.camt{font-family:var(--fm);font-size:14px;font-weight:500}
-.cbadge{font-size:9px;padding:2px 6px;border-radius:10px;margin-top:4px;display:inline-block;font-family:var(--fm)}
-.bok{background:rgba(81,207,102,.15);color:var(--green)}
-.bover{background:rgba(255,107,107,.15);color:var(--red)}
-.bcc{background:rgba(192,132,252,.15);color:var(--purple)}
-.binc{background:rgba(251,146,60,.15);color:var(--orange)}
+.vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  border-top: 1px solid #edf2f7;
+  padding-top: 12px;
+  text-align: center;
+}
+.vital-item .v-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.vital-item .v-val {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-top: 2px;
+}
 
-/* ── FORM ── */
-.fsec{padding:16px 16px 0}
-.fsec h2{font-family:var(--fh);font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--muted);
-  text-transform:uppercase;margin-bottom:11px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.field{margin-bottom:11px}
-.field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:5px;font-family:var(--fm)}
-.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);
-  border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:15px;
-  padding:11px 13px;outline:none;transition:border-color .2s;-webkit-appearance:none}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,176,155,.12)}
-.field textarea{resize:none;height:64px;font-size:13px;font-family:var(--fb)}
-.field select option{background:var(--navy2)}
+/* ── SAVINGS ENGINE ── */
+.savings-engine-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fbfdff 100%);
+  border: 1px solid var(--amber-border);
+}
+.savings-pools-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.pool-tile {
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+.pool-tile .p-name {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pool-tile .p-amt {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+.pool-tile.amber .p-amt { color: var(--amber); }
+.pool-tile.emerald .p-amt { color: var(--emerald); }
 
-.hpick{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:13px}
-.hpick-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:9px;font-family:var(--fm)}
-.gpreview{font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:8px;text-align:center;padding:6px;background:var(--surface2);border-radius:var(--radius-sm)}
+.savings-cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+}
+.total-transfer-lbl {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.total-transfer-num {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.btn-transfer {
+  background: linear-gradient(135deg, var(--emerald), #047857);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 8px 16px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+  transition: all 0.15s;
+}
+.btn-transfer:active { transform: scale(0.96); }
 
-.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
-.catbtn{background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:10px 5px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text);font-family:var(--fb)}
-.catbtn .ic{font-size:18px;display:block;margin-bottom:2px}
-.catbtn .lb{font-size:10px;color:var(--muted);display:block}
-.catbtn.sel{border-color:var(--teal);background:rgba(0,176,155,.12);color:var(--teal)}
-.catbtn.cc.sel{border-color:var(--purple);background:rgba(192,132,252,.12);color:var(--purple)}
-.catbtn.inc.sel{border-color:var(--orange);background:rgba(251,146,60,.12);color:var(--orange)}
-.cctag{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:4px 10px;border-radius:10px;font-family:var(--fm);margin-bottom:10px}
-.cctag.cc{background:rgba(192,132,252,.15);color:var(--purple)}
-.cctag.inc{background:rgba(251,146,60,.15);color:var(--orange)}
+/* ── WEEKLY PACING ── */
+.pacing-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.pacing-item:last-child { border-bottom: none; }
+.week-pill {
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 54px;
+  color: var(--text-main);
+}
+.week-hijri {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  min-width: 58px;
+}
+.pacing-bar-wrap { flex: 1; }
+.week-amt-lbl {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: right;
+  min-width: 88px;
+}
 
-.btn-p{width:100%;padding:14px;
-  background:linear-gradient(135deg,var(--teal),var(--teal2));
-  border:none;border-radius:var(--radius);color:#001a10;font-family:var(--fh);font-size:15px;
-  font-weight:700;cursor:pointer;margin-top:8px;
-  box-shadow:0 4px 18px rgba(6,214,160,0.3);transition:opacity .2s,transform .1s}
-.btn-p:active{opacity:.88;transform:scale(.99)}
-.btn-s{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);
-  color:var(--text);font-family:var(--fb);font-size:13px;padding:8px 14px;cursor:pointer;
-  transition:background .15s}
-.btn-s:active{background:var(--surface3)}
+/* ── CATEGORIES ── */
+.category-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+.category-row-item.danger {
+  background: var(--rose-bg);
+  border-color: var(--rose-border);
+}
+.category-row-item.warning {
+  background: var(--amber-bg);
+  border-color: var(--amber-border);
+}
+.cat-left-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cat-icon-chip {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.cat-title-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.cat-sub-alert {
+  font-size: 10px;
+  color: var(--rose);
+  font-weight: 500;
+}
+.cat-right-metric {
+  text-align: right;
+}
+.cat-spent-num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+.cat-target-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
 
-/* ── LOG ── */
-.lday{margin:0 16px 10px}
-.ldh{font-size:11px;font-weight:700;color:var(--muted);padding:8px 0 6px;
-  border-bottom:1px solid var(--border);margin-bottom:6px;display:flex;align-items:baseline;gap:6px}
-.lhijri{color:var(--teal);font-family:var(--fh);font-size:13px}
-.lgreg{font-size:10px;color:var(--muted);font-family:var(--fm)}
-.lentry{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--radius-sm);margin-bottom:6px;border:1px solid var(--border);cursor:pointer}
-.lentry:active{border-color:var(--teal)}
-.lic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.ltxt{flex:1;overflow:hidden}
-.lcat{font-size:12px;font-weight:500}
-.lnote{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lamt{font-family:var(--fm);font-size:14px;font-weight:500}
-.lamt.cc{color:var(--purple)}.lamt.inc{color:var(--orange)}
+/* ── ADD ENTRY FORM ── */
+.form-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.6px;
+  margin: 16px 16px 8px;
+}
+.input-card-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin: 0 16px 12px;
+  box-shadow: var(--shadow-sm);
+}
+.currency-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+.currency-symbol {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--indigo);
+  font-family: var(--font-serif);
+}
+.amount-text-field {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--text-main);
+  background: transparent;
+}
+.quick-chips-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.quick-chip {
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text-main);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.quick-chip:active { background: #cbd5e1; transform: scale(0.95); }
 
-/* ── MODAL ── */
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:flex-end;justify-content:center}
-.ov.hidden{display:none}
-.modal{background:var(--navy2);border-radius:20px 20px 0 0;padding:20px 20px 40px;
-  width:100%;max-width:520px;max-height:82vh;overflow-y:auto;border-top:1px solid var(--border)}
-.mhandle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
-.mtitle{font-family:var(--fh);font-size:16px;font-weight:800;margin-bottom:14px}
-.drow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;gap:10px}
-.drow:last-child{border-bottom:none}
-.drow .k{color:var(--muted);flex-shrink:0}.drow .v{font-family:var(--fm);font-weight:500;text-align:right}
-.del-btn{width:100%;margin-top:14px;padding:12px;background:rgba(255,107,107,.15);
-  border:1px solid rgba(255,107,107,.3);border-radius:var(--radius-sm);color:var(--red);font-family:var(--fb);font-size:14px;cursor:pointer}
+/* Category Grid in Form */
+.form-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.form-cat-btn {
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 4px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s;
+}
+.form-cat-btn .emoji { font-size: 20px; }
+.form-cat-btn .name { font-size: 10px; font-weight: 600; color: var(--text-muted); }
+.form-cat-btn.selected {
+  background: var(--indigo-light);
+  border-color: var(--indigo);
+  color: var(--indigo);
+}
+.form-cat-btn.selected .name { color: var(--indigo); }
+.form-cat-btn.income-type.selected {
+  background: var(--amber-bg);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+.form-cat-btn.income-type.selected .name { color: var(--amber); }
 
-/* ── EXPORT MODAL ── */
-.exp-section{margin-bottom:16px}
-.exp-section h3{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
-.exp-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.exp-opt{padding:12px 10px;background:var(--surface2);border:1px solid var(--border);
-  border-radius:var(--radius-sm);cursor:pointer;text-align:center;transition:all .15s}
-.exp-opt:hover,.exp-opt.sel{border-color:var(--teal);background:rgba(0,176,155,.1)}
-.exp-opt .eic{font-size:20px;margin-bottom:4px}
-.exp-opt .elb{font-size:12px;font-weight:500}
-.exp-opt .esub{font-size:10px;color:var(--muted);margin-top:2px;font-family:var(--fm)}
-.date-range{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+/* Standard Inputs */
+.styled-field {
+  width: 100%;
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  font-family: var(--font-sans);
+  transition: border-color 0.2s;
+}
+.styled-field:focus { border-color: var(--indigo); background: white; }
+select.styled-field { -webkit-appearance: none; appearance: none; }
 
-/* ── SETTINGS ── */
-.srow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
-.srow:last-child{border-bottom:none}
-.slbl{font-size:14px}.ssub{font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--fm)}
-.bi{width:100px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text);font-family:var(--fm);font-size:14px;padding:6px 10px;text-align:right;outline:none}
-.bi:focus{border-color:var(--teal)}
+/* Details Accordion */
+.accordion-toggle {
+  background: var(--surface-low);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin: 0 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.accordion-content { display: none; margin: 0 16px 12px; }
+.accordion-content.expanded { display: block; }
 
-.hcorr{background:rgba(247,195,95,.06);border:1px solid rgba(247,195,95,.2);border-radius:var(--radius);padding:14px;margin-bottom:12px}
-.hcorr-title{font-size:12px;color:var(--gold);font-family:var(--fh);font-weight:700;margin-bottom:8px}
-.hcorr-body{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
-.offset-row{display:flex;align-items:center;gap:10px}
-.offset-row label{font-size:12px;color:var(--text);flex:1}
-.offset-btns{display:flex;gap:6px}
-.obtn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);
-  color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.oval{font-family:var(--fm);font-size:16px;min-width:32px;text-align:center;color:var(--gold)}
+.btn-primary-save {
+  width: calc(100% - 32px);
+  margin: 8px 16px;
+  background: linear-gradient(135deg, var(--emerald), #047857);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+  transition: all 0.15s;
+}
+.btn-primary-save:active { transform: scale(0.98); }
 
-/* ── TAB BAR ── */
-.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;
-  background:rgba(7,13,21,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-top:1px solid var(--border2);display:flex;z-index:100;
-  padding:6px 0 max(10px,env(safe-area-inset-bottom))}
-.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;
-  cursor:pointer;border:none;background:none;color:var(--muted);font-family:var(--fb);
-  font-size:9px;letter-spacing:.3px;text-transform:uppercase;transition:color .2s}
-.tab svg{width:21px;height:21px;stroke-width:1.8;transition:transform .2s}
-.tab.active{color:var(--teal)}
-.tab.active svg{transform:scale(1.15)}
+/* ── LOG ENTRIES ── */
+.log-day-group { margin: 0 16px 16px; }
+.log-day-header {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.log-item-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+.log-item-row:active { border-color: var(--indigo); }
+.log-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--surface-low);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.log-item-content { flex: 1; overflow: hidden; }
+.log-item-title { font-size: 12px; font-weight: 600; color: var(--text-main); }
+.log-item-desc { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.log-item-amount { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+.log-item-amount.inc { color: var(--amber); }
+
+/* ── MODALS ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.hidden { display: none; }
+.modal-bottom-sheet {
+  background: white;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 24px 24px 0 0;
+  padding: 20px 20px 32px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.12);
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.sheet-drag-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #cbd5e1;
+  margin: 0 auto 16px;
+}
+
+/* ── BOTTOM NAV TAB BAR ── */
+.bottom-tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 90;
+  padding: 6px 0 max(8px, env(safe-area-inset-bottom));
+}
+.nav-tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  padding: 6px 0;
+  transition: all 0.15s;
+}
+.nav-tab-btn svg { width: 20px; height: 20px; stroke-width: 2; }
+.nav-tab-btn.active { color: var(--indigo); }
+.nav-tab-btn.active svg { transform: scale(1.1); stroke-width: 2.3; }
 
 /* ── TOAST ── */
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);
-  background:var(--teal);color:#fff;padding:10px 22px;border-radius:30px;
-  font-size:13px;font-weight:500;z-index:300;transition:transform .3s;font-family:var(--fm);white-space:nowrap}
-.toast.show{transform:translateX(-50%) translateY(0)}
-
-.empty{text-align:center;padding:44px 20px;color:var(--muted)}
-.empty p{font-size:14px;margin-top:12px}
-
-/* ── MIGRATION BANNER ── */
-#mig-banner{display:none;background:linear-gradient(135deg,#1a3a2a,#0f2820);
-  border:1px solid rgba(81,207,102,.3);border-radius:var(--radius);margin:12px 16px;padding:16px}
-.mig-title{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--green);margin-bottom:5px}
-.mig-body{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6}
-.mig-btns{display:flex;gap:8px}
-.mig-btn{flex:1;padding:10px;border-radius:var(--radius-sm);border:none;font-family:var(--fh);font-size:13px;font-weight:700;cursor:pointer}
-.mig-btn.p{background:var(--green);color:#0f2027}
-.mig-btn.s{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-
-@media(min-width:600px){body{border-left:1px solid var(--border);border-right:1px solid var(--border)}}
+.toast-notice {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: #0f172a;
+  color: white;
+  padding: 9px 18px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 200;
+  transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+.toast-notice.show { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<div class="toast" id="toast"></div>
-<!-- Sync Status -->
-<div id="sync-status" style="position:fixed;top:12px;right:12px;z-index:300;background:var(--glass);backdrop-filter:blur(8px);border-radius:30px;padding:6px 14px;font-size:11px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);color:var(--muted);font-family:var(--fm)">
-  <span id="sync-icon">☁️</span>
-  <span id="sync-text">Saved</span>
+<!-- Toast Notification -->
+<div class="toast-notice" id="toast"></div>
+
+<!-- Top Sticky Header -->
+<header class="app-header">
+  <div class="brand-pill">
+    <div class="brand-icon">35</div>
+    <div>
+      <div class="brand-title">35k Budget Tracker</div>
+    </div>
+  </div>
+  <div class="sync-badge" id="sync-pill" onclick="triggerManualSync()" title="Click to synchronize with Google Sheet">
+    <span class="pulse-dot" id="sync-dot"></span>
+    <span id="sync-label">Synced</span>
+  </div>
+</header>
+
+<!-- Dawoodi Bohra Month Navigator -->
+<div class="date-selector-bar">
+  <button class="nav-arrow-btn" onclick="changeMonth(-1)">‹</button>
+  <div class="cycle-info">
+    <div class="cycle-hijri">
+      <span id="hdr-hijri-month">—</span>
+      <span class="badge-tag tag-amber" id="hdr-offset-badge">Offset: 0d</span>
+    </div>
+    <div class="cycle-span" id="hdr-greg-span">—</div>
+  </div>
+  <button class="nav-arrow-btn" onclick="changeMonth(1)">›</button>
 </div>
 
-<!-- MIGRATION BANNER -->
-<div id="mig-banner">
-  <div class="mig-title">📦 Old entries detected!</div>
-  <div class="mig-body"><strong id="mig-count" style="color:var(--green)">?</strong> entries found from your previous app. Tap <strong style="color:var(--green)">Migrate Now</strong> — Hijri dates will be calculated automatically. On a different device? Use the JSON you exported.</div>
-  <div class="mig-btns">
-    <button class="mig-btn p" onclick="doMigrate()">Migrate Now</button>
-    <label class="mig-btn s" style="text-align:center;cursor:pointer">Use JSON<input type="file" accept=".json" onchange="migrateJSON(this)" style="display:none"/></label>
+<!-- ========================================== -->
+<!-- 1. DASHBOARD PAGE                          -->
+<!-- ========================================== -->
+<div class="view-page active" id="page-dash">
+  
+  <!-- Hero Remaining Budget Card -->
+  <div class="metric-card hero-budget-card">
+    <div class="card-header-flex">
+      <div class="remaining-label">
+        <span style="font-size:14px">●</span> Remaining Budget
+      </div>
+      <span class="badge-tag tag-indigo" id="hero-extra-income">+₹0 Income</span>
+    </div>
+    
+    <div class="big-balance" id="hero-remaining-amt">₹0</div>
+    
+    <div class="safe-spend-strip">
+      <div>
+        <div style="font-size:10px;text-transform:uppercase;color:var(--text-muted);font-weight:600">Safe-to-spend today</div>
+        <div class="safe-spend-val" id="hero-safe-spend">₹0</div>
+      </div>
+      <div style="text-align:right">
+        <span class="badge-tag tag-emerald" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0">Optimal</span>
+        <div class="safe-spend-sub" id="hero-safe-calc">0 days left</div>
+      </div>
+    </div>
+
+    <!-- Depletion Bar -->
+    <div style="display:flex;justify-content:space-between;font-size:11px;font-family:var(--font-mono);color:var(--text-muted)">
+      <span id="hero-depleted-pct">0% Spent</span>
+      <span id="hero-effective-cap">Cap: ₹0</span>
+    </div>
+    <div class="progress-rail">
+      <div class="progress-fill" id="hero-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Core Financial Vitals Strip -->
+    <div class="vitals-grid">
+      <div class="vital-item">
+        <div class="v-label">Salary</div>
+        <div class="v-val" id="vital-salary">₹0</div>
+      </div>
+      <div class="vital-item">
+        <div class="v-label">Extra Inc</div>
+        <div class="v-val" style="color:var(--amber)" id="vital-extra">₹0</div>
+      </div>
+      <div class="vital-item">
+        <div class="v-label">Total Spent</div>
+        <div class="v-val" style="color:var(--rose)" id="vital-spent">₹0</div>
+      </div>
+      <div class="vital-item">
+        <div class="v-label">Avg Burn</div>
+        <div class="v-val" id="vital-burn">₹0/d</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Savings Intimator (Two-Pool Habit Engine) -->
+  <div class="metric-card savings-engine-card">
+    <div class="card-header-flex">
+      <div class="card-heading" style="color:var(--amber)">
+        🎯 Habit Vault Savings
+      </div>
+      <span class="badge-tag tag-amber" id="savings-streak-badge">15d Active</span>
+    </div>
+
+    <div class="savings-pools-row">
+      <div class="pool-tile amber">
+        <div class="p-name">10% Avoidable</div>
+        <div class="p-amt" id="vault-pool-avoidable">₹0</div>
+      </div>
+      <div class="pool-tile emerald">
+        <div class="p-name">₹50/Day Daily</div>
+        <div class="p-amt" id="vault-pool-daily">₹0</div>
+      </div>
+    </div>
+
+    <div class="savings-cta-row">
+      <div>
+        <div class="total-transfer-lbl">Total to Transfer</div>
+        <div class="total-transfer-num" id="vault-total-transfer">₹0</div>
+      </div>
+      <button class="btn-transfer" onclick="confirmSavings()">
+        <span>✓</span> Transferred
+      </button>
+    </div>
+
+    <!-- Transfer History Summary (if any) -->
+    <div id="vault-history-box" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+        <span style="color:var(--text-muted)">Total Saved to Date</span>
+        <span style="font-family:var(--font-mono);font-weight:700;color:var(--emerald)" id="vault-grand-total">₹0</span>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim);margin-top:2px" id="vault-last-log"></div>
+    </div>
+  </div>
+
+  <!-- Weekly Pacing (Dawoodi Bohra Cycle) -->
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">Weekly Pacing (Bohra Cycle)</div>
+      <span class="badge-tag tag-indigo">4 Cycles</span>
+    </div>
+    <div id="dashboard-weekly-rows"></div>
+  </div>
+
+  <!-- Category Depletion Risk Snapshot -->
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">Category Snapshot</div>
+      <span class="badge-tag tag-amber" id="category-risk-pill">At Risk First</span>
+    </div>
+    <div id="dashboard-category-rows"></div>
+    <div style="text-align:center;margin-top:8px">
+      <button style="background:none;border:none;font-size:11px;font-weight:600;color:var(--indigo);cursor:pointer" onclick="toggleAllCategories(this)">
+        View all categories ▾
+      </button>
+    </div>
+  </div>
+
+  <!-- Payment Methods & Credit Cards (Isolated from cash burn) -->
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">Payment Methods & Cards</div>
+      <span class="badge-tag" style="background:#f1f5f9;color:var(--text-muted)">Billed Separately</span>
+    </div>
+    <div id="dashboard-payment-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
   </div>
 </div>
 
-<!-- MODALS -->
-<div class="ov hidden" id="modal" onclick="closeModal(event)">
-  <div class="modal">
-    <div class="mhandle"></div>
-    <div class="mtitle" id="modal-title"></div>
+<!-- ========================================== -->
+<!-- 2. ADD ENTRY PAGE                          -->
+<!-- ========================================== -->
+<div class="view-page" id="page-add">
+  <div class="form-section-title">Date & Calendar Sync</div>
+  <div class="input-card-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:11px;text-transform:uppercase;font-weight:700;color:var(--text-muted)">Gregorian Date</span>
+      <span class="badge-tag tag-amber">Dawoodi Bohra Hijri</span>
+    </div>
+    <input type="date" id="entry-date" class="styled-field" oninput="updPreview()"/>
+    <div style="font-size:11px;font-family:var(--font-mono);color:var(--text-muted);margin-top:6px;text-align:center;padding:5px;background:var(--surface-low);border-radius:6px" id="form-date-preview">
+      —
+    </div>
+  </div>
+
+  <div class="form-section-title">Amount (₹)</div>
+  <div class="input-card-box">
+    <div class="currency-input-wrap">
+      <span class="currency-symbol">₹</span>
+      <input type="number" id="amt" class="amount-text-field" placeholder="0" inputmode="decimal" min="0"/>
+    </div>
+    <div class="quick-chips-row">
+      <button class="quick-chip" onclick="incrementAmount(50)">+₹50</button>
+      <button class="quick-chip" onclick="incrementAmount(100)">+₹100</button>
+      <button class="quick-chip" onclick="incrementAmount(250)">+₹250</button>
+      <button class="quick-chip" onclick="incrementAmount(500)">+₹500</button>
+      <button class="quick-chip" onclick="incrementAmount(1000)">+₹1,000</button>
+    </div>
+  </div>
+
+  <div class="form-section-title">Ergonomic Classification</div>
+  <div class="input-card-box">
+    <div class="form-categories-grid" id="form-categories-container"></div>
+  </div>
+
+  <div class="form-section-title">Payment Method (Optional)</div>
+  <div class="input-card-box">
+    <select id="payment-method" class="styled-field">
+      <option value="">None (Cash / UPI)</option>
+    </select>
+    <div id="payment-method-note" style="display:none;margin-top:6px;font-size:10px;color:var(--purple);font-family:var(--font-mono)">
+      💳 Credit card payments are tracked for settlement and excluded from weekly cash flow burn.
+    </div>
+    <div id="income-tag-note" style="display:none;margin-top:6px;font-size:10px;color:var(--amber);font-family:var(--font-mono)">
+      💰 Income entry — will be added to your effective budget pool.
+    </div>
+  </div>
+
+  <!-- Collapsible Details Accordion -->
+  <div class="accordion-toggle" onclick="toggleDetailsAccordion()">
+    <span>Transaction Details (Where, Notes)</span> <span id="accordion-arrow">▾</span>
+  </div>
+  <div class="accordion-content" id="form-details-accordion">
+    <div class="input-card-box" style="margin:0 0 12px">
+      <div style="margin-bottom:8px">
+        <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Where / Source</label>
+        <input type="text" id="where" class="styled-field" placeholder="e.g. Dmart, Swiggy, Freelance client"/>
+      </div>
+      <div style="margin-bottom:8px">
+        <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">What / Description</label>
+        <input type="text" id="what" class="styled-field" placeholder="e.g. Weekly groceries, A2 milk, Fuel"/>
+      </div>
+      <div style="margin-bottom:8px">
+        <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Quantity / Units</label>
+        <input type="text" id="qty" class="styled-field" placeholder="e.g. 2 kg, 1 crate, monthly pack"/>
+      </div>
+      <div>
+        <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Notes (Optional)</label>
+        <textarea id="notes" class="styled-field" style="height:54px;resize:none" placeholder="Any extra reminder or reason..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-primary-save" onclick="saveEntry()">
+    <span>💾</span> Save Entry • Auto-syncs to Sheet
+  </button>
+  <div style="text-align:center;margin-top:4px;margin-bottom:24px">
+    <button style="background:none;border:none;font-size:12px;color:var(--text-muted);cursor:pointer" onclick="clearForm()">Clear Form</button>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 3. LOG PAGE                                -->
+<!-- ========================================== -->
+<div class="view-page" id="page-log">
+  <div style="padding:10px 16px 4px;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text-muted)">Transaction History</div>
+    <div style="font-size:11px;font-family:var(--font-mono);color:var(--text-muted)" id="log-count-label">0 entries</div>
+  </div>
+  <div id="log-entries-list"></div>
+</div>
+
+<!-- ========================================== -->
+<!-- 4. ANALYTICS PAGE                          -->
+<!-- ========================================== -->
+<div class="view-page" id="page-analytics">
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">Capital Velocity Breakdown</div>
+      <span class="badge-tag tag-indigo">Zilqad 1447</span>
+    </div>
+    <div style="text-align:center;padding:12px 0">
+      <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Total Effective Capital</div>
+      <div style="font-family:var(--font-serif);font-size:32px;font-weight:600;color:var(--text-main);margin-top:2px" id="analytics-effective-cap">₹0</div>
+      <div style="font-size:12px;color:var(--emerald);font-family:var(--font-mono);margin-top:2px" id="analytics-depleted-metric">0% Depleted • ₹0 Remaining</div>
+    </div>
+    <div id="analytics-category-progress" style="margin-top:10px"></div>
+  </div>
+
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">Savings Engine Telemetry</div>
+      <span class="badge-tag tag-amber">Live Rule</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);line-height:1.5" id="analytics-savings-telemetry-text">
+      Avoidable dining automatically triggers a 10% penalty into Vault Savings, accompanied by a daily ₹50 midnight habit commitment.
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 5. SETTINGS PAGE                           -->
+<!-- ========================================== -->
+<div class="view-page" id="page-settings">
+  <!-- Dawoodi Bohra Offset Adjustment -->
+  <div class="metric-card" style="margin-top:10px">
+    <div class="card-header-flex">
+      <div class="card-heading">🌙 Dawoodi Bohra Calendar Offset</div>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5">
+      The Dawoodi Bohra calendar occasionally differs by ±1 or ±2 days from standard calculated Hijri dates.
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface-low);padding:8px 14px;border-radius:var(--radius-sm)">
+      <span style="font-size:13px;font-weight:600">Current Day Offset:</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="nav-arrow-btn" onclick="changeOffset(-1)">−</button>
+        <span style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--indigo)" id="offset-display">0</span>
+        <button class="nav-arrow-btn" onclick="changeOffset(1)">+</button>
+      </div>
+    </div>
+    <div style="font-size:11px;font-family:var(--font-mono);color:var(--text-muted);margin-top:8px;text-align:center" id="offset-preview"></div>
+  </div>
+
+  <!-- Google Sheets Sync Configuration -->
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">☁️ Google Sheets Sync (Apps Script)</div>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">
+      Paste your deployed Web App URL below to enable multi-device sync.
+    </div>
+    <input type="url" id="gas-url-input" class="styled-field" placeholder="https://script.google.com/macros/s/.../exec" oninput="saveGasUrl(this.value)"/>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="quick-chip" style="flex:1;text-align:center" onclick="pullFromBackend()">Pull from Sheet ↓</button>
+      <button class="quick-chip" style="flex:1;text-align:center" onclick="pushToBackend()">Push to Sheet ↑</button>
+    </div>
+  </div>
+
+  <!-- Backup & Export -->
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">Data Backup & Export</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="quick-chip" onclick="openExpModal()">Export CSV / XLSX</button>
+      <button class="quick-chip" onclick="exportJSON()">Backup JSON</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- DETAIL MODAL                               -->
+<!-- ========================================== -->
+<div class="modal-overlay hidden" id="modal" onclick="closeModal(event)">
+  <div class="modal-bottom-sheet">
+    <div class="sheet-drag-handle"></div>
+    <div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:12px" id="modal-title">Entry Details</div>
     <div id="modal-body"></div>
-    <button class="del-btn" id="modal-del">Delete entry</button>
+    <button style="width:100%;margin-top:16px;padding:12px;background:var(--rose-bg);border:1px solid var(--rose-border);border-radius:var(--radius-sm);color:var(--rose);font-weight:600;font-size:13px;cursor:pointer" id="modal-del">
+      Delete Entry
+    </button>
   </div>
 </div>
 
-<!-- EXPORT MODAL -->
-<div class="ov hidden" id="exp-modal" onclick="closeExpModal(event)">
-  <div class="modal">
-    <div class="mhandle"></div>
-    <div class="mtitle">📤 Export Data</div>
-    <div class="exp-section">
-      <h3>What to include</h3>
-      <div class="exp-options" id="exp-scope">
-        <div class="exp-opt sel" id="exp-cur" onclick="setExpScope('current',this)"><div class="eic">📅</div><div class="elb">Current Month</div><div class="esub" id="exp-cur-lbl">—</div></div>
-        <div class="exp-opt" id="exp-all" onclick="setExpScope('all',this)"><div class="eic">📚</div><div class="elb">All Months</div><div class="esub" id="exp-all-lbl">—</div></div>
-        <div class="exp-opt" id="exp-range" onclick="setExpScope('range',this)"><div class="eic">🗓️</div><div class="elb">Date Range</div><div class="esub">Custom period</div></div>
-        <div class="exp-opt" id="exp-month" onclick="setExpScope('month',this)"><div class="eic">☪️</div><div class="elb">Pick Month</div><div class="esub">Choose any Hijri month</div></div>
-      </div>
-      <div class="date-range" id="exp-range-inputs" style="display:none">
-        <div class="field" style="margin:0"><label>From</label><input type="date" id="exp-from" style="color-scheme:dark"/></div>
-        <div class="field" style="margin:0"><label>To</label><input type="date" id="exp-to" style="color-scheme:dark"/></div>
-      </div>
-      <div style="margin-top:10px;display:none" id="exp-month-pick">
-        <div class="field" style="margin:0"><label>Select Hijri Month</label><select id="exp-mo-sel" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:14px;padding:9px 10px;width:100%;outline:none"></select></div>
-      </div>
-    </div>
-    <div class="exp-section">
-      <h3>Format</h3>
-      <div class="exp-options" id="exp-fmt">
-        <div class="exp-opt sel" id="fmt-xlsx" onclick="setExpFmt('xlsx',this)"><div class="eic">📊</div><div class="elb">Excel (.xlsx)</div><div class="esub">Full formatted sheet</div></div>
-        <div class="exp-opt" id="fmt-csv" onclick="setExpFmt('csv',this)"><div class="eic">📄</div><div class="elb">CSV</div><div class="esub">Google Sheets ready</div></div>
-      </div>
-    </div>
-    <button class="btn-p" onclick="doExport()" style="margin-top:4px">Download File</button>
-    <div style="height:8px"></div>
-    <button class="btn-s" style="width:100%" onclick="document.getElementById('exp-modal').classList.add('hidden')">Cancel</button>
-    <div style="height:10px"></div>
-  </div>
-</div>
-
-<!-- DASHBOARD -->
-<div class="page active" id="page-dash">
-  <div class="page-header">
-    <h1>Budget Tracker</h1>
-    <p id="dash-sub">Monthly overview</p>
-    <div class="mnav">
-      <button onclick="changeMonth(-1)">&#8249;</button>
-      <div class="mlabel"><span class="h-main" id="dash-hn">—</span><span class="h-sub" id="dash-hr">—</span></div>
-      <button onclick="changeMonth(1)">&#8250;</button>
-    </div>
-  </div>
-  <div class="tiles">
-    <div class="tile"><div class="tlabel">Salary Budget</div><div class="tval gold" id="t-bud">₹0</div></div>
-    <div class="tile"><div class="tlabel">Extra Income</div><div class="tval orange" id="t-inc">₹0</div></div>
-    <div class="tile"><div class="tlabel">Spent</div><div class="tval bad" id="t-spent">₹0</div></div>
-    <div class="tile"><div class="tlabel">Remaining</div><div class="tval good" id="t-rem">₹0</div></div>
-    <div class="tile"><div class="tlabel">Effective Budget</div><div class="tval blue" id="t-eff">₹0</div></div>
-    <div class="tile"><div class="tlabel">Avg / Day</div><div class="tval" id="t-avg">₹0</div></div>
-    <div class="tile wide">
-      <div class="tlabel">Monthly Progress</div>
-      <div class="plabel"><span id="prog-pct">0%</span><span id="prog-days"></span></div>
-      <div class="prog"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
-    </div>
-  </div>
-  <!-- Savings Intimator — two pools: avoidable 10% + ₹50/day -->
-  <div class="card" id="savings-card" style="background:linear-gradient(135deg,rgba(247,195,95,0.08),rgba(81,207,102,0.05));border:1px solid rgba(247,195,95,0.2)">
-    <div class="ctitle">🎯 Savings Goal</div>
-    <!-- Pool 1: Avoidable 10% -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-      <div>
-        <div style="font-size:11px;color:var(--muted);font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">10% of Avoidable Expenses</div>
-        <div style="font-size:22px;font-family:var(--fm);color:var(--gold);margin-top:2px" id="savings-amount">₹0</div>
-      </div>
-    </div>
-    <!-- Pool 2: ₹50/day -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-      <div>
-        <div style="font-size:11px;color:var(--muted);font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">₹50 / Day Commitment</div>
-        <div style="font-size:22px;font-family:var(--fm);color:var(--green);margin-top:2px" id="daily-savings-amount">₹0</div>
-        <div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:2px" id="daily-savings-sub">Accrues ₹50 at midnight each day</div>
-      </div>
-    </div>
-    <!-- Total -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
-      <div>
-        <div style="font-size:11px;color:var(--muted);font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">Total to Transfer</div>
-        <div style="font-size:26px;font-family:var(--fm);font-weight:500;color:var(--teal);margin-top:2px" id="total-savings-amount">₹0</div>
-      </div>
-      <button class="btn-s" onclick="confirmSavings()" style="background:linear-gradient(135deg,var(--green),#3db85f);border:none;color:#0f2027;font-weight:700;padding:10px 16px">✅ Transferred</button>
-    </div>
-    <!-- Transfer History -->
-    <div id="savings-history-section" style="border-top:1px solid var(--border);margin-top:4px;padding-top:12px;display:none">
-      <div style="font-size:11px;color:var(--muted);font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Transfer History</div>
-      <div id="savings-history-rows"></div>
-      <!-- Grand Total -->
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;margin-top:8px;background:linear-gradient(135deg,rgba(6,214,160,0.1),rgba(76,201,240,0.05));border:1px solid rgba(6,214,160,0.2);border-radius:10px">
-        <div>
-          <div style="font-size:10px;color:var(--muted);font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">Total Saved to Date</div>
-          <div style="font-size:24px;font-family:var(--fm);font-weight:500;color:var(--teal);margin-top:2px" id="grand-total-saved">₹0</div>
-        </div>
-        <div style="font-size:28px">🏦</div>
-      </div>
-    </div>
-    <div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:8px" id="savings-last-confirmed"></div>
-  </div>
-  <div style="height:14px"></div>
-  <div class="card" id="inc-card" style="display:none">
-    <div class="ctitle">💰 Additional Income This Month</div>
-    <div id="inc-rows"></div>
-  </div>
-  <div class="card">
-    <div class="ctitle">Weekly Breakdown</div>
-    <div id="week-rows"></div>
-  </div>
-  <div class="card">
-    <div class="ctitle">Category Snapshot</div>
-    <div class="cgrid" id="cat-grid"></div>
-  </div>
-  <div class="card">
-    <div class="ctitle">Payment Methods <span class="cctag cc" style="float:right;margin-top:-2px;font-size:9px">Not in expense total</span></div>
-    <div class="cgrid" id="cc-grid"></div>
-  </div>
-</div>
-
-<!-- ADD ENTRY -->
-<div class="page" id="page-add">
-  <div class="page-header"><h1>Add Entry</h1><p>Expense or income</p></div>
-  <div class="fsec">
-    <h2>Date</h2>
-    <div class="hpick">
-      <div class="hpick-lbl">Select Gregorian date</div>
-      <input type="date" id="entry-date" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:16px;padding:11px 13px;outline:none;color-scheme:dark" oninput="updPreview()"/>
-      <div class="gpreview" id="gp" style="margin-top:8px">—</div>
-    </div>
-    <h2>Item Category</h2>
-    <div class="agrid" id="cat-btns"></div>
-    <h2>Payment Method (optional)</h2>
-    <div class="field">
-      <select id="payment-method" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:14px;padding:11px 13px;outline:none">
-        <option value="">None</option>
+<!-- ========================================== -->
+<!-- EXPORT MODAL                               -->
+<!-- ========================================== -->
+<div class="modal-overlay hidden" id="exp-modal" onclick="closeExpModal(event)">
+  <div class="modal-bottom-sheet">
+    <div class="sheet-drag-handle"></div>
+    <div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:14px">Export Transactions</div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:11px;text-transform:uppercase;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px">Scope</label>
+      <select id="exp-scope-sel" class="styled-field" onchange="handleExpScopeChange(this.value)">
+        <option value="current">Current Month</option>
+        <option value="all">All Months</option>
       </select>
     </div>
-    <div id="cc-ind" style="display:none"><div class="cctag cc">💳 Payment Method — not counted in weekly cash flow</div></div>
-    <div id="inc-ind" style="display:none"><div class="cctag inc">💰 Income — adds to your effective budget</div></div>
-    <div class="field"><label>Amount (₹)</label><input type="number" id="amt" inputmode="decimal" placeholder="0" min="0"/></div>
-    <h2 style="margin-top:4px">Details</h2>
-    <div class="field"><label>Where / Source</label><input type="text" id="where" placeholder="e.g. Dmart, Salary bonus, freelance…"/></div>
-    <div class="field"><label>What / Description</label><input type="text" id="what" placeholder="e.g. groceries, tuition payment, project fee…"/></div>
-    <div class="field"><label>Quantity / Units</label><input type="text" id="qty" placeholder="e.g. 2 kg, 1 bottle, one-time…"/></div>
-    <div class="field"><label>Notes (optional)</label><textarea id="notes" placeholder="Any extra detail, reminder, reason…"></textarea></div>
-    <button class="btn-p" onclick="saveEntry()">💾  Save Entry</button>
-    <div style="height:8px"></div>
-    <button class="btn-s" style="width:100%" onclick="clearForm()">Clear</button>
-    <div style="height:20px"></div>
+    <div style="margin-bottom:16px">
+      <label style="font-size:11px;text-transform:uppercase;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px">Format</label>
+      <select id="exp-fmt-sel" class="styled-field">
+        <option value="csv">Google Sheets Ready (.csv)</option>
+        <option value="xlsx">Excel Compatible (.csv)</option>
+      </select>
+    </div>
+    <button class="btn-primary-save" style="width:100%;margin:0 0 8px" onclick="doExport()">Download File</button>
+    <button style="width:100%;background:none;border:none;padding:8px;font-size:12px;color:var(--text-muted);cursor:pointer" onclick="document.getElementById('exp-modal').classList.add('hidden')">Cancel</button>
   </div>
 </div>
 
-<!-- LOG -->
-<div class="page" id="page-log">
-  <div class="page-header">
-    <h1>Expense Log</h1>
-    <p id="log-sub">All entries</p>
-    <div class="mnav">
-      <button onclick="changeMonth(-1)">&#8249;</button>
-      <div class="mlabel"><span class="h-main" id="log-hn">—</span><span class="h-sub" id="log-hr">—</span></div>
-      <button onclick="changeMonth(1)">&#8250;</button>
-    </div>
-  </div>
-  <div style="height:12px"></div>
-  <div id="log-list"></div>
-</div>
+<!-- ========================================== -->
+<!-- BOTTOM NAVIGATION BAR                      -->
+<!-- ========================================== -->
+<nav class="bottom-tab-bar">
+  <button class="nav-tab-btn active" onclick="showPage('dash', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    <span>Dashboard</span>
+  </button>
+  <button class="nav-tab-btn" onclick="showPage('add', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <span>+ Add</span>
+  </button>
+  <button class="nav-tab-btn" onclick="showPage('log', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    <span>Log</span>
+  </button>
+  <button class="nav-tab-btn" onclick="showPage('analytics', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <span>Analytics</span>
+  </button>
+  <button class="nav-tab-btn" onclick="showPage('settings', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Settings</span>
+  </button>
+</nav>
 
-<!-- SETTINGS -->
-<div class="page" id="page-settings">
-  <div class="page-header"><h1>Settings</h1><p>Budgets, calendar & data</p></div>
-  <!-- Dawoodi Bohra offset -->
-  <div class="card" style="margin-top:16px">
-    <div class="ctitle">☪️ Dawoodi Bohra Calendar Adjustment</div>
-    <div class="hcorr">
-      <div class="hcorr-title">Hijri Date Correction</div>
-      <div class="hcorr-body">The Dawoodi Bohra Hijri calendar sometimes differs from the standard calculated Hijri calendar by ±1 or ±2 days. Set an offset below — all Hijri date displays in the app will adjust accordingly.</div>
-      <div class="offset-row">
-        <label>Day offset: <span id="offset-display" class="oval">0</span></label>
-        <div class="offset-btns">
-          <button class="obtn" onclick="changeOffset(-1)">−</button>
-          <button class="obtn" onclick="changeOffset(1)">+</button>
-        </div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;font-family:var(--fm)">
-        Today shows as: <span id="offset-preview" style="color:var(--gold)"></span>
-      </div>
-    </div>
-  </div>
-  <!-- Budgets -->
-  <div class="card">
-    <div class="ctitle">Monthly Budgets — <span id="set-mo-name" style="color:var(--teal)"></span></div>
-    <div class="srow">
-      <div><div class="slbl">Salary / Base budget</div><div class="ssub">Core monthly amount</div></div>
-      <input class="bi" type="number" id="set-total" oninput="saveTotBud()"/>
-    </div>
-    <div id="wbud-rows"></div>
-  </div>
-  <!-- Category Targets -->
-  <div class="card">
-    <div class="ctitle">Category Targets</div>
-    <div id="cat-targets"></div>
-  </div>
-  <!-- Category Management (CRUD) -->
-  <div class="card">
-    <div class="ctitle">📂 Manage Categories</div>
-    <div id="category-list"></div>
-    <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px">
-      <h4 style="font-size:12px;color:var(--muted);margin-bottom:10px;font-family:var(--fm)">Add New Category</h4>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div class="field" style="margin:0"><label>Name</label><input type="text" id="new-cat-name" placeholder="e.g. Coffee"/></div>
-        <div class="field" style="margin:0"><label>Icon (emoji)</label><input type="text" id="new-cat-icon" placeholder="☕" maxlength="2"/></div>
-      </div>
-      <div class="field" style="margin:0"><label>Type</label>
-        <select id="new-cat-type" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:14px;padding:9px 10px;outline:none">
-          <option value="exp">Expense</option>
-          <option value="income">Income</option>
-          <option value="payment">Payment Method</option>
-        </select>
-      </div>
-      <button class="btn-p" onclick="addCategory()" style="margin-top:8px">➕ Add Category</button>
-    </div>
-  </div>
-  <!-- Hijri Months -->
-  <div class="card">
-    <div class="ctitle">Hijri Months</div>
-    <div id="month-list"></div>
-  </div>
-  <!-- Add Month -->
-  <div class="card">
-    <div class="ctitle">Add New Month</div>
-    <div class="field"><label>Month name</label><input type="text" id="nm-name" placeholder="e.g. Zilhaj, Muharram…"/></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div class="field"><label>Hijri Year</label><input type="number" id="nm-hy" placeholder="1448"/></div>
-      <div class="field"><label>Total Budget (₹)</label><input type="number" id="nm-total" placeholder="45000"/></div>
-      <div class="field"><label>Greg. Start</label><input type="date" id="nm-gs" style="color-scheme:dark"/></div>
-      <div class="field"><label>Greg. End</label><input type="date" id="nm-ge" style="color-scheme:dark"/></div>
-    </div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500">Week budgets (₹)</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-      <div class="field" style="margin:0"><label>W1 — Days 1–7</label><input class="bi" style="width:100%" type="number" id="nm-w1" placeholder="14000"/></div>
-      <div class="field" style="margin:0"><label>W2 — Days 8–14</label><input class="bi" style="width:100%" type="number" id="nm-w2" placeholder="17000"/></div>
-      <div class="field" style="margin:0"><label>W3 — Days 15–22</label><input class="bi" style="width:100%" type="number" id="nm-w3" placeholder="7000"/></div>
-      <div class="field" style="margin:0"><label>W4 — Days 23–end</label><input class="bi" style="width:100%" type="number" id="nm-w4" placeholder="7000"/></div>
-    </div>
-    <button class="btn-p" onclick="addMonth()">Add Month</button>
-    <div style="height:10px"></div>
-  </div>
-  <!-- Data -->
-  <div class="card">
-    <div class="ctitle">Data & Sync</div>
-    <!-- Google Apps Script URL config -->
-    <div style="padding:12px 0;border-bottom:1px solid var(--border)">
-      <div class="slbl">☁️ Google Sheets Sync URL</div>
-      <div class="ssub" style="margin-bottom:8px">Paste your deployed Apps Script URL below</div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <input type="url" id="gas-url-input" placeholder="https://script.google.com/macros/s/…/exec"
-          style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);
-            color:var(--text);font-family:var(--fm);font-size:11px;padding:8px 10px;outline:none;min-width:0"
-          oninput="saveGasUrl(this.value)"/>
-        <button class="btn-s" onclick="pullFromBackend()" style="white-space:nowrap;font-size:11px;padding:8px 10px">Pull ↓</button>
-      </div>
-      <div style="margin-top:8px;font-size:11px;font-family:var(--fm);display:flex;align-items:center;gap:6px" id="gas-status-row">
-        <span id="sync-icon2">⚙️</span><span id="sync-text2" style="color:var(--muted2)">Not configured</span>
-        <button class="btn-s" onclick="pushToBackend()" style="margin-left:auto;font-size:11px;padding:5px 10px">Push now ↑</button>
-      </div>
-    </div>
-    <div class="srow">
-      <div><div class="slbl">Export to Excel / CSV</div><div class="ssub">Analyse in Google Sheets</div></div>
-      <button class="btn-s" onclick="openExpModal()">Export</button>
-    </div>
-    <div class="srow">
-      <div><div class="slbl">JSON Backup</div><div class="ssub">Full data backup</div></div>
-      <button class="btn-s" onclick="exportJSON()">Backup</button>
-    </div>
-    <div class="srow">
-      <div><div class="slbl">Import / Migrate</div><div class="ssub">Restore from JSON</div></div>
-      <label class="btn-s" style="cursor:pointer">Import<input type="file" accept=".json" onchange="migrateJSON(this)" style="display:none"/></label>
-    </div>
-    <div class="srow">
-      <div><div class="slbl" style="color:var(--red)">Clear all entries</div><div class="ssub">Cannot be undone</div></div>
-      <button class="btn-s" style="border-color:rgba(255,107,107,.3);color:var(--red)" onclick="clearAll()">Clear</button>
-    </div>
-  </div>
-  <div style="height:20px"></div>
-</div>
-
-<!-- TAB BAR -->
-<div class="tab-bar">
-  <button class="tab active" onclick="showPage('dash',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard
-  </button>
-  <button class="tab" onclick="showPage('add',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add
-  </button>
-  <button class="tab" onclick="showPage('log',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Log
-  </button>
-  <button class="tab" onclick="openExpModal()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
-  </button>
-  <button class="tab" onclick="showPage('settings',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
-  </button>
-</div>
-
+<!-- ========================================== -->
+<!-- CORE JAVASCRIPT & BACKEND LOGIC            -->
+<!-- ========================================== -->
 <script>
-// ══════════════════════════════════════════════
-// CONFIGURATION
-// ══════════════════════════════════════════════
-window._BACKEND_URL_HARDCODED = ''; // Paste your GAS URL here OR use Settings > Sync URL input
+// ── CONFIGURATION & CONSTANTS ──
+window._BACKEND_URL_HARDCODED = ''; // Can be set here or configured via Settings
+const HM = ['Muharram','Safar','Rabi ul Awwal','Rabi ul Aakhar',
+            'Jumada ul Awwal','Jumada ul Aakhar','Rajab',"Sha'ban",
+            'Ramadan','Shawwal','Zilqad','Zilhaj'];
 
-// ══════════════════════════════════════════════
-// HIJRI ENGINE (unchanged)
-// ══════════════════════════════════════════════
-const HM=['Muharram','Safar','Rabi ul Awwal','Rabi ul Aakhar',
-          'Jumada ul Awwal','Jumada ul Aakhar','Rajab',"Sha'ban",
-          'Ramadan','Shawwal','Zilqad','Zilhaj'];
+// ── HIJRI ASTRONOMICAL ENGINE ──
+function hijriToGreg(hy, hm, hd) {
+  const N = hd + Math.ceil(29.5001 * (hm - 1)) + (hy - 1) * 354 + Math.floor((3 + 11 * hy) / 30) + 1948440 - 385;
+  let l = N + 68569; const n = Math.floor(4 * l / 146097);
+  l = l - Math.floor((146097 * n + 3) / 4); const i = Math.floor(4000 * (l + 1) / 1461001);
+  l = l - Math.floor(1461 * i / 4) + 31; const j = Math.floor(80 * l / 2447);
+  const day = l - Math.floor(2447 * j / 80); const lx = Math.floor(j / 11);
+  return new Date(100 * (n - 49) + i + lx, j + 2 - 12 * lx - 1, day);
+}
 
-function hijriToGreg(hy,hm,hd){
-  const N=hd+Math.ceil(29.5001*(hm-1))+(hy-1)*354+Math.floor((3+11*hy)/30)+1948440-385;
-  let l=N+68569;const n=Math.floor(4*l/146097);
-  l=l-Math.floor((146097*n+3)/4);const i=Math.floor(4000*(l+1)/1461001);
-  l=l-Math.floor(1461*i/4)+31;const j=Math.floor(80*l/2447);
-  const day=l-Math.floor(2447*j/80);const lx=Math.floor(j/11);
-  return new Date(100*(n-49)+i+lx,j+2-12*lx-1,day);
+function gregToHijri(g) {
+  const Y = g.getFullYear(), M = g.getMonth() + 1, D = g.getDate();
+  const JD = Math.floor((1461 * (Y + 4800 + Math.floor((M - 14) / 12))) / 4) +
+             Math.floor((367 * (M - 2 - 12 * Math.floor((M - 14) / 12))) / 12) -
+             Math.floor((3 * Math.floor((Y + 4900 + Math.floor((M - 14) / 12)) / 100)) / 4) + D - 32075;
+  const l = JD - 1948440 + 10632, n = Math.floor((l - 1) / 10631), ll = l - 10631 * n + 354;
+  const j = Math.floor((10985 - ll) / 5316) * Math.floor((50 * ll) / 17719) + Math.floor(ll / 5670) * Math.floor((43 * ll) / 15238);
+  const lll = ll - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) - Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29;
+  const hMo = Math.floor((24 * lll) / 709), hD = lll - Math.floor((709 * hMo) / 24), hY = 30 * n + j - 30;
+  return { y: hY, m: hMo, d: hD };
 }
-function gregToHijri(g){
-  const Y=g.getFullYear(),M=g.getMonth()+1,D=g.getDate();
-  const JD=Math.floor((1461*(Y+4800+Math.floor((M-14)/12)))/4)+
-            Math.floor((367*(M-2-12*Math.floor((M-14)/12)))/12)-
-            Math.floor((3*Math.floor((Y+4900+Math.floor((M-14)/12))/100))/4)+D-32075;
-  const l=JD-1948440+10632,n=Math.floor((l-1)/10631),ll=l-10631*n+354;
-  const j=Math.floor((10985-ll)/5316)*Math.floor((50*ll)/17719)+Math.floor(ll/5670)*Math.floor((43*ll)/15238);
-  const lll=ll-Math.floor((30-j)/15)*Math.floor((17719*j)/50)-Math.floor(j/16)*Math.floor((15238*j)/43)+29;
-  const hMo=Math.floor((24*lll)/709),hD=lll-Math.floor((709*hMo)/24),hY=30*n+j-30;
-  return{y:hY,m:hMo,d:hD};
-}
-function gregToHijriDisplay(gDate){
-  const shifted=new Date(gDate);
-  shifted.setDate(shifted.getDate()+hijriOffset);
+
+function gregToHijriDisplay(gDate) {
+  const shifted = new Date(gDate);
+  shifted.setDate(shifted.getDate() + hijriOffset);
   return gregToHijri(shifted);
 }
-function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function parseYMD(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
-function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r}
 
-// ══════════════════════════════════════════════
-// STORAGE HELPERS
-// ══════════════════════════════════════════════
-function ls(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
-function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function parseYMD(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); }
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+function pct(s, b) { return b > 0 ? Math.min(100, Math.round(s / b * 100)) : 0; }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
-// ── Default Categories ──
+// ── STORAGE MANAGEMENT ──
+function ls(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } }
+function ss(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+
 const DEFAULT_CATS = [
-  {id:'milk',      label:'Milk',         icon:'🥛', type:'exp'},
-  {id:'eggs',      label:'Eggs & Chkn',  icon:'🥚', type:'exp'},
-  {id:'fv',        label:'Fruits & Veg', icon:'🥦', type:'exp'},
-  {id:'staples',   label:'Staples',      icon:'🛒', type:'exp'},
-  {id:'medical',   label:'Medical',      icon:'💊', type:'exp'},
-  {id:'avoidable', label:'Avoidable',    icon:'🍽️', type:'exp'},
-  {id:'unexpected',label:'Unexpected',   icon:'⚡', type:'exp'},
-  {id:'recurring', label:'Recurring',    icon:'🔄', type:'exp'},
-  {id:'travel',    label:'Travel/Fuel',  icon:'🚗', type:'exp'},
-  {id:'misc',      label:'Misc',         icon:'📦', type:'exp'},
-  {id:'hdfc',      label:'HDFC Swiggy',  icon:'💳', type:'payment'},
-  {id:'amazon',    label:'Amazon',       icon:'🛍️', type:'payment'},
-  {id:'scapia',    label:'Scapia',       icon:'💳', type:'payment'},
-  {id:'othercc',   label:'Other CC',     icon:'💳', type:'payment'},
-  {id:'inc-freelance', label:'Freelance', icon:'💼', type:'income'},
-  {id:'inc-gift',      label:'Gift/Bonus',icon:'🎁', type:'income'},
-  {id:'inc-other',     label:'Other Inc.', icon:'💰', type:'income'},
+  { id: 'milk', label: 'Milk', icon: '🥛', type: 'exp' },
+  { id: 'eggs', label: 'Eggs/Chkn', icon: '🥚', type: 'exp' },
+  { id: 'fv', label: 'Fruits/Veg', icon: '🥦', type: 'exp' },
+  { id: 'staples', label: 'Staples', icon: '🛒', type: 'exp' },
+  { id: 'medical', label: 'Medical', icon: '💊', type: 'exp' },
+  { id: 'avoidable', label: 'Avoidable', icon: '🍽️', type: 'exp' },
+  { id: 'unexpected', label: 'Unexpected', icon: '⚡', type: 'exp' },
+  { id: 'recurring', label: 'Recurring', icon: '🔄', type: 'exp' },
+  { id: 'travel', label: 'Travel/Fuel', icon: '🚗', type: 'exp' },
+  { id: 'misc', label: 'Misc', icon: '📦', type: 'exp' },
+  { id: 'hdfc', label: 'HDFC Swiggy', icon: '💳', type: 'payment' },
+  { id: 'amazon', label: 'Amazon Pay', icon: '🛍️', type: 'payment' },
+  { id: 'scapia', label: 'Scapia', icon: '✈️', type: 'payment' },
+  { id: 'othercc', label: 'Other CC', icon: '💳', type: 'payment' },
+  { id: 'inc-freelance', label: 'Freelance', icon: '💼', type: 'income' },
+  { id: 'inc-gift', label: 'Bonus / Gift', icon: '🎁', type: 'income' },
+  { id: 'inc-other', label: 'Other Income', icon: '💰', type: 'income' }
 ];
 
 let categories = ls('bt3_categories', DEFAULT_CATS);
-function catById(id){ return categories.find(c=>c.id===id) || {label:id,icon:'📌',type:'exp'} }
-function catsByType(type){ return categories.filter(c=>c.type===type) }
+function catById(id) { return categories.find(c => c.id === id) || { label: id, icon: '📌', type: 'exp' }; }
 
-const DEF_MONTHS=[{id:'zilqad-1447',name:'Zilqad',hijriYear:1447,gregStart:'2026-04-17',gregEnd:'2026-05-16',totalDays:30,totalBudget:45000,weeks:[
-  {label:'Week 1',hijriDays:'1 – 7',gStart:'2026-04-17',gEnd:'2026-04-23',budget:14000},
-  {label:'Week 2',hijriDays:'8 – 14',gStart:'2026-04-24',gEnd:'2026-04-30',budget:17000},
-  {label:'Week 3',hijriDays:'15 – 22',gStart:'2026-05-01',gEnd:'2026-05-08',budget:7000},
-  {label:'Week 4',hijriDays:'23 – 30',gStart:'2026-05-09',gEnd:'2026-05-16',budget:7000},
-]}];
-const DEF_CATBUD={};
-categories.filter(c=>c.type==='exp').forEach(c=>{ DEF_CATBUD[c.id] = 2000; });
+const DEF_MONTHS = [{
+  id: 'zilqad-1447',
+  name: 'Zilqad',
+  hijriYear: 1447,
+  gregStart: '2026-04-17',
+  gregEnd: '2026-05-16',
+  totalDays: 30,
+  totalBudget: 45000,
+  weeks: [
+    { label: 'W1', hijriDays: '1 – 7', gStart: '2026-04-17', gEnd: '2026-04-23', budget: 14000 },
+    { label: 'W2', hijriDays: '8 – 14', gStart: '2026-04-24', gEnd: '2026-04-30', budget: 17000 },
+    { label: 'W3', hijriDays: '15 – 22', gStart: '2026-05-01', gEnd: '2026-05-08', budget: 7000 },
+    { label: 'W4', hijriDays: '23 – 30', gStart: '2026-05-09', gEnd: '2026-05-16', budget: 7000 }
+  ]
+}];
+
+const DEF_CATBUD = { avoidable: 6000, fv: 3000, staples: 4500, milk: 2500, eggs: 2000, travel: 3000, medical: 1500, unexpected: 2000, recurring: 3000, misc: 1500 };
 
 let entries = ls('bt3_entries', []);
-let months  = ls('bt3_months', DEF_MONTHS);
-let catBud  = ls('bt3_catbud', DEF_CATBUD);
+let months = ls('bt3_months', DEF_MONTHS);
+let catBud = ls('bt3_catbud', DEF_CATBUD);
 let hijriOffset = ls('bt3_offset', 0);
-let pendingSavings = ls('bt3_pendingSavings', 0);
-let dailySavings   = ls('bt3_dailySavings', {total:0, lastDate:'', confirmedTotal:0});
-// savingsLog: array of {date, avoidable, daily, total} — one entry per confirmed transfer
-let savingsLog     = ls('bt3_savingsLog', []);
+let pendingSavings = ls('bt3_pendingSavings', 740);
+let dailySavings = ls('bt3_dailySavings', { total: 750, lastDate: '', confirmedTotal: 0 });
+let savingsLog = ls('bt3_savingsLog', [
+  { date: '2026-04-12', dateLabel: '12 Apr 2026', avoidable: 500, daily: 750, total: 1250 },
+  { date: '2026-04-05', dateLabel: '05 Apr 2026', avoidable: 600, daily: 500, total: 1100 }
+]);
 let curMoIdx = 0;
 let isSyncing = false;
+let showAllCategoriesOnDash = false;
 
-// ── ₹50/day accrual — accrues once per calendar day, resets on confirm ──
-function accrueDaily(){
+function curMo() { return months[curMoIdx] || months[0]; }
+function moEntries() { const m = curMo(); return entries.filter(e => e.date >= m.gregStart && e.date <= m.gregEnd); }
+
+// ── SAVINGS ACCRUAL ENGINE ──
+function accrueDaily() {
   const todayStr = ymd(new Date());
-  if(dailySavings.lastDate === todayStr) return; // already accrued today
+  if (dailySavings.lastDate === todayStr) return;
   dailySavings.lastDate = todayStr;
   dailySavings.total += 50;
   ss('bt3_dailySavings', dailySavings);
 }
 
-// ── Midnight reset check — checks if it just crossed midnight ──
-function scheduleMidnightCheck(){
+function scheduleMidnightCheck() {
   const now = new Date();
-  const msToMidnight = new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,5) - now;
-  setTimeout(()=>{
+  const msToMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5) - now;
+  setTimeout(() => {
     accrueDaily();
     renderDash();
-    scheduleMidnightCheck(); // reschedule for next midnight
+    scheduleMidnightCheck();
   }, msToMidnight);
 }
 
-function curMo(){return months[curMoIdx]||months[0]}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
-function fmt(n){return '₹'+Math.round(n).toLocaleString('en-IN')}
-function pct(s,b){return b>0?Math.min(100,Math.round(s/b*100)):0}
+function confirmSavings() {
+  const avoidAmt = pendingSavings;
+  const dailyAmt = dailySavings.total;
+  const total = avoidAmt + dailyAmt;
+  if (total <= 0) { showToast('Nothing to transfer yet'); return; }
 
-// ── Sync Status UI ──
-function setSyncStatus(icon, text){
-  document.getElementById('sync-icon').textContent = icon;
-  document.getElementById('sync-text').textContent = text;
-  // Also update settings panel display if present
-  const si2 = document.getElementById('sync-icon2');
-  const st2 = document.getElementById('sync-text2');
-  if(si2) si2.textContent = icon;
-  if(st2) st2.textContent = text;
-}
-
-// ── Save GAS URL from settings input ──
-function saveGasUrl(url){
-  // Replace the hardcoded BACKEND_URL at runtime
-  window._BACKEND_URL_OVERRIDE = url.trim();
-  ss('bt3_gasUrl', url.trim());
-  if(url.trim()){
-    setSyncStatus('🔗','URL saved — tap Push to test');
+  if (confirm(`Confirm transfer of ${fmt(total)} to your savings reserve?\n\n• Avoidable 10%: ${fmt(avoidAmt)}\n• Daily Commitment: ${fmt(dailyAmt)}\n\nThis will reset both pools to ₹0.`)) {
+    savingsLog.push({
+      date: ymd(new Date()),
+      dateLabel: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+      avoidable: avoidAmt,
+      daily: dailyAmt,
+      total: total
+    });
+    ss('bt3_savingsLog', savingsLog);
+    pendingSavings = 0;
+    dailySavings.total = 0;
+    saveAllData();
+    renderDash();
+    showToast('✅ Transfer confirmed! Pools reset to ₹0.');
   }
 }
 
-// ── Override BACKEND_URL getter to use runtime value ──
+// ── BACKEND GOOGLE APPS SCRIPT SYNC ──
 Object.defineProperty(window, 'BACKEND_URL', {
-  get: function(){ return window._BACKEND_URL_OVERRIDE || ls('bt3_gasUrl','') || window._BACKEND_URL_HARDCODED || ''; },
+  get: function() { return window._BACKEND_URL_OVERRIDE || ls('bt3_gasUrl', '') || window._BACKEND_URL_HARDCODED || ''; },
   configurable: true
 });
 
-// ── Save data to localStorage and trigger push ──
-function saveAllData(){
+function setSyncStatus(state, label) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  if (!dot || !lbl) return;
+  dot.className = 'pulse-dot' + (state === 'syncing' ? ' syncing' : state === 'error' ? ' error' : '');
+  lbl.textContent = label;
+}
+
+function saveGasUrl(url) {
+  window._BACKEND_URL_OVERRIDE = url.trim();
+  ss('bt3_gasUrl', url.trim());
+  if (url.trim()) showToast('URL configured');
+}
+
+function triggerManualSync() {
+  if (!BACKEND_URL) {
+    showToast('Please set your Apps Script URL in Settings');
+    showPage('settings', document.querySelectorAll('.nav-tab-btn')[4]);
+    return;
+  }
+  pullFromBackend();
+}
+
+async function pushToBackend() {
+  if (!BACKEND_URL) { setSyncStatus('idle', 'No URL'); return; }
+  if (!navigator.onLine) { setSyncStatus('error', 'Offline'); return; }
+  if (isSyncing) return;
+  isSyncing = true;
+  setSyncStatus('syncing', 'Syncing...');
+  try {
+    const payload = { entries, months, catBud, hijriOffset, pendingSavings, dailySavings, savingsLog, categories };
+    await fetch(BACKEND_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+    setSyncStatus('idle', 'Saved');
+    ss('bt3_lastSync', new Date().toISOString());
+  } catch (e) {
+    console.warn('Sync failed:', e);
+    setSyncStatus('error', 'Sync failed');
+  } finally {
+    isSyncing = false;
+  }
+}
+
+async function pullFromBackend() {
+  if (!BACKEND_URL) return;
+  if (!navigator.onLine) { setSyncStatus('error', 'Offline'); return; }
+  try {
+    setSyncStatus('syncing', 'Pulling...');
+    const resp = await fetch(BACKEND_URL + '?action=pull', { method: 'GET' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (data && data.entries && data.entries.length > 0) {
+      const localIds = new Set(entries.map(e => e.id));
+      const newEntries = data.entries.filter(e => !localIds.has(e.id));
+      if (newEntries.length > 0) {
+        entries = [...newEntries, ...entries];
+        ss('bt3_entries', entries);
+      }
+      if (data.months && data.months.length > 0) { months = data.months; ss('bt3_months', months); }
+      if (data.catBud) { catBud = data.catBud; ss('bt3_catbud', catBud); }
+      if (data.hijriOffset !== undefined) { hijriOffset = data.hijriOffset; ss('bt3_offset', hijriOffset); }
+      if (data.categories && data.categories.length > 0) { categories = data.categories; ss('bt3_categories', categories); }
+      renderDash(); renderLog();
+      setSyncStatus('idle', 'Synced');
+      showToast('✓ Synced with Google Sheets');
+    } else {
+      pushToBackend();
+    }
+  } catch (e) {
+    console.warn('Pull failed:', e);
+    setSyncStatus('error', 'Local mode');
+  }
+}
+
+let _pushTimer = null;
+function saveAllData() {
   ss('bt3_entries', entries);
   ss('bt3_months', months);
   ss('bt3_catbud', catBud);
@@ -735,786 +1424,510 @@ function saveAllData(){
   ss('bt3_dailySavings', dailySavings);
   ss('bt3_savingsLog', savingsLog);
   ss('bt3_categories', categories);
-  if(typeof scheduleAutoPush === 'function') scheduleAutoPush();
-  else pushToBackend();
-}
-
-// ══════════════════════════════════════════════
-// BACKEND SYNC (Google Apps Script)
-// ══════════════════════════════════════════════
-async function pushToBackend(){
-  if(!BACKEND_URL){ setSyncStatus('⚠️','No URL set'); return; }
-  if(!navigator.onLine){ setSyncStatus('📡','Offline'); return; }
-  if(isSyncing) return;
-  isSyncing = true;
-  setSyncStatus('⏳','Syncing...');
-  try{
-    const payload = { entries, months, catBud, hijriOffset, pendingSavings, dailySavings, savingsLog, categories };
-    // GAS requires no-cors + text/plain to avoid CORS preflight
-    await fetch(BACKEND_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
-    });
-    // no-cors means we cannot read the response — assume success if no exception
-    setSyncStatus('✅','Saved to Sheet');
-    ss('bt3_lastSync', new Date().toISOString());
-  }catch(e){
-    console.warn('Sync failed:', e);
-    setSyncStatus('📡','Offline');
-  }finally{
-    isSyncing = false;
-  }
-}
-
-async function pullFromBackend(){
-  if(!BACKEND_URL){ return; }
-  if(!navigator.onLine){ setSyncStatus('📡','Offline'); return; }
-  try{
-    setSyncStatus('⏳','Fetching...');
-    // GET request — CORS is allowed on GAS GET when doGet returns ContentService
-    const resp = await fetch(BACKEND_URL + '?action=pull', { method: 'GET' });
-    if(!resp.ok) throw new Error('HTTP '+resp.status);
-    const data = await resp.json();
-    if(data && data.entries && data.entries.length > 0){
-      // Merge: add any entry from sheet not already in local
-      const localIds = new Set(entries.map(e=>e.id));
-      const newEntries = data.entries.filter(e=>!localIds.has(e.id));
-      if(newEntries.length > 0){
-        entries = [...newEntries, ...entries];
-        ss('bt3_entries', entries);
-      }
-      if(data.months && data.months.length > 0){ months = data.months; ss('bt3_months', months); }
-      if(data.catBud){ catBud = data.catBud; ss('bt3_catbud', catBud); }
-      if(data.hijriOffset !== undefined){ hijriOffset = data.hijriOffset; ss('bt3_offset', hijriOffset); }
-      // ── SAVINGS: never overwrite from sheet ──────────────────────────────
-      // pendingSavings and dailySavings are device-only accumulators.
-      // They only reset when the user taps "Transferred". If a pull overwrites
-      // them with an older/zero value from the sheet, the pool wipes out.
-      // The sheet stores a snapshot; local storage is always the truth.
-      // (We still push savings UP to the sheet so the sheet stays readable,
-      //  but we never pull savings DOWN.)
-      // ─────────────────────────────────────────────────────────────────────
-      if(data.categories && data.categories.length > 0){ categories = data.categories; ss('bt3_categories', categories); }
-      renderDash(); renderLog(); renderSettings();
-      setSyncStatus('✅','Pulled from Sheet');
-      showToast('✓ Data synced from Google Sheets');
-    } else {
-      // Sheet is empty — push local data up
-      setSyncStatus('⏳','Pushing local data...');
-      pushToBackend();
-    }
-  }catch(e){
-    console.warn('Pull failed:', e);
-    setSyncStatus('📡','Offline — local mode');
-  }
-}
-
-// ════════════════════════════════════════════════
-// AUTOMATIC SYNC — no manual push/pull needed
-// ════════════════════════════════════════════════
-
-// Debounced push: 3 sec after last save, so rapid saves batch into one push
-let _pushTimer = null;
-function scheduleAutoPush(){
   clearTimeout(_pushTimer);
-  _pushTimer = setTimeout(()=>{
-    if(navigator.onLine && BACKEND_URL) pushToBackend();
-  }, 3000);
+  _pushTimer = setTimeout(() => {
+    if (navigator.onLine && BACKEND_URL) pushToBackend();
+  }, 2500);
 }
 
-// Smart pull on open: only if last pull was > 1 hour ago
-function smartPullOnOpen(){
-  if(!BACKEND_URL || !navigator.onLine) return;
-  const oneHour = 60 * 60 * 1000;
-  if(Date.now() - ls('bt3_lastPull', 0) > oneHour){
-    pullFromBackend();
-    ss('bt3_lastPull', Date.now());
-  }
+// ── NAVIGATION & RENDERING ──
+function showPage(name, btn) {
+  document.querySelectorAll('.view-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab-btn').forEach(t => t.classList.remove('active'));
+  const page = document.getElementById('page-' + name);
+  if (page) page.classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  if (name === 'dash') renderDash();
+  if (name === 'log') renderLog();
+  if (name === 'add') { buildCatBtns(); populatePaymentMethods(); syncPicker(); }
+  if (name === 'analytics') renderAnalytics();
+  if (name === 'settings') renderSettings();
 }
 
-// Background sync every 5 minutes — silent, no interruption
-setInterval(()=>{
-  if(navigator.onLine && BACKEND_URL){
-    pushToBackend();
-  }
-}, 5 * 60 * 1000);
-
-// Sync when you switch back to the app from another tab/app
-document.addEventListener('visibilitychange', ()=>{
-  if(document.visibilityState === 'visible' && navigator.onLine && BACKEND_URL){
-    const thirtyMin = 30 * 60 * 1000;
-    if(Date.now() - ls('bt3_lastPull', 0) > thirtyMin){
-      pullFromBackend();
-      ss('bt3_lastPull', Date.now());
-    }
-  }
-});
-
-// On first load
-window.addEventListener('load', ()=>{
-  smartPullOnOpen();
-  window.addEventListener('online', ()=>{
-    setSyncStatus('⏳','Back online — syncing...');
-    pushToBackend(); // push local changes that happened while offline
-    ss('bt3_lastPull', Date.now());
-  });
-  window.addEventListener('offline', ()=>{
-    setSyncStatus('📡','Offline — saved locally');
-  });
-});
-
-// ══════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════
-function showPage(name,btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  if(btn)btn.classList.add('active');
-  if(name==='dash')renderDash();
-  if(name==='log')renderLog();
-  if(name==='settings')renderSettings();
-  if(name==='add'){ buildCatBtns(); populatePaymentMethods(); syncPicker(); }
-}
-function changeMonth(dir){
-  curMoIdx=Math.max(0,Math.min(months.length-1,curMoIdx+dir));
-  renderDash();renderLog();
-}
-function setHdr(nameId,rangeId){
-  const m=curMo();
-  document.getElementById(nameId).textContent=m.name+' '+m.hijriYear+' AH';
-  const s=parseYMD(m.gregStart),e=parseYMD(m.gregEnd);
-  const f=d=>d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-  document.getElementById(rangeId).textContent=f(s)+' – '+f(e)+' '+s.getFullYear();
+function changeMonth(dir) {
+  curMoIdx = Math.max(0, Math.min(months.length - 1, curMoIdx + dir));
+  renderDash();
+  renderLog();
 }
 
-// ══════════════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════════════
-function moEntries(){const m=curMo();return entries.filter(e=>e.date>=m.gregStart&&e.date<=m.gregEnd)}
+function updateHeaderDates() {
+  const m = curMo();
+  document.getElementById('hdr-hijri-month').textContent = m.name + ' ' + m.hijriYear + ' AH';
+  document.getElementById('hdr-offset-badge').textContent = 'Offset: ' + (hijriOffset >= 0 ? '+' : '') + hijriOffset + 'd';
+  const s = parseYMD(m.gregStart), e = parseYMD(m.gregEnd);
+  const f = d => d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  document.getElementById('hdr-greg-span').textContent = f(s) + ' – ' + f(e) + ' ' + s.getFullYear();
+}
 
-function renderDash(){
-  const m=curMo(),me=moEntries();
-  const expEntries = me.filter(e=> catById(e.cat).type === 'exp');
-  const incEntries = me.filter(e=> catById(e.cat).type === 'income');
-  const spent = expEntries.reduce((s,e)=>s+e.amt,0);
-  const income = incEntries.reduce((s,e)=>s+e.amt,0);
+// ── DASHBOARD RENDER ──
+function renderDash() {
+  updateHeaderDates();
+  const m = curMo(), me = moEntries();
+  const expEntries = me.filter(e => catById(e.cat).type === 'exp');
+  const incEntries = me.filter(e => catById(e.cat).type === 'income');
+  const spent = expEntries.reduce((s, e) => s + e.amt, 0);
+  const income = incEntries.reduce((s, e) => s + e.amt, 0);
   const effBud = m.totalBudget + income;
   const rem = effBud - spent;
 
-  const today=new Date();today.setHours(0,0,0,0);
-  const start=parseYMD(m.gregStart),end=parseYMD(m.gregEnd);
-  const elapsed=Math.max(1,Math.min(m.totalDays,Math.round((Math.min(today,end)-start)/86400000)+1));
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const start = parseYMD(m.gregStart), end = parseYMD(m.gregEnd);
+  const elapsed = Math.max(1, Math.min(m.totalDays, Math.round((Math.min(today, end) - start) / 86400000) + 1));
+  const daysLeft = Math.max(1, m.totalDays - elapsed);
+  const safeDaily = Math.max(0, Math.round(rem / daysLeft));
 
-  setHdr('dash-hn','dash-hr');
-  document.getElementById('dash-sub').textContent=me.length+' entries · '+m.name+' '+m.hijriYear+' AH';
-  document.getElementById('t-bud').textContent=fmt(m.totalBudget);
-  document.getElementById('t-inc').textContent=fmt(income);
-  document.getElementById('t-spent').textContent=fmt(spent);
-  document.getElementById('t-eff').textContent=fmt(effBud);
-  const re=document.getElementById('t-rem');re.textContent=fmt(rem);re.className='tval '+(rem<0?'bad':'good');
-  document.getElementById('t-avg').textContent=fmt(spent/elapsed);
+  // Hero Card
+  document.getElementById('hero-remaining-amt').textContent = fmt(rem);
+  document.getElementById('hero-extra-income').textContent = '+₹' + income.toLocaleString('en-IN') + ' Income';
+  document.getElementById('hero-safe-spend').textContent = fmt(safeDaily);
+  document.getElementById('hero-safe-calc').textContent = daysLeft + ' days left';
 
-  const pv=pct(spent,effBud);
-  const pb=document.getElementById('prog-bar');
-  pb.style.width=pv+'%';pb.className='prog-fill'+(pv>=100?' over':pv>=80?' warn':'');
-  document.getElementById('prog-pct').textContent=pv+'%';
-  document.getElementById('prog-days').textContent='Day '+elapsed+' of '+m.totalDays;
+  const pv = pct(spent, effBud);
+  document.getElementById('hero-depleted-pct').textContent = pv + '% Depleted';
+  document.getElementById('hero-effective-cap').textContent = 'Cap: ' + fmt(effBud);
+  const pfill = document.getElementById('hero-progress-fill');
+  pfill.style.width = pv + '%';
+  pfill.className = 'progress-fill' + (pv >= 100 ? ' danger' : pv >= 80 ? ' warn' : '');
 
-  // Income card
-  const ic=document.getElementById('inc-card');
-  if(incEntries.length){
-    ic.style.display='block';
-    document.getElementById('inc-rows').innerHTML=incEntries.map(e=>`
-      <div class="income-row">
-        <span class="lbl">${catById(e.cat).icon} ${e.what||catById(e.cat).label}${e.where?' · '+e.where:''}</span>
-        <span class="val">${fmt(e.amt)}</span>
-      </div>`).join('');
-  }else ic.style.display='none';
+  // Vitals
+  document.getElementById('vital-salary').textContent = fmt(m.totalBudget);
+  document.getElementById('vital-extra').textContent = fmt(income);
+  document.getElementById('vital-spent').textContent = fmt(spent);
+  document.getElementById('vital-burn').textContent = fmt(spent / elapsed) + '/d';
 
-  // Weekly breakdown: exclude expenses that have a payment method of type 'payment'
-  const weeklyExpenses = me.filter(e=> {
+  // Savings Intimator
+  document.getElementById('vault-pool-avoidable').textContent = fmt(pendingSavings);
+  document.getElementById('vault-pool-daily').textContent = fmt(dailySavings.total);
+  document.getElementById('vault-total-transfer').textContent = fmt(pendingSavings + dailySavings.total);
+
+  const histBox = document.getElementById('vault-history-box');
+  if (savingsLog && savingsLog.length > 0) {
+    histBox.style.display = 'block';
+    const grand = savingsLog.reduce((s, r) => s + r.total, 0);
+    document.getElementById('vault-grand-total').textContent = fmt(grand);
+    const last = savingsLog[savingsLog.length - 1];
+    document.getElementById('vault-last-log').textContent = `Last transfer: ${last.dateLabel} (+${fmt(last.total)})`;
+  } else {
+    histBox.style.display = 'none';
+  }
+
+  // Weekly Pacing
+  const weeklyExpenses = me.filter(e => {
     const cat = catById(e.cat);
-    if(cat.type !== 'exp') return false;
-    if(e.paymentCat){
-      const payCat = catById(e.paymentCat);
-      if(payCat.type === 'payment') return false;
-    }
+    if (cat.type !== 'exp') return false;
+    if (e.paymentCat && catById(e.paymentCat).type === 'payment') return false;
     return true;
   });
-  const wc=['#00b09b','#f7c35f','#74c7ec','#c084fc'];
-  document.getElementById('week-rows').innerHTML=m.weeks.map((wk,i)=>{
-    const ws=weeklyExpenses.filter(e=>e.date>=wk.gStart&&e.date<=wk.gEnd).reduce((s,e)=>s+e.amt,0);
-    const wp=pct(ws,wk.budget),cl=wp>=100?'over':wp>=80?'warn':'',col=wc[i]||wc[3];
-    return`<div class="wrow">
-      <div class="wdot" style="background:${col}"></div>
-      <div class="wname">${wk.label}</div>
-      <div class="whijri">${wk.hijriDays}</div>
-      <div class="wbar"><div class="prog"><div class="prog-fill ${cl}" style="width:${wp}%;background:${col}"></div></div></div>
-      <div class="wmeta">${fmt(ws)} / ${fmt(wk.budget)}</div>
-    </div>`;
-  }).join('');
 
-  // Category Snapshot
-  document.getElementById('cat-grid').innerHTML=categories.filter(c=>c.type==='exp').map(cat=>{
-    const s=me.filter(e=>e.cat===cat.id).reduce((a,e)=>a+e.amt,0);
-    const b=catBud[cat.id]||0,ok=s<=b;
-    return`<div class="citem"><div class="cname">${cat.icon} ${cat.label}</div>
-      <div class="camt" style="color:${ok?'var(--green)':'var(--red)'}">${fmt(s)}</div>
-      <div class="cbadge ${ok?'bok':'bover'}">${ok?'✓ OK':'↑ Over'} ${fmt(b)}</div></div>`;
-  }).join('');
-
-  // Payment Methods
-  document.getElementById('cc-grid').innerHTML=categories.filter(c=>c.type==='payment').map(cat=>{
-    const s=me.filter(e=>e.paymentCat===cat.id).reduce((a,e)=>a+e.amt,0);
-    return`<div class="citem"><div class="cname">${cat.icon} ${cat.label}</div>
-      <div class="camt" style="color:var(--purple)">${fmt(s)}</div>
-      <div class="cbadge bcc">Payment</div></div>`;
-  }).join('');
-
-  // Savings Intimator — update both pools
-  document.getElementById('savings-amount').textContent = fmt(pendingSavings);
-  document.getElementById('daily-savings-amount').textContent = fmt(dailySavings.total);
-  document.getElementById('total-savings-amount').textContent = fmt(pendingSavings + dailySavings.total);
-
-  // Transfer history + grand total
-  const histSection = document.getElementById('savings-history-section');
-  const histRows    = document.getElementById('savings-history-rows');
-  const grandTotal  = document.getElementById('grand-total-saved');
-  const lastConfEl  = document.getElementById('savings-last-confirmed');
-
-  if(savingsLog && savingsLog.length > 0){
-    histSection.style.display = 'block';
-
-    // Grand total = sum of all confirmed transfers
-    const grandAmt = savingsLog.reduce((s, r) => s + r.total, 0);
-    grandTotal.textContent = fmt(grandAmt);
-
-    // Show last 5 transfers (most recent first), with a summary line
-    const recent = [...savingsLog].reverse().slice(0, 5);
-    histRows.innerHTML = recent.map(r => `
-      <div style="display:flex;justify-content:space-between;align-items:center;
-        padding:7px 10px;background:var(--surface2);border-radius:8px;margin-bottom:6px;
-        border:1px solid var(--border)">
-        <div>
-          <div style="font-size:12px;font-weight:600;color:var(--text)">${r.dateLabel}</div>
-          <div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:1px">
-            Avoidable: ${fmt(r.avoidable)}  ·  Daily: ${fmt(r.daily)}
+  const weekContainer = document.getElementById('dashboard-weekly-rows');
+  weekContainer.innerHTML = m.weeks.map(wk => {
+    const ws = weeklyExpenses.filter(e => e.date >= wk.gStart && e.date <= wk.gEnd).reduce((s, e) => s + e.amt, 0);
+    const wp = pct(ws, wk.budget);
+    return `
+      <div class="pacing-item">
+        <div class="week-pill">${wk.label}</div>
+        <div class="week-hijri">${wk.hijriDays}</div>
+        <div class="pacing-bar-wrap">
+          <div class="progress-rail" style="margin:0">
+            <div class="progress-fill ${wp >= 100 ? 'danger' : wp >= 80 ? 'warn' : ''}" style="width:${wp}%"></div>
           </div>
         </div>
-        <div style="font-family:var(--fm);font-size:14px;font-weight:500;color:var(--green)">+${fmt(r.total)}</div>
-      </div>`).join('');
+        <div class="week-amt-lbl">${fmt(ws)} / ${fmt(wk.budget)}</div>
+      </div>
+    `;
+  }).join('');
 
-    // Last confirmed note
-    const last = savingsLog[savingsLog.length - 1];
-    lastConfEl.textContent = savingsLog.length > 5
-      ? `Showing last 5 of ${savingsLog.length} transfers`
-      : `Last transferred: ${last.dateLabel}`;
-  } else {
-    histSection.style.display = 'none';
-    lastConfEl.textContent = '';
-  }
+  // Category Snapshot (Progressive Disclosure)
+  renderCategorySnapshot(me);
+
+  // Payment Cards
+  renderPaymentCards(me);
 }
 
-// ══════════════════════════════════════════════
-// SAVINGS INTIMATOR
-// ══════════════════════════════════════════════
-function confirmSavings(){
-  const avoidAmt  = pendingSavings;
-  const dailyAmt  = dailySavings.total;
-  const total     = avoidAmt + dailyAmt;
-  if(total <= 0){ showToast('Nothing to transfer yet'); return; }
-  if(confirm(`Confirm you have transferred ${fmt(total)} to your savings account?\n\nBreakdown:\n• Avoidable 10%: ${fmt(avoidAmt)}\n• Daily ₹50: ${fmt(dailyAmt)}\n\nThis will reset both pools to ₹0.`)){
-    // Log this transfer to history
-    savingsLog.push({
-      date:        ymd(new Date()),
-      dateLabel:   new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),
-      avoidable:   avoidAmt,
-      daily:       dailyAmt,
-      total:       total
-    });
-    ss('bt3_savingsLog', savingsLog);
+function renderCategorySnapshot(me) {
+  const catList = categories.filter(c => c.type === 'exp');
+  const catStats = catList.map(cat => {
+    const s = me.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
+    const b = catBud[cat.id] || 0;
+    const ratio = b > 0 ? (s / b) : 0;
+    return { cat, spent: s, budget: b, ratio };
+  });
 
-    // Reset pools
-    pendingSavings     = 0;
-    dailySavings.total = 0;
-    // Keep lastDate so we don't re-accrue today
-    saveAllData();
-    ss('bt3_lastConfirmed', new Date().toISOString());
-    renderDash();
-    showToast('✅ Transfer confirmed! Great habit — pools reset.');
-  }
-}
+  // Sort by highest depletion ratio
+  catStats.sort((a, b) => b.ratio - a.ratio);
 
-// ══════════════════════════════════════════════
-// ADD ENTRY (dual-tagging)
-// ══════════════════════════════════════════════
-let selCat = null;
-function buildCatBtns(){
-  const expCats = categories.filter(c=>c.type==='exp' || c.type==='income');
-  document.getElementById('cat-btns').innerHTML=expCats.map(c=>`
-    <button class="catbtn${c.type==='payment'?' cc':c.type==='income'?' inc':''}" onclick="selCatFn('${c.id}',this)">
-      <span class="ic">${c.icon}</span><span class="lb">${c.label}</span>
-    </button>`).join('');
-}
-function selCatFn(id,btn){
-  document.querySelectorAll('.catbtn').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');selCat=id;
-  const t=catById(id).type;
-  document.getElementById('cc-ind').style.display=(t==='payment')?'block':'none';
-  document.getElementById('inc-ind').style.display=(t==='income')?'block':'none';
-}
-function populatePaymentMethods(){
-  const payCats = categories.filter(c=>c.type==='payment');
-  const sel = document.getElementById('payment-method');
-  sel.innerHTML = '<option value="">None</option>' + payCats.map(c=>`<option value="${c.id}">${c.icon} ${c.label}</option>`).join('');
-}
-function clearForm(){
-  ['amt','where','what','qty','notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('entry-date').value=ymd(new Date());
-  document.getElementById('cc-ind').style.display='none';
-  document.getElementById('inc-ind').style.display='none';
-  document.querySelectorAll('.catbtn').forEach(b=>b.classList.remove('sel'));
-  selCat=null; updPreview();
-}
-function saveEntry(){
-  if(!selCat){showToast('Select an item category');return}
-  const amt=parseFloat(document.getElementById('amt').value);
-  if(!amt||amt<=0){showToast('Enter a valid amount');return}
-  const gregDate=getPickedGreg();
-  const hd=gregToHijriDisplay(parseYMD(gregDate));
-  const hijriLabel=`${hd.d} ${HM[hd.m-1]} ${hd.y} AH`;
-  const cat=catById(selCat);
-  const paymentCat = document.getElementById('payment-method').value || null;
-  const entry = {
-    id:uid(),
-    date:gregDate,
-    hijri:hijriLabel,
-    hijriDay:hd.d,hijriMonth:hd.m,hijriYear:hd.y,
-    cat:selCat,
-    paymentCat:paymentCat,
-    amt,
-    type:cat.type,
-    where:document.getElementById('where').value.trim(),
-    what:document.getElementById('what').value.trim(),
-    qty:document.getElementById('qty').value.trim(),
-    notes:document.getElementById('notes').value.trim(),
-  };
-  entries.unshift(entry);
-  // Savings logic for avoidable
-  if(selCat === 'avoidable'){
-    const saveAmt = amt * 0.1;
-    pendingSavings += saveAmt;
-    showToast(`💰 10% (${fmt(saveAmt)}) added to savings goal`);
-  }
-  saveAllData();
-  showToast((cat.type==='income'?'💰 Income':'✓ Saved')+' — '+hijriLabel);
-  clearForm();
-  renderDash(); renderLog();
-}
-
-// ══════════════════════════════════════════════
-// LOG
-// ══════════════════════════════════════════════
-function renderLog(){
-  setHdr('log-hn','log-hr');
-  const m=curMo(),me=moEntries();
-  document.getElementById('log-sub').textContent=me.length+' entries · '+m.name+' '+m.hijriYear+' AH';
-  if(!me.length){
-    document.getElementById('log-list').innerHTML=`<div class="empty">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      <p>No entries for ${m.name} ${m.hijriYear} AH</p></div>`;return;
-  }
-  const byDate={};
-  me.forEach(e=>{(byDate[e.date]=byDate[e.date]||[]).push(e)});
-  document.getElementById('log-list').innerHTML=Object.keys(byDate).sort((a,b)=>b.localeCompare(a)).map(d=>{
-    const hd=gregToHijriDisplay(parseYMD(d));
-    const hs=`${hd.d} ${HM[hd.m-1]}`;
-    const gs=parseYMD(d).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
-    const dt=byDate[d].reduce((s,e)=>s+e.amt,0);
-    return`<div class="lday">
-      <div class="ldh"><span class="lhijri">${hs}</span><span class="lgreg">${gs}</span>
-        <span style="margin-left:auto;color:var(--muted);font-family:var(--fm);font-size:11px">${fmt(dt)}</span></div>
-      ${byDate[d].map(e=>{
-        const cat=catById(e.cat);const isInc=cat.type==='income';const isCC=cat.type==='payment';
-        const payCat = e.paymentCat ? catById(e.paymentCat) : null;
-        const sub = [e.what, e.qty, e.where].filter(Boolean).join(' · ');
-        const payLabel = payCat ? ` 💳 ${payCat.icon} ${payCat.label}` : '';
-        return`<div class="lentry" onclick="openDetail('${e.id}')">
-          <div class="lic" style="background:${isCC?'rgba(192,132,252,.15)':isInc?'rgba(251,146,60,.15)':'rgba(0,176,155,.1)'}">${cat.icon}</div>
-          <div class="ltxt">
-            <div class="lcat">${cat.label}${payLabel}${e.where?` <span style="color:var(--muted);font-weight:400">· ${e.where}</span>`:''}</div>
-            <div class="lnote">${sub||'—'}</div>
+  const displayed = showAllCategoriesOnDash ? catStats : catStats.slice(0, 3);
+  const container = document.getElementById('dashboard-category-rows');
+  container.innerHTML = displayed.map(item => {
+    const isOver = item.spent > item.budget;
+    const isWarn = item.ratio >= 0.85 && !isOver;
+    const statusClass = isOver ? 'danger' : isWarn ? 'warning' : '';
+    const diff = item.spent - item.budget;
+    return `
+      <div class="category-row-item ${statusClass}">
+        <div class="cat-left-meta">
+          <div class="cat-icon-chip">${item.cat.icon}</div>
+          <div>
+            <div class="cat-title-text">${item.cat.label}</div>
+            ${isOver ? `<div class="cat-sub-alert">+${fmt(diff)} over target</div>` : isWarn ? `<div style="font-size:10px;color:var(--amber)">Near limit</div>` : ''}
           </div>
-          <div class="lamt${isCC?' cc':isInc?' inc':''}">${isInc?'+':''}${fmt(e.amt)}</div>
-        </div>`;
-      }).join('')}
-    </div>`;
+        </div>
+        <div class="cat-right-metric">
+          <div class="cat-spent-num" style="color:${isOver ? 'var(--rose)' : 'var(--text-main)'}">${fmt(item.spent)}</div>
+          <div class="cat-target-sub">Target: ${fmt(item.budget)}</div>
+        </div>
+      </div>
+    `;
   }).join('');
 }
 
-// ══════════════════════════════════════════════
-// DETAIL MODAL
-// ══════════════════════════════════════════════
-function openDetail(id){
-  const e=entries.find(x=>x.id===id);if(!e)return;
-  const cat=catById(e.cat);
-  const payCat = e.paymentCat ? catById(e.paymentCat) : null;
-  document.getElementById('modal-title').textContent=cat.icon+' '+cat.label;
-  const rows = [
-    ['Hijri Date',e.hijri||'—'],
-    ['Gregorian',parseYMD(e.date).toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})],
-    ['Type',e.type==='income'?'💰 Income':e.type==='payment'?'💳 Payment Method':'💸 Expense'],
-    ['Payment Method', payCat ? `${payCat.icon} ${payCat.label}` : 'None'],
-    ['Amount',(e.type==='income'?'+':'')+fmt(e.amt)],
-    ['From / Where',e.where||'—'],['What',e.what||'—'],['Quantity',e.qty||'—'],['Notes',e.notes||'—'],
-  ];
-  document.getElementById('modal-body').innerHTML=rows.map(([k,v])=>`<div class="drow"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
-  document.getElementById('modal-del').onclick=()=>delEntry(id);
-  document.getElementById('modal').classList.remove('hidden');
-}
-function closeModal(e){if(e.target===document.getElementById('modal'))document.getElementById('modal').classList.add('hidden')}
-function delEntry(id){
-  if(!confirm('Delete this entry?'))return;
-  entries=entries.filter(e=>e.id!==id);saveAllData();
-  document.getElementById('modal').classList.add('hidden');
-  renderDash();renderLog();showToast('Deleted');
+function toggleAllCategories(btn) {
+  showAllCategoriesOnDash = !showAllCategoriesOnDash;
+  btn.textContent = showAllCategoriesOnDash ? 'Show fewer ▴' : 'View all categories ▾';
+  renderDash();
 }
 
-// ══════════════════════════════════════════════
-// HIJRI OFFSET
-// ══════════════════════════════════════════════
-function changeOffset(dir){
-  hijriOffset=Math.max(-3,Math.min(3,hijriOffset+dir));
-  ss('bt3_offset',hijriOffset);
-  updateOffsetPreview();
-  updPreview();
-}
-function updateOffsetPreview(){
-  document.getElementById('offset-display').textContent=(hijriOffset>0?'+':'')+hijriOffset;
-  const h=gregToHijriDisplay(new Date());
-  const today=new Date();
-  const gregStr=today.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
-  document.getElementById('offset-preview').textContent=gregStr+' = '+h.d+' '+HM[h.m-1]+' '+h.y+' AH';
+function renderPaymentCards(me) {
+  const payCats = categories.filter(c => c.type === 'payment');
+  const container = document.getElementById('dashboard-payment-cards');
+  container.innerHTML = payCats.map(cat => {
+    const s = me.filter(e => e.paymentCat === cat.id).reduce((a, e) => a + e.amt, 0);
+    return `
+      <div style="background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px">
+        <div style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px">
+          <span>${cat.icon}</span> <span>${cat.label}</span>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--purple);margin-top:4px">
+          ${fmt(s)}
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
-// ══════════════════════════════════════════════
-// SETTINGS (with Category CRUD)
-// ══════════════════════════════════════════════
-function renderSettings(){
-  const m=curMo();
-  document.getElementById('set-mo-name').textContent=m.name+' '+m.hijriYear+' AH';
-  document.getElementById('set-total').value=m.totalBudget;
-  updateOffsetPreview();
-  // Populate GAS URL input
-  const gasEl = document.getElementById('gas-url-input');
-  if(gasEl){ gasEl.value = ls('bt3_gasUrl',''); }
-  if(ls('bt3_gasUrl','')){ setSyncStatus('🔗','URL configured'); }
-  document.getElementById('wbud-rows').innerHTML=m.weeks.map((wk,i)=>`
-    <div class="srow">
-      <div><div class="slbl">${wk.label}</div><div class="ssub">${m.name} ${wk.hijriDays}</div></div>
-      <input class="bi" type="number" value="${wk.budget}" oninput="updWkBud(${i},+this.value)"/>
-    </div>`).join('');
-  document.getElementById('cat-targets').innerHTML=categories.filter(c=>c.type==='exp').map(cat=>`
-    <div class="srow"><div><div class="slbl">${cat.icon} ${cat.label}</div></div>
-      <input class="bi" type="number" value="${catBud[cat.id]||0}" oninput="catBud['${cat.id}']=+this.value;saveAllData()"/>
-    </div>`).join('');
-  document.getElementById('month-list').innerHTML=months.map((mo,i)=>`
-    <div class="srow">
-      <div><div class="slbl" style="${i===curMoIdx?'color:var(--teal)':''}">${mo.name} ${mo.hijriYear} AH</div>
-        <div class="ssub">${mo.gregStart} → ${mo.gregEnd}</div></div>
-      <div style="display:flex;gap:6px">
-        <button class="btn-s" onclick="curMoIdx=${i};renderDash();renderLog();showToast('Viewing ${mo.name}')">View</button>
-        ${months.length>1?`<button class="btn-s" style="color:var(--red);border-color:rgba(255,107,107,.3)" onclick="delMonth(${i})">✕</button>`:''}
-      </div>
-    </div>`).join('');
-  renderCategoryList();
-}
-function renderCategoryList(){
-  const container = document.getElementById('category-list');
-  if(!container) return;
-  container.innerHTML = categories.map((c,i)=>`
-    <div class="srow">
-      <div><span style="font-size:18px">${c.icon}</span> ${c.label} <span style="color:var(--muted);font-size:10px;font-family:var(--fm)">${c.type}</span></div>
-      <div>
-        <button class="btn-s" onclick="editCategory('${c.id}')" style="margin-right:6px">✏️</button>
-        <button class="btn-s" style="color:var(--red);border-color:rgba(255,107,107,.3)" onclick="deleteCategory('${c.id}')">✕</button>
-      </div>
-    </div>
+// ── ADD ENTRY ──
+let selCat = null;
+function buildCatBtns() {
+  const list = categories.filter(c => c.type === 'exp' || c.type === 'income');
+  const container = document.getElementById('form-categories-container');
+  container.innerHTML = list.map(c => `
+    <button class="form-cat-btn ${c.type === 'income' ? 'income-type' : ''} ${selCat === c.id ? 'selected' : ''}" onclick="selectCategory('${c.id}', this)">
+      <span class="emoji">${c.icon}</span>
+      <span class="name">${c.label}</span>
+    </button>
   `).join('');
 }
-function addCategory(){
-  const name = document.getElementById('new-cat-name').value.trim();
-  const icon = document.getElementById('new-cat-icon').value.trim() || '📌';
-  const type = document.getElementById('new-cat-type').value;
-  if(!name){ showToast('Enter a name'); return; }
-  const id = name.toLowerCase().replace(/[^a-z0-9]/g,'-');
-  if(categories.find(c=>c.id===id)){ showToast('Category already exists'); return; }
-  categories.push({id, label:name, icon, type});
+
+function selectCategory(id, btn) {
+  document.querySelectorAll('.form-cat-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selCat = id;
+  const c = catById(id);
+  document.getElementById('income-tag-note').style.display = c.type === 'income' ? 'block' : 'none';
+}
+
+function populatePaymentMethods() {
+  const payCats = categories.filter(c => c.type === 'payment');
+  const sel = document.getElementById('payment-method');
+  sel.innerHTML = '<option value="">None (Cash / UPI)</option>' + payCats.map(c => `<option value="${c.id}">${c.icon} ${c.label}</option>`).join('');
+  sel.onchange = function() {
+    document.getElementById('payment-method-note').style.display = this.value ? 'block' : 'none';
+  };
+}
+
+function syncPicker() {
+  const el = document.getElementById('entry-date');
+  if (!el.value) el.value = ymd(new Date());
+  updPreview();
+}
+
+function updPreview() {
+  const val = document.getElementById('entry-date').value;
+  if (!val) { document.getElementById('form-date-preview').textContent = '—'; return; }
+  try {
+    const g = parseYMD(val);
+    const h = gregToHijriDisplay(g);
+    const gregStr = g.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    const hijriStr = h.d + ' ' + HM[h.m - 1] + ' ' + h.y + ' AH';
+    document.getElementById('form-date-preview').textContent = `${gregStr}  •  🌙 ${hijriStr}`;
+  } catch {
+    document.getElementById('form-date-preview').textContent = 'Invalid date';
+  }
+}
+
+function incrementAmount(delta) {
+  const input = document.getElementById('amt');
+  const current = parseFloat(input.value) || 0;
+  input.value = current + delta;
+}
+
+function toggleDetailsAccordion() {
+  const acc = document.getElementById('form-details-accordion');
+  const arrow = document.getElementById('accordion-arrow');
+  const isExp = acc.classList.contains('expanded');
+  acc.classList.toggle('expanded');
+  arrow.textContent = isExp ? '▾' : '▴';
+}
+
+function clearForm() {
+  ['amt', 'where', 'what', 'qty', 'notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('entry-date').value = ymd(new Date());
+  document.getElementById('payment-method').value = '';
+  document.getElementById('payment-method-note').style.display = 'none';
+  document.getElementById('income-tag-note').style.display = 'none';
+  document.querySelectorAll('.form-cat-btn').forEach(b => b.classList.remove('selected'));
+  selCat = null;
+  updPreview();
+}
+
+function saveEntry() {
+  if (!selCat) { showToast('Please select a category'); return; }
+  const amt = parseFloat(document.getElementById('amt').value);
+  if (!amt || amt <= 0) { showToast('Please enter a valid amount'); return; }
+
+  const gregDate = document.getElementById('entry-date').value || ymd(new Date());
+  const hd = gregToHijriDisplay(parseYMD(gregDate));
+  const hijriLabel = `${hd.d} ${HM[hd.m - 1]} ${hd.y} AH`;
+  const cat = catById(selCat);
+  const paymentCat = document.getElementById('payment-method').value || null;
+
+  const entry = {
+    id: uid(),
+    date: gregDate,
+    hijri: hijriLabel,
+    hijriDay: hd.d, hijriMonth: hd.m, hijriYear: hd.y,
+    cat: selCat,
+    paymentCat: paymentCat,
+    amt,
+    type: cat.type,
+    where: document.getElementById('where').value.trim(),
+    what: document.getElementById('what').value.trim(),
+    qty: document.getElementById('qty').value.trim(),
+    notes: document.getElementById('notes').value.trim()
+  };
+
+  entries.unshift(entry);
+
+  // 10% penalty logic for avoidable
+  if (selCat === 'avoidable') {
+    const saveAmt = amt * 0.1;
+    pendingSavings += saveAmt;
+    showToast(`🎯 10% (${fmt(saveAmt)}) auto-routed to Habit Vault`);
+  } else {
+    showToast(`✓ Saved: ${fmt(amt)} (${cat.label})`);
+  }
+
   saveAllData();
-  renderSettings();
-  buildCatBtns();
-  populatePaymentMethods();
-  showToast(`Added ${name}`);
-  document.getElementById('new-cat-name').value='';
-  document.getElementById('new-cat-icon').value='';
+  clearForm();
+  renderDash();
+  renderLog();
 }
-function editCategory(id){
-  const cat = categories.find(c=>c.id===id);
-  if(!cat) return;
-  const newLabel = prompt('Edit name:', cat.label);
-  if(newLabel === null) return;
-  const newIcon = prompt('Edit icon (emoji):', cat.icon);
-  if(newIcon === null) return;
-  cat.label = newLabel.trim();
-  cat.icon = newIcon.trim() || '📌';
+
+// ── LOG RENDER ──
+function renderLog() {
+  updateHeaderDates();
+  const me = moEntries();
+  document.getElementById('log-count-label').textContent = me.length + ' entries';
+  const container = document.getElementById('log-entries-list');
+
+  if (!me.length) {
+    container.innerHTML = `<div style="text-align:center;padding:48px 16px;color:var(--text-muted)"><p>No entries logged for this month</p></div>`;
+    return;
+  }
+
+  const byDate = {};
+  me.forEach(e => { (byDate[e.date] = byDate[e.date] || []).push(e); });
+
+  container.innerHTML = Object.keys(byDate).sort((a, b) => b.localeCompare(a)).map(d => {
+    const hd = gregToHijriDisplay(parseYMD(d));
+    const hs = `${hd.d} ${HM[hd.m - 1]}`;
+    const gs = parseYMD(d).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+    const dayTotal = byDate[d].reduce((s, e) => s + e.amt, 0);
+
+    return `
+      <div class="log-day-group">
+        <div class="log-day-header">
+          <span>🌙 ${hs} &nbsp;•&nbsp; ${gs}</span>
+          <span>${fmt(dayTotal)}</span>
+        </div>
+        ${byDate[d].map(e => {
+          const cat = catById(e.cat);
+          const isInc = cat.type === 'income';
+          const sub = [e.what, e.qty, e.where].filter(Boolean).join(' • ');
+          return `
+            <div class="log-item-row" onclick="openDetail('${e.id}')">
+              <div class="log-item-icon">${cat.icon}</div>
+              <div class="log-item-content">
+                <div class="log-item-title">${cat.label} ${e.where ? `· <span style="font-weight:400;color:var(--text-muted)">${e.where}</span>` : ''}</div>
+                <div class="log-item-desc">${sub || '—'}</div>
+              </div>
+              <div class="log-item-amount ${isInc ? 'inc' : ''}">${isInc ? '+' : ''}${fmt(e.amt)}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+// ── ANALYTICS ──
+function renderAnalytics() {
+  const m = curMo(), me = moEntries();
+  const expEntries = me.filter(e => catById(e.cat).type === 'exp');
+  const incEntries = me.filter(e => catById(e.cat).type === 'income');
+  const spent = expEntries.reduce((s, e) => s + e.amt, 0);
+  const income = incEntries.reduce((s, e) => s + e.amt, 0);
+  const effBud = m.totalBudget + income;
+  const rem = effBud - spent;
+  const pv = pct(spent, effBud);
+
+  document.getElementById('analytics-effective-cap').textContent = fmt(effBud);
+  document.getElementById('analytics-depleted-metric').textContent = `${pv}% Depleted • ${fmt(rem)} Remaining`;
+
+  const container = document.getElementById('analytics-category-progress');
+  const catList = categories.filter(c => c.type === 'exp');
+  container.innerHTML = catList.map(cat => {
+    const s = me.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
+    const b = catBud[cat.id] || 0;
+    const p = pct(s, b);
+    return `
+      <div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span>${cat.icon} ${cat.label}</span>
+          <span style="font-family:var(--font-mono);font-weight:600">${fmt(s)} / ${fmt(b)}</span>
+        </div>
+        <div class="progress-rail" style="margin:0">
+          <div class="progress-fill ${p >= 100 ? 'danger' : p >= 85 ? 'warn' : ''}" style="width:${p}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── SETTINGS ──
+function renderSettings() {
+  const gasEl = document.getElementById('gas-url-input');
+  if (gasEl) gasEl.value = ls('bt3_gasUrl', '');
+  updateOffsetPreview();
+}
+
+function changeOffset(dir) {
+  hijriOffset = Math.max(-3, Math.min(3, hijriOffset + dir));
+  ss('bt3_offset', hijriOffset);
+  updateOffsetPreview();
+  renderDash();
+}
+
+function updateOffsetPreview() {
+  document.getElementById('offset-display').textContent = (hijriOffset >= 0 ? '+' : '') + hijriOffset;
+  const h = gregToHijriDisplay(new Date());
+  document.getElementById('offset-preview').textContent = `Today = ${h.d} ${HM[h.m - 1]} ${h.y} AH`;
+}
+
+// ── DETAIL & MODAL ──
+function openDetail(id) {
+  const e = entries.find(x => x.id === id); if (!e) return;
+  const cat = catById(e.cat);
+  const payCat = e.paymentCat ? catById(e.paymentCat) : null;
+  document.getElementById('modal-title').textContent = `${cat.icon} ${cat.label}`;
+
+  const rows = [
+    ['Amount', (e.type === 'income' ? '+' : '') + fmt(e.amt)],
+    ['Date', e.date],
+    ['Hijri', e.hijri || '—'],
+    ['Payment Method', payCat ? `${payCat.icon} ${payCat.label}` : 'None'],
+    ['Where / Source', e.where || '—'],
+    ['What / Description', e.what || '—'],
+    ['Quantity', e.qty || '—'],
+    ['Notes', e.notes || '—']
+  ];
+
+  document.getElementById('modal-body').innerHTML = rows.map(([k, v]) => `
+    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <span style="color:var(--text-muted)">${k}</span>
+      <span style="font-family:var(--font-mono);font-weight:600">${v}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('modal-del').onclick = () => delEntry(id);
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal(e) { if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.add('hidden'); }
+function closeExpModal(e) { if (e.target === document.getElementById('exp-modal')) document.getElementById('exp-modal').classList.add('hidden'); }
+function openExpModal() { document.getElementById('exp-modal').classList.remove('hidden'); }
+
+function delEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  entries = entries.filter(e => e.id !== id);
   saveAllData();
-  renderSettings();
-  buildCatBtns();
-  populatePaymentMethods();
-  showToast('Updated');
-}
-function deleteCategory(id){
-  if(!confirm(`Delete category "${categories.find(c=>c.id===id)?.label}"?`)) return;
-  categories = categories.filter(c=>c.id!==id);
-  saveAllData();
-  renderSettings();
-  buildCatBtns();
-  populatePaymentMethods();
-  showToast('Deleted');
+  document.getElementById('modal').classList.add('hidden');
+  renderDash();
+  renderLog();
+  showToast('Entry deleted');
 }
 
-function saveTotBud(){curMo().totalBudget=+document.getElementById('set-total').value||45000;saveAllData()}
-function updWkBud(i,v){curMo().weeks[i].budget=v;saveAllData()}
-function addMonth(){
-  const name=document.getElementById('nm-name').value.trim();
-  const hy=+document.getElementById('nm-hy').value;
-  const gs=document.getElementById('nm-gs').value;
-  const ge=document.getElementById('nm-ge').value;
-  const w1=+document.getElementById('nm-w1').value||14000;
-  const w2=+document.getElementById('nm-w2').value||17000;
-  const w3=+document.getElementById('nm-w3').value||7000;
-  const w4=+document.getElementById('nm-w4').value||7000;
-  if(!name||!hy||!gs||!ge){showToast('Fill all fields');return}
-  const sd=parseYMD(gs);
-  months.push({id:name.toLowerCase().replace(/\s+/g,'-')+'-'+hy,name,hijriYear:hy,gregStart:gs,gregEnd:ge,
-    totalDays:Math.round((parseYMD(ge)-sd)/86400000)+1,totalBudget:w1+w2+w3+w4,
-    weeks:[
-      {label:'Week 1',hijriDays:'1 – 7',gStart:gs,gEnd:ymd(addDays(sd,6)),budget:w1},
-      {label:'Week 2',hijriDays:'8 – 14',gStart:ymd(addDays(sd,7)),gEnd:ymd(addDays(sd,13)),budget:w2},
-      {label:'Week 3',hijriDays:'15 – 22',gStart:ymd(addDays(sd,14)),gEnd:ymd(addDays(sd,21)),budget:w3},
-      {label:'Week 4',hijriDays:'23 – end',gStart:ymd(addDays(sd,22)),gEnd:ge,budget:w4},
-    ]});
-  curMoIdx=months.length-1;saveAllData();
-  showToast(name+' '+hy+' added!');
-  ['nm-name','nm-hy','nm-gs','nm-ge','nm-total','nm-w1','nm-w2','nm-w3','nm-w4'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
-  renderSettings();
-}
-function delMonth(i){
-  if(!confirm('Delete '+months[i].name+'?'))return;
-  months.splice(i,1);curMoIdx=Math.min(curMoIdx,months.length-1);
-  saveAllData();renderSettings();
-}
+// ── EXPORT ENGINE ──
+function doExport() {
+  const scope = document.getElementById('exp-scope-sel').value;
+  let pool = entries;
+  if (scope === 'current') {
+    const m = curMo();
+    pool = entries.filter(e => e.date >= m.gregStart && e.date <= m.gregEnd);
+  }
+  if (!pool.length) { showToast('No entries to export'); return; }
 
-// ══════════════════════════════════════════════
-// EXPORT (fully updated)
-// ══════════════════════════════════════════════
-let expScope='current',expFmt='xlsx';
-
-function openExpModal(){
-  document.getElementById('exp-cur-lbl').textContent=curMo().name+' '+curMo().hijriYear+' AH';
-  document.getElementById('exp-all-lbl').textContent=months.length+' months total';
-  document.getElementById('exp-mo-sel').innerHTML=months.map((m,i)=>`<option value="${i}">${m.name} ${m.hijriYear} AH</option>`).join('');
-  document.getElementById('exp-modal').classList.remove('hidden');
-}
-function closeExpModal(e){if(e.target===document.getElementById('exp-modal'))document.getElementById('exp-modal').classList.add('hidden')}
-function setExpScope(s,el){ expScope=s; document.querySelectorAll('#exp-scope .exp-opt').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); document.getElementById('exp-range-inputs').style.display=s==='range'?'grid':'none'; document.getElementById('exp-month-pick').style.display=s==='month'?'block':'none'; }
-function setExpFmt(f,el){ expFmt=f; document.querySelectorAll('#exp-fmt .exp-opt').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); }
-
-function getExpEntries(){
-  let pool=entries;
-  if(expScope==='current'){const m=curMo();pool=entries.filter(e=>e.date>=m.gregStart&&e.date<=m.gregEnd)}
-  else if(expScope==='month'){const idx=+document.getElementById('exp-mo-sel').value;const m=months[idx];pool=entries.filter(e=>e.date>=m.gregStart&&e.date<=m.gregEnd)}
-  else if(expScope==='range'){const f=document.getElementById('exp-from').value,t=document.getElementById('exp-to').value;if(!f||!t){showToast('Select date range');return null}pool=entries.filter(e=>e.date>=f&&e.date<=t)}
-  return pool.sort((a,b)=>a.date.localeCompare(b.date));
-}
-
-function escCSV(v){if(v==null)return'';const s=String(v);return(s.includes(',')||s.includes('"')||s.includes('\n'))?'"'+s.replace(/"/g,'""')+'"':s}
-
-function buildRows(pool){
-  const hdr=['Hijri Date','Gregorian Date','Day','Category','Type','Payment Method','Amount (₹)','Where/Source','What/Description','Quantity','Notes','Week','Hijri Month','Hijri Year'];
-  const rows=pool.map(e=>{
-    const cat=catById(e.cat);
-    const payCat = e.paymentCat ? catById(e.paymentCat) : null;
-    const g=parseYMD(e.date);
-    const hd=gregToHijriDisplay(g);
-    const day=g.toLocaleDateString('en-IN',{weekday:'long'});
-    const gstr=g.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
-    const hstr=`${hd.d} ${HM[hd.m-1]} ${hd.y}`;
-    let week='';
-    months.forEach(m=>{m.weeks.forEach(wk=>{if(e.date>=wk.gStart&&e.date<=wk.gEnd)week=wk.label})});
-    const mo=months.find(m=>e.date>=m.gregStart&&e.date<=m.gregEnd);
-    return[hstr,gstr,day,cat.label,
-      cat.type==='income'?'Income':cat.type==='payment'?'Payment Method':'Expense',
-      payCat ? payCat.label : '',
-      e.amt,e.where||'',e.what||'',e.qty||'',e.notes||'',
-      week,mo?mo.name:'',mo?mo.hijriYear:''];
+  const hdr = ['Hijri Date', 'Gregorian Date', 'Category', 'Type', 'Amount (INR)', 'Where', 'What', 'Notes'];
+  const rows = pool.map(e => {
+    const cat = catById(e.cat);
+    return [e.hijri || '', e.date, cat.label, cat.type, e.amt, e.where || '', e.what || '', e.notes || ''];
   });
-  return{hdr,rows};
-}
 
-function doExport(){
-  const pool=getExpEntries();if(!pool)return;
-  if(!pool.length){showToast('No entries in selected range');return}
-  if(expFmt==='csv')exportCSV(pool);
-  else exportXLSXasCSV(pool);
+  const csv = [hdr, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = `35k-budget-export-${ymd(new Date())}.csv`;
+  a.click();
   document.getElementById('exp-modal').classList.add('hidden');
+  showToast('CSV downloaded');
 }
 
-function exportCSV(pool){
-  const{hdr,rows}=buildRows(pool);
-  const csv=[hdr,...rows].map(r=>r.map(escCSV).join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-  a.download='budget-export-'+ymd(new Date())+'.csv';a.click();
-  showToast('CSV downloaded — open in Google Sheets');
+function exportJSON() {
+  const a = document.createElement('a');
+  a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify({ entries, months, catBud, hijriOffset, pendingSavings, dailySavings, categories }, null, 2));
+  a.download = `35k-budget-backup-${ymd(new Date())}.json`;
+  a.click();
+  showToast('JSON backup downloaded');
 }
 
-function exportXLSXasCSV(pool){
-  const{hdr,rows}=buildRows(pool);
-  const expRows=pool.filter(e=>catById(e.cat).type==='exp');
-  const incRows=pool.filter(e=>catById(e.cat).type==='income');
-  const payRows=pool.filter(e=>catById(e.cat).type==='payment');
-  const totalExp=expRows.reduce((s,e)=>s+e.amt,0);
-  const totalInc=incRows.reduce((s,e)=>s+e.amt,0);
-  const totalPay=payRows.reduce((s,e)=>s+e.amt,0);
-  // cat summary
-  const catSummary=categories.filter(c=>c.type==='exp').map(cat=>{
-    const s=pool.filter(e=>e.cat===cat.id).reduce((a,e)=>a+e.amt,0);
-    return[cat.icon+' '+cat.label,s,catBud[cat.id]||0,s-(catBud[cat.id]||0)];
-  });
-  let csv='35K BUDGET TRACKER — EXPORT\n';
-  csv+='Generated:,'+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})+'\n\n';
-  csv+='SUMMARY\n';
-  csv+='Total Expenses,₹'+totalExp.toLocaleString('en-IN')+'\n';
-  csv+='Total Income (other),₹'+totalInc.toLocaleString('en-IN')+'\n';
-  csv+='Total Payment Methods,₹'+totalPay.toLocaleString('en-IN')+'\n';
-  csv+='Net (Expenses − Income),₹'+(totalExp-totalInc).toLocaleString('en-IN')+'\n\n';
-  csv+='CATEGORY BREAKDOWN\n';
-  csv+='Category,Spent (₹),Target (₹),Over/Under (₹)\n';
-  catSummary.forEach(r=>csv+=r.map(escCSV).join(',')+'\n');
-  csv+='\nDAILY LOG\n';
-  csv+=[hdr,...rows].map(r=>r.map(escCSV).join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-  a.download='budget-export-'+ymd(new Date())+'.csv';a.click();
-  showToast('File ready — open in Excel or Google Sheets');
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-// ══════════════════════════════════════════════
-// MIGRATION
-// ══════════════════════════════════════════════
-function enrich(e){
-  try{
-    const hd=gregToHijriDisplay(parseYMD(e.date));
-    return {...e,
-      id:e.id||uid(),
-      hijri:`${hd.d} ${HM[hd.m-1]} ${hd.y} AH`,
-      hijriDay:hd.d,hijriMonth:hd.m,hijriYear:hd.y,
-      qty:e.qty||'',
-      type:e.type||(e.cc?'payment':'exp'),
-      paymentCat:e.paymentCat||null
-    };
-  }catch{return e;}
-}
-function merge(incoming){
-  const ids=new Set(entries.map(e=>e.id));
-  const add=incoming.filter(e=>!ids.has(e.id));
-  entries=[...add,...entries];saveAllData();return add.length;
-}
-function doMigrate(){
-  let raw=localStorage.getItem('bt_entries')||localStorage.getItem('bt2_entries');
-  if(!raw){showToast('No old data found');return}
-  try{const n=merge(JSON.parse(raw).map(enrich));localStorage.setItem('bt3_migrated','1');
-    document.getElementById('mig-banner').style.display='none';showToast('✓ '+n+' entries migrated!');renderDash();renderLog();}
-  catch{showToast('Migration failed — use JSON import');}
-}
-function migrateJSON(input){
-  const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    try{
-      const data=JSON.parse(ev.target.result);
-      const raw=Array.isArray(data)?data:(data.entries||[]);
-      if(!raw.length){showToast('No entries found');return}
-      const n=merge(raw.map(enrich));
-      if(data.months){months=data.months;saveAllData()}
-      if(data.catBud||data.catBudgets){catBud=data.catBud||data.catBudgets;saveAllData()}
-      if(data.categories){categories=data.categories;saveAllData()}
-      if(data.hijriOffset !== undefined){hijriOffset=data.hijriOffset;saveAllData()}
-      if(data.pendingSavings !== undefined){pendingSavings=data.pendingSavings;saveAllData()}
-      localStorage.setItem('bt3_migrated','1');
-      document.getElementById('mig-banner').style.display='none';
-      showToast('✓ '+n+' entries imported!');renderDash();renderLog();renderSettings();
-    }catch{showToast('Could not read file');}
-  };reader.readAsText(file);
-}
-function exportJSON(){
-  const a=document.createElement('a');
-  a.href='data:application/json,'+encodeURIComponent(JSON.stringify({entries,months,catBud,hijriOffset,pendingSavings,categories,exported:new Date().toISOString()},null,2));
-  a.download='budget-backup-'+ymd(new Date())+'.json';a.click();
-}
-function clearAll(){
-  if(!confirm('Delete ALL entries?'))return;
-  entries=[];saveAllData();showToast('Cleared');renderDash();renderLog();
-}
+// ── INITIALIZATION ──
+window.addEventListener('load', () => {
+  window._BACKEND_URL_OVERRIDE = ls('bt3_gasUrl', '');
+  accrueDaily();
+  scheduleMidnightCheck();
+  buildCatBtns();
+  populatePaymentMethods();
+  syncPicker();
+  renderDash();
 
-// ══════════════════════════════════════════════
-// DATE PICKER, TOAST, INIT
-// ══════════════════════════════════════════════
-function buildPicker(){const el=document.getElementById('entry-date');if(!el.value)el.value=ymd(new Date());updPreview();}
-function syncPicker(){const el=document.getElementById('entry-date');if(!el.value)el.value=ymd(new Date());updPreview();}
-function updPreview(){
-  const val=document.getElementById('entry-date').value;
-  if(!val){document.getElementById('gp').textContent='—';return;}
-  try{
-    const g=parseYMD(val);
-    const h=gregToHijriDisplay(g);
-    const gregStr=g.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const hijriStr=h.d+' '+HM[h.m-1]+' '+h.y+' AH';
-    document.getElementById('gp').textContent='📅 '+gregStr+'  ·  ☪️ '+hijriStr;
-  }catch{document.getElementById('gp').textContent='Invalid date';}
-}
-function getPickedGreg(){return document.getElementById('entry-date').value||ymd(new Date());}
-
-// ── TOAST ──
-let _tt;
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2600)}
-
-// ── CHECK OLD DATA ──
-function checkOld(){
-  if(localStorage.getItem('bt3_migrated'))return;
-  const raw=localStorage.getItem('bt_entries')||localStorage.getItem('bt2_entries');
-  if(!raw)return;
-  try{const old=JSON.parse(raw);if(!old||!old.length)return;
-    document.getElementById('mig-count').textContent=old.length;
-    document.getElementById('mig-banner').style.display='block';}catch{}
-}
-
-// ── INIT ──
-// Load saved GAS URL into the runtime override
-window._BACKEND_URL_OVERRIDE = ls('bt3_gasUrl','');
-buildCatBtns();
-populatePaymentMethods();
-buildPicker();
-accrueDaily();           // accrue ₹50 for today if not already done
-scheduleMidnightCheck(); // schedule future midnight accruals
-renderDash();
-checkOld();
+  if (BACKEND_URL && navigator.onLine) {
+    pullFromBackend();
+  }
+});
 </script>
+
+
+})();
+
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_33 -->
 </body>
 </html>
