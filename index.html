@@ -793,6 +793,10 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 1. DASHBOARD PAGE                          -->
 <!-- ========================================== -->
 <div class="view-page active" id="page-dash">
+
+  <div id="migration-banner" style="display:none; background:var(--indigo-light); color:var(--indigo); padding:10px; margin: 0 16px 14px; border-radius: var(--radius-sm); text-align:center; font-size:12px; font-weight:600; border: 1px solid var(--indigo-border);">
+    Data migrated to version 3.0 successfully.
+  </div>
   
   <!-- Hero Remaining Budget Card -->
   <div class="metric-card hero-budget-card">
@@ -852,7 +856,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       <div class="card-heading" style="color:var(--amber)">
         🎯 Habit Vault Savings
       </div>
-      <span class="badge-tag tag-amber" id="savings-streak-badge">15d Active</span>
+      <span class="badge-tag tag-amber" id="savings-streak-badge">0d Active</span>
     </div>
 
     <div class="savings-pools-row">
@@ -970,7 +974,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 
   <!-- Collapsible Details Accordion -->
   <div class="accordion-toggle" onclick="toggleDetailsAccordion()">
-    <span>Transaction Details (Where, Notes)</span> <span id="accordion-arrow">▾</span>
+    <span>📝 Add Details (Where, What, Notes...)</span> <span id="accordion-arrow">▾</span>
   </div>
   <div class="accordion-content" id="form-details-accordion">
     <div class="input-card-box" style="margin:0 0 12px">
@@ -1019,14 +1023,30 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   <div class="metric-card">
     <div class="card-header-flex">
       <div class="card-heading">Capital Velocity Breakdown</div>
-      <span class="badge-tag tag-indigo">Zilqad 1447</span>
+      <span class="badge-tag tag-indigo">Current Cycle</span>
     </div>
-    <div style="text-align:center;padding:12px 0">
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center;margin-bottom:14px;">
+       <div style="background:var(--emerald-bg);padding:10px;border-radius:var(--radius-sm);color:var(--emerald);border:1px solid var(--emerald-border)">
+         <div style="font-size:10px;text-transform:uppercase;font-weight:700">Total Income</div>
+         <div style="font-size:18px;font-weight:700;font-family:var(--font-mono);margin-top:4px" id="analytics-total-inc">₹0</div>
+       </div>
+       <div style="background:var(--rose-bg);padding:10px;border-radius:var(--radius-sm);color:var(--rose);border:1px solid var(--rose-border)">
+         <div style="font-size:10px;text-transform:uppercase;font-weight:700">Total Expenses</div>
+         <div style="font-size:18px;font-weight:700;font-family:var(--font-mono);margin-top:4px" id="analytics-total-exp">₹0</div>
+       </div>
+    </div>
+    
+    <div style="text-align:center;padding:12px 0;border-top:1px dashed var(--border);border-bottom:1px dashed var(--border);">
       <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Total Effective Capital</div>
       <div style="font-family:var(--font-serif);font-size:32px;font-weight:600;color:var(--text-main);margin-top:2px" id="analytics-effective-cap">₹0</div>
       <div style="font-size:12px;color:var(--emerald);font-family:var(--font-mono);margin-top:2px" id="analytics-depleted-metric">0% Depleted • ₹0 Remaining</div>
     </div>
-    <div id="analytics-category-progress" style="margin-top:10px"></div>
+    
+    <div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:8px">SPENDING BY CATEGORY</div>
+      <div id="analytics-category-progress"></div>
+    </div>
   </div>
 
   <div class="metric-card">
@@ -1081,11 +1101,15 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   <!-- Backup & Export -->
   <div class="metric-card">
     <div class="card-header-flex">
-      <div class="card-heading">Data Backup & Export</div>
+      <div class="card-heading">Data Management & Backup</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <button class="quick-chip" onclick="openExpModal()">Export CSV / XLSX</button>
       <button class="quick-chip" onclick="exportJSON()">Backup JSON</button>
+      <button class="quick-chip" onclick="document.getElementById('import-json-file').click()">Restore JSON</button>
+      <input type="file" id="import-json-file" style="display:none" accept=".json" onchange="importJSONData(event)">
+      <button class="quick-chip" onclick="alert('Manage Categories - Coming Soon in v3.1')">Manage Categories</button>
+      <button class="quick-chip" style="grid-column: span 2" onclick="alert('Manage Budgets - Coming Soon in v3.1')">Manage Months & Budgets</button>
     </div>
   </div>
 </div>
@@ -1260,6 +1284,18 @@ let curMoIdx = 0;
 let isSyncing = false;
 let showAllCategoriesOnDash = false;
 
+// Auto Migration logic
+if (ls('bt_legacy_migrated', false) === false && ls('bt_entries', null) !== null) {
+  if (entries.length === 0) {
+    entries = ls('bt_entries', []);
+    ss('bt3_entries', entries);
+  }
+  ss('bt_legacy_migrated', true);
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('migration-banner').style.display = 'block';
+  });
+}
+
 function curMo() { return months[curMoIdx] || months[0]; }
 function moEntries() { const m = curMo(); return entries.filter(e => e.date >= m.gregStart && e.date <= m.gregEnd); }
 
@@ -1377,6 +1413,9 @@ async function pullFromBackend() {
       if (data.catBud) { catBud = data.catBud; ss('bt3_catbud', catBud); }
       if (data.hijriOffset !== undefined) { hijriOffset = data.hijriOffset; ss('bt3_offset', hijriOffset); }
       if (data.categories && data.categories.length > 0) { categories = data.categories; ss('bt3_categories', categories); }
+      if (data.pendingSavings !== undefined) { pendingSavings = data.pendingSavings; ss('bt3_pendingSavings', pendingSavings); }
+      if (data.dailySavings) { dailySavings = data.dailySavings; ss('bt3_dailySavings', dailySavings); }
+      if (data.savingsLog) { savingsLog = data.savingsLog; ss('bt3_savingsLog', savingsLog); }
       renderDash(); renderLog();
       setSyncStatus('idle', 'Synced');
       showToast('✓ Synced with Google Sheets');
@@ -1388,6 +1427,20 @@ async function pullFromBackend() {
     setSyncStatus('error', 'Local mode');
   }
 }
+
+// Smart Throttled Background Pull
+let lastPullTime = 0;
+async function smartPull() {
+  if (!BACKEND_URL || !navigator.onLine) return;
+  if (Date.now() - lastPullTime < 3600000) return; // 1 hour throttle
+  await pullFromBackend();
+  lastPullTime = Date.now();
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') smartPull();
+});
+setInterval(smartPull, 5 * 60 * 1000);
 
 let _pushTimer = null;
 function saveAllData() {
@@ -1475,6 +1528,9 @@ function renderDash() {
   document.getElementById('vault-pool-avoidable').textContent = fmt(pendingSavings);
   document.getElementById('vault-pool-daily').textContent = fmt(dailySavings.total);
   document.getElementById('vault-total-transfer').textContent = fmt(pendingSavings + dailySavings.total);
+  
+  const streakDays = Math.floor(dailySavings.total / 50);
+  document.getElementById('savings-streak-badge').textContent = streakDays + 'd Active';
 
   const histBox = document.getElementById('vault-history-box');
   if (savingsLog && savingsLog.length > 0) {
@@ -1757,6 +1813,8 @@ function renderAnalytics() {
 
   document.getElementById('analytics-effective-cap').textContent = fmt(effBud);
   document.getElementById('analytics-depleted-metric').textContent = `${pv}% Depleted • ${fmt(rem)} Remaining`;
+  document.getElementById('analytics-total-inc').textContent = fmt(income);
+  document.getElementById('analytics-total-exp').textContent = fmt(spent);
 
   const container = document.getElementById('analytics-category-progress');
   const catList = categories.filter(c => c.type === 'exp');
@@ -1781,7 +1839,7 @@ function renderAnalytics() {
 // ── SETTINGS ──
 function renderSettings() {
   const gasEl = document.getElementById('gas-url-input');
-  if (gasEl) gasEl.value = ls('bt3_gasUrl', '');
+  if (gasEl) gasEl.value = BACKEND_URL;
   updateOffsetPreview();
 }
 
@@ -1841,7 +1899,7 @@ function delEntry(id) {
   showToast('Entry deleted');
 }
 
-// ── EXPORT ENGINE ──
+// ── EXPORT & RESTORE ENGINE ──
 function doExport() {
   const scope = document.getElementById('exp-scope-sel').value;
   let pool = entries;
@@ -1868,10 +1926,36 @@ function doExport() {
 
 function exportJSON() {
   const a = document.createElement('a');
-  a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify({ entries, months, catBud, hijriOffset, pendingSavings, dailySavings, categories }, null, 2));
+  a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify({ entries, months, catBud, hijriOffset, pendingSavings, dailySavings, categories, savingsLog }, null, 2));
   a.download = `35k-budget-backup-${ymd(new Date())}.json`;
   a.click();
   showToast('JSON backup downloaded');
+}
+
+function importJSONData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      const data = JSON.parse(evt.target.result);
+      if (data.entries) entries = data.entries;
+      if (data.months) months = data.months;
+      if (data.catBud) catBud = data.catBud;
+      if (data.categories) categories = data.categories;
+      if (data.pendingSavings !== undefined) pendingSavings = data.pendingSavings;
+      if (data.dailySavings) dailySavings = data.dailySavings;
+      if (data.savingsLog) savingsLog = data.savingsLog;
+      if (data.hijriOffset !== undefined) hijriOffset = data.hijriOffset;
+      
+      saveAllData();
+      renderDash();
+      showToast('✅ Data Restored Successfully');
+    } catch (err) {
+      showToast('❌ Invalid JSON File');
+    }
+  };
+  reader.readAsText(file);
 }
 
 function showToast(msg) {
