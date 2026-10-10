@@ -1020,6 +1020,32 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 4. ANALYTICS PAGE                          -->
 <!-- ========================================== -->
 <div class="view-page" id="page-analytics">
+  <!-- 1. Runway Forecasting Card -->
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🛫 Runway Forecast</div>
+      <span class="badge-tag tag-emerald" id="runway-status-badge">On Track</span>
+    </div>
+    <div style="padding:10px 0;text-align:center;">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Projected Depletion</div>
+      <div style="font-family:var(--font-serif);font-size:28px;font-weight:600;color:var(--text-main);" id="runway-days-left">0 Days</div>
+      <div style="font-size:11px;font-family:var(--font-mono);margin-top:4px;color:var(--text-muted)" id="runway-projection-text">Based on ₹0/d burn rate</div>
+    </div>
+    <div class="progress-rail" style="height:4px;margin-top:12px;background:var(--surface-low)">
+      <div class="progress-fill" id="runway-progress-bar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- 2. Behavioral Insights Card -->
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🧠 Behavioral Engine</div>
+    </div>
+    <div id="analytics-insights-container" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+      <!-- Insights injected here -->
+    </div>
+  </div>
+
   <div class="metric-card">
     <div class="card-header-flex">
       <div class="card-heading">Capital Velocity Breakdown</div>
@@ -1046,16 +1072,6 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     <div style="margin-top:14px">
       <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:8px">SPENDING BY CATEGORY</div>
       <div id="analytics-category-progress"></div>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="card-header-flex">
-      <div class="card-heading">Savings Engine Telemetry</div>
-      <span class="badge-tag tag-amber">Live Rule</span>
-    </div>
-    <div style="font-size:12px;color:var(--text-muted);line-height:1.5" id="analytics-savings-telemetry-text">
-      Avoidable dining automatically triggers a 10% penalty into Vault Savings, accompanied by a daily ₹50 midnight habit commitment.
     </div>
   </div>
 </div>
@@ -1811,13 +1827,115 @@ function renderAnalytics() {
   const rem = effBud - spent;
   const pv = pct(spent, effBud);
 
+  // Time metrics for pacing
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const start = parseYMD(m.gregStart), end = parseYMD(m.gregEnd);
+  const elapsed = Math.max(1, Math.min(m.totalDays, Math.round((Math.min(today, end) - start) / 86400000) + 1));
+  const daysLeftInMonth = Math.max(0, m.totalDays - elapsed);
+  
+  // 1. Runway Forecasting
+  const dailyBurn = spent / elapsed;
+  let runwayDays = 0;
+  if (dailyBurn > 0) {
+    runwayDays = Math.floor(rem / dailyBurn);
+  } else {
+    runwayDays = daysLeftInMonth;
+  }
+  
+  const runwayEl = document.getElementById('runway-days-left');
+  const runwayBadge = document.getElementById('runway-status-badge');
+  const runwayBar = document.getElementById('runway-progress-bar');
+  const runwayText = document.getElementById('runway-projection-text');
+  
+  if (rem <= 0) {
+    runwayEl.textContent = 'Out of Capital';
+    runwayEl.style.color = 'var(--rose)';
+    runwayBadge.textContent = 'Depleted';
+    runwayBadge.className = 'badge-tag tag-amber';
+    runwayBadge.style.background = 'var(--rose-bg)';
+    runwayBadge.style.color = 'var(--rose)';
+    runwayBadge.style.borderColor = 'var(--rose-border)';
+    runwayBar.style.width = '100%';
+    runwayBar.style.background = 'var(--rose)';
+    runwayText.textContent = `Burned ${fmt(dailyBurn)}/d • 0 runway left`;
+  } else if (runwayDays < daysLeftInMonth) {
+    const shortfall = daysLeftInMonth - runwayDays;
+    runwayEl.textContent = runwayDays + ' Days Runway';
+    runwayEl.style.color = 'var(--text-main)';
+    runwayBadge.textContent = shortfall + 'd Shortfall';
+    runwayBadge.className = 'badge-tag tag-amber';
+    runwayBadge.style.background = 'var(--amber-bg)';
+    runwayBadge.style.color = 'var(--amber)';
+    runwayBadge.style.borderColor = 'var(--amber-border)';
+    runwayBar.style.width = Math.min(100, (runwayDays / daysLeftInMonth) * 100) + '%';
+    runwayBar.style.background = 'var(--amber)';
+    runwayText.textContent = `At ${fmt(dailyBurn)}/d • Runs out before month ends`;
+  } else {
+    runwayEl.textContent = runwayDays + ' Days Runway';
+    runwayEl.style.color = 'var(--text-main)';
+    runwayBadge.textContent = 'On Track';
+    runwayBadge.className = 'badge-tag tag-emerald';
+    runwayBadge.style.background = 'var(--emerald-bg)';
+    runwayBadge.style.color = 'var(--emerald)';
+    runwayBadge.style.borderColor = 'var(--emerald-border)';
+    runwayBar.style.width = '100%';
+    runwayBar.style.background = 'var(--emerald)';
+    runwayText.textContent = `At ${fmt(dailyBurn)}/d • Covers remaining ${daysLeftInMonth} days safely`;
+  }
+
+  // 2. Behavioral Insights
+  const insights = [];
+  const catList = categories.filter(c => c.type === 'exp');
+  const expectedDepletionPct = (elapsed / m.totalDays) * 100;
+
+  catList.forEach(cat => {
+    const s = me.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
+    const b = catBud[cat.id] || 0;
+    if (b > 0) {
+      const catDepletion = (s / b) * 100;
+      if (catDepletion > expectedDepletionPct + 25) {
+        insights.push({ type: 'warn', text: `You've burned ${Math.round(catDepletion)}% of your ${cat.label} budget, but only ${Math.round(expectedDepletionPct)}% of the month has passed.` });
+      } else if (s > 0 && catDepletion < expectedDepletionPct - 20) {
+        insights.push({ type: 'good', text: `Pacing Well: You are spending highly efficiently on ${cat.label} this cycle.` });
+      }
+    }
+  });
+
+  const avoidS = me.filter(e => e.cat === 'avoidable').reduce((a, e) => a + e.amt, 0);
+  if (avoidS > 0) {
+    insights.push({ type: 'info', text: `Your ${fmt(avoidS)} spending on Avoidable categories has automatically routed ${fmt(avoidS * 0.1)} to your Habit Vault.` });
+  }
+
+  insights.sort((a, b) => {
+    const rank = { 'warn': 1, 'info': 2, 'good': 3 };
+    return rank[a.type] - rank[b.type];
+  });
+  const topInsights = insights.slice(0, 3);
+
+  const insightsContainer = document.getElementById('analytics-insights-container');
+  if (topInsights.length === 0) {
+    insightsContainer.innerHTML = `<div style="font-size:11px;color:var(--text-muted);text-align:center;padding:10px;">Not enough data for insights yet. Keep logging!</div>`;
+  } else {
+    insightsContainer.innerHTML = topInsights.map(ins => {
+      let icon = '💡';
+      let bg = 'var(--surface-low)';
+      let color = 'var(--text-main)';
+      let border = 'var(--border)';
+      if (ins.type === 'warn') { icon = '🚨'; bg = 'var(--rose-bg)'; color = 'var(--rose)'; border = 'var(--rose-border)'; }
+      if (ins.type === 'good') { icon = '🏆'; bg = 'var(--emerald-bg)'; color = 'var(--emerald)'; border = 'var(--emerald-border)'; }
+      if (ins.type === 'info') { icon = '🎯'; bg = 'var(--amber-bg)'; color = 'var(--amber)'; border = 'var(--amber-border)'; }
+      return `<div style="display:flex;gap:10px;background:${bg};border:1px solid ${border};padding:10px 12px;border-radius:var(--radius-sm);font-size:11px;color:${color};align-items:flex-start;line-height:1.4;">
+                <div style="font-size:14px;">${icon}</div><div>${ins.text}</div>
+              </div>`;
+    }).join('');
+  }
+
   document.getElementById('analytics-effective-cap').textContent = fmt(effBud);
   document.getElementById('analytics-depleted-metric').textContent = `${pv}% Depleted • ${fmt(rem)} Remaining`;
   document.getElementById('analytics-total-inc').textContent = fmt(income);
   document.getElementById('analytics-total-exp').textContent = fmt(spent);
 
   const container = document.getElementById('analytics-category-progress');
-  const catList = categories.filter(c => c.type === 'exp');
   container.innerHTML = catList.map(cat => {
     const s = me.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
     const b = catBud[cat.id] || 0;
