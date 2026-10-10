@@ -45,6 +45,11 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
+  // Ignore non-HTTP/HTTPS requests (e.g., chrome-extension://) to prevent caching errors
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+
   // Network-only for Google Apps Script API calls
   if (url.hostname.includes('script.google.com') || url.hostname.includes('googleapis.com')) {
     event.respondWith(
@@ -105,3 +110,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
