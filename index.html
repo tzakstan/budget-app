@@ -1129,8 +1129,8 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       <button class="quick-chip" onclick="exportJSON()">Backup JSON</button>
       <button class="quick-chip" onclick="document.getElementById('import-json-file').click()">Restore JSON</button>
       <input type="file" id="import-json-file" style="display:none" accept=".json" onchange="importJSONData(event)">
-      <button class="quick-chip" onclick="alert('Manage Categories - Coming Soon in v3.1')">Manage Categories</button>
-      <button class="quick-chip" style="grid-column: span 2" onclick="alert('Manage Budgets - Coming Soon in v3.1')">Manage Months & Budgets</button>
+      <button class="quick-chip" onclick="openCatManager()">Manage Categories</button>
+      <button class="quick-chip" style="grid-column: span 2" onclick="openMonthsManager()">Manage Months &amp; Budgets</button>
     </div>
   </div>
 </div>
@@ -1172,6 +1172,51 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     </div>
     <button class="btn-primary-save" style="width:100%;margin:0 0 8px" onclick="doExport()">Download File</button>
     <button style="width:100%;background:none;border:none;padding:8px;font-size:12px;color:var(--text-muted);cursor:pointer" onclick="document.getElementById('exp-modal').classList.add('hidden')">Cancel</button>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- CATEGORY MODAL                             -->
+<!-- ========================================== -->
+<div class="modal-overlay hidden" id="cat-modal" onclick="closeCatModal(event)">
+  <div class="modal-bottom-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-drag-handle"></div>
+    <div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:16px">Manage Categories</div>
+    
+    <div id="cat-manager-list" style="max-height:40vh;overflow-y:auto;margin-bottom:16px;">
+      <!-- Populated by JS -->
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;margin-bottom:8px">ADD NEW CATEGORY</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input type="text" id="new-cat-icon" placeholder="😀" maxlength="2" style="width:40px;text-align:center" class="styled-field">
+        <input type="text" id="new-cat-label" placeholder="Category Name" class="styled-field" style="flex:1">
+      </div>
+      <select id="new-cat-type" class="styled-field" style="margin-bottom:8px">
+        <option value="exp">Expense</option>
+        <option value="payment">Payment Method</option>
+        <option value="income">Income</option>
+      </select>
+      <button class="btn-primary-save" style="width:100%;margin:0" onclick="addNewCategory()">Add Category</button>
+    </div>
+
+    <button style="width:100%;margin-bottom:8px;padding:12px;background:var(--rose-bg);border:1px solid var(--rose-border);border-radius:var(--radius-sm);color:var(--rose);font-weight:600;font-size:13px;cursor:pointer" onclick="resetCategories()">
+      Reset to Defaults
+    </button>
+    <button style="width:100%;background:none;border:none;padding:8px;font-size:12px;color:var(--text-muted);cursor:pointer" onclick="document.getElementById('cat-modal').classList.add('hidden')">Close</button>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MONTHS & BUDGETS MODAL                     -->
+<!-- ========================================== -->
+<div class="modal-overlay hidden" id="months-modal" onclick="closeMonthsModal(event)">
+  <div class="modal-bottom-sheet" style="max-height:85vh;overflow-y:auto;padding-bottom:20px;" onclick="event.stopPropagation()">
+    <div class="sheet-drag-handle"></div>
+    <div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:14px">Manage Months &amp; Budgets</div>
+    <div id="months-modal-body"></div>
+    <button style="width:100%;background:var(--card-bg);border:1px solid var(--border-color);padding:12px;font-size:13px;color:var(--text-color);border-radius:var(--radius-sm);cursor:pointer;margin-top:16px;font-weight:600;" onclick="document.getElementById('months-modal').classList.add('hidden')">Close</button>
   </div>
 </div>
 
@@ -2124,6 +2169,307 @@ function updateOffsetPreview() {
   document.getElementById('offset-display').textContent = (hijriOffset >= 0 ? '+' : '') + hijriOffset;
   const h = gregToHijriDisplay(new Date());
   document.getElementById('offset-preview').textContent = `Today = ${h.d} ${HM[h.m - 1]} ${h.y} AH`;
+}
+
+// ── CATEGORY MANAGER ──
+function openCatManager() {
+  document.getElementById('cat-modal').classList.remove('hidden');
+  renderCatManagerList();
+}
+
+function renderCatManagerList() {
+  const container = document.getElementById('cat-manager-list');
+  const types = [
+    { key: 'exp', title: 'Expenses' },
+    { key: 'payment', title: 'Payments' },
+    { key: 'income', title: 'Income' }
+  ];
+  
+  let html = '';
+  types.forEach(t => {
+    const cats = categories.filter(c => c.type === t.key);
+    html += `
+      <details style="margin-bottom:8px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm)">
+        <summary style="padding:10px;font-weight:600;font-size:14px;cursor:pointer">${t.title} (${cats.length})</summary>
+        <div style="padding:0 10px 10px;">
+          ${cats.map(c => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:16px">${c.icon}</span>
+                <span style="font-size:14px">${c.label}</span>
+              </div>
+              <button onclick="deleteCategory('${c.id}')" style="background:none;border:none;cursor:pointer;font-size:16px" title="Delete">🗑️</button>
+            </div>
+          `).join('')}
+        </div>
+      </details>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function addNewCategory() {
+  const icon = document.getElementById('new-cat-icon').value.trim();
+  const label = document.getElementById('new-cat-label').value.trim();
+  const type = document.getElementById('new-cat-type').value;
+  
+  if (!icon || !label) {
+    alert('Please provide an icon and a label.');
+    return;
+  }
+  
+  const newId = type.substring(0,3) + '_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 2);
+  categories.push({ id: newId, label: label, icon: icon, type: type });
+  
+  document.getElementById('new-cat-icon').value = '';
+  document.getElementById('new-cat-label').value = '';
+  
+  saveAllData();
+  buildCatBtns();
+  populatePaymentMethods();
+  renderCatManagerList();
+}
+
+function deleteCategory(id) {
+  const cat = categories.find(c => c.id === id);
+  if (!cat) return;
+  
+  if (cat.type === 'exp') {
+    const expCount = categories.filter(c => c.type === 'exp').length;
+    if (expCount <= 1) {
+      alert('You must have at least one expense category.');
+      return;
+    }
+  }
+  
+  const inUse = entries.some(e => e.cat === id || e.paymentCat === id);
+  if (inUse) {
+    if (!confirm(`Warning: The category "${cat.label}" is being used by existing entries. Deleting it may cause those entries to display incorrectly. Continue?`)) {
+      return;
+    }
+  } else {
+    if (!confirm(`Delete category "${cat.label}"?`)) {
+      return;
+    }
+  }
+  
+  categories = categories.filter(c => c.id !== id);
+  saveAllData();
+  buildCatBtns();
+  populatePaymentMethods();
+  renderCatManagerList();
+}
+
+function resetCategories() {
+  if (confirm('Are you sure you want to reset all categories to defaults? Any custom categories will be lost.')) {
+    categories = JSON.parse(JSON.stringify(DEFAULT_CATS));
+    saveAllData();
+    buildCatBtns();
+    populatePaymentMethods();
+    renderCatManagerList();
+  }
+}
+
+function closeCatModal(e) {
+  if (e.target.id === 'cat-modal' || e.target.classList.contains('sheet-drag-handle')) {
+    document.getElementById('cat-modal').classList.add('hidden');
+  }
+}
+
+// ── MANAGE MONTHS & BUDGETS ──
+function openMonthsManager() {
+  renderMonthsManagerBody();
+  document.getElementById('months-modal').classList.remove('hidden');
+}
+
+function renderMonthsManagerBody() {
+  const container = document.getElementById('months-modal-body');
+  const m = months[curMoIdx];
+  
+  let html = `<div style="margin-bottom:20px;">
+    <h3 style="font-size:14px;margin-bottom:10px;color:var(--indigo);">Existing Months</h3>`;
+  
+  months.forEach((mo, idx) => {
+    html += `
+      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <strong style="font-size:14px;">${mo.name} ${mo.hijriYear}</strong>
+          <button style="background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-border);border-radius:var(--radius-sm);padding:4px 8px;font-size:11px;cursor:pointer;" onclick="deleteMonth(${idx})" ${months.length <= 1 ? 'disabled' : ''}>Delete</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">${mo.gregStart} &ndash; ${mo.gregEnd}</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label style="font-size:11px;color:var(--text-muted);">Total Budget:</label>
+          <input type="number" min="0" value="${mo.totalBudget}" class="styled-field" style="padding:4px 8px;font-size:12px;width:100px;" oninput="updateMonthBudget(${idx}, this.value)">
+        </div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+
+  html += `
+    <div style="margin-bottom:20px;background:var(--surface-low);padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border-color);">
+      <h3 style="font-size:14px;margin-bottom:10px;color:var(--indigo);">Add New Month</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <input type="text" id="new-mo-name" class="styled-field" placeholder="Name (e.g. Zilhaj)">
+        <input type="number" id="new-mo-year" class="styled-field" placeholder="Hijri Year" value="${m ? m.hijriYear : ''}">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <input type="date" id="new-mo-start" class="styled-field">
+        <input type="date" id="new-mo-end" class="styled-field">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;align-items:center;">
+        <input type="number" min="0" id="new-mo-bud" class="styled-field" placeholder="Total Budget">
+        <button class="btn-primary-save" style="padding:8px;margin:0;" onclick="addNewMonth()">Add Month</button>
+      </div>
+    </div>
+  `;
+
+  if (m) {
+    html += `
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:14px;margin-bottom:10px;color:var(--indigo);">Weekly Targets (${m.name} ${m.hijriYear})</h3>
+        ${m.weeks.map((w, wIdx) => `
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;margin-bottom:8px;font-size:12px;">
+            <div style="width:40px;font-weight:600;">${w.label}</div>
+            <div style="flex:1;font-size:11px;color:var(--text-muted);">${w.hijriDays}<br>${w.gStart} &ndash; ${w.gEnd}</div>
+            <input type="number" min="0" value="${w.budget}" class="styled-field" style="width:80px;padding:4px;font-size:12px;" oninput="updateWeekBudget(${curMoIdx}, ${wIdx}, this.value)">
+          </div>
+        `).join('')}
+        
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:10px;padding:8px;background:var(--surface-low);border:1px solid var(--border-color);border-radius:var(--radius-sm);">
+          <div style="width:100%;font-size:12px;font-weight:600;margin-bottom:4px;color:var(--text-muted)">Add New Week</div>
+          <input type="text" id="new-wk-label" placeholder="Label (e.g. W5)" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
+          <input type="text" id="new-wk-hdays" placeholder="Hijri Days (1-7)" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
+          <input type="date" id="new-wk-start" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
+          <input type="date" id="new-wk-end" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
+          <input type="number" min="0" id="new-wk-bud" placeholder="Budget" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
+          <button style="width:calc(50% - 2px);padding:4px;background:var(--indigo);color:white;border:none;border-radius:var(--radius-sm);font-size:11px;cursor:pointer;" onclick="addWeekToMonth(${curMoIdx})">Add Week</button>
+        </div>
+        <div style="margin-top:10px;text-align:right;">
+          <button style="padding:4px 8px;background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer;" onclick="removeLastWeek(${curMoIdx})" ${m.weeks.length === 0 ? 'disabled' : ''}>- Remove Last Week</button>
+        </div>
+      </div>
+    `;
+  }
+
+  html += `
+    <div style="margin-bottom:20px;">
+      <h3 style="font-size:14px;margin-bottom:10px;color:var(--indigo);">Category Budgets (Monthly)</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        ${categories.filter(c => c.type === 'exp').map(c => `
+          <div style="display:flex;flex-direction:column;gap:4px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;">
+            <label style="font-size:11px;">${c.icon} ${c.label}</label>
+            <input type="number" min="0" value="${catBud[c.id] || 0}" class="styled-field" style="padding:4px;font-size:12px;" oninput="updateCatBudget('${c.id}', this.value)">
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+function addNewMonth() {
+  const name = document.getElementById('new-mo-name').value.trim();
+  const year = parseInt(document.getElementById('new-mo-year').value);
+  const start = document.getElementById('new-mo-start').value;
+  const end = document.getElementById('new-mo-end').value;
+  const bud = parseInt(document.getElementById('new-mo-bud').value);
+
+  if (!name || isNaN(year) || !start || !end || isNaN(bud)) {
+    alert("Please fill all month fields correctly.");
+    return;
+  }
+
+  const startDate = parseYMD(start);
+  const endDate = parseYMD(end);
+  const totalDays = Math.round((endDate - startDate) / 86400000) + 1;
+
+  const newMo = {
+    id: name.toLowerCase().replace(/\\s+/g, '-') + '-' + year,
+    name: name,
+    hijriYear: year,
+    gregStart: start,
+    gregEnd: end,
+    totalDays: totalDays,
+    totalBudget: bud,
+    weeks: []
+  };
+
+  months.push(newMo);
+  curMoIdx = months.length - 1;
+  saveAllData();
+  renderDash();
+  renderMonthsManagerBody();
+}
+
+function deleteMonth(idx) {
+  if (months.length <= 1) return;
+  if (!confirm('Are you sure you want to delete this month?')) return;
+  
+  months.splice(idx, 1);
+  if (curMoIdx >= months.length) curMoIdx = months.length - 1;
+  
+  saveAllData();
+  renderDash();
+  renderMonthsManagerBody();
+}
+
+function updateMonthBudget(idx, val) {
+  months[idx].totalBudget = parseInt(val) || 0;
+  saveAllData();
+  renderDash();
+}
+
+function addWeekToMonth(idx) {
+  const label = document.getElementById('new-wk-label').value.trim();
+  const hdays = document.getElementById('new-wk-hdays').value.trim();
+  const start = document.getElementById('new-wk-start').value;
+  const end = document.getElementById('new-wk-end').value;
+  const bud = parseInt(document.getElementById('new-wk-bud').value);
+
+  if (!label || !hdays || !start || !end || isNaN(bud)) {
+    alert("Please fill all week fields.");
+    return;
+  }
+
+  months[idx].weeks.push({
+    label: label,
+    hijriDays: hdays,
+    gStart: start,
+    gEnd: end,
+    budget: bud
+  });
+
+  saveAllData();
+  renderDash();
+  renderMonthsManagerBody();
+}
+
+function removeLastWeek(idx) {
+  if (months[idx].weeks.length === 0) return;
+  months[idx].weeks.pop();
+  saveAllData();
+  renderDash();
+  renderMonthsManagerBody();
+}
+
+function updateWeekBudget(moIdx, wkIdx, val) {
+  months[moIdx].weeks[wkIdx].budget = parseInt(val) || 0;
+  saveAllData();
+  renderDash();
+}
+
+function updateCatBudget(catId, val) {
+  catBud[catId] = parseInt(val) || 0;
+  saveAllData();
+  renderDash();
+}
+
+function closeMonthsModal(e) {
+  if (e.target.id === 'months-modal') {
+    document.getElementById('months-modal').classList.add('hidden');
+  }
 }
 
 // ── DETAIL & MODAL ──
