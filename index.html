@@ -2592,6 +2592,17 @@ window.addEventListener('beforeinstallprompt', (e) => {
 // ── INITIALIZATION ──
 window.addEventListener('load', () => {
   window._BACKEND_URL_OVERRIDE = ls('bt3_gasUrl', '');
+
+  // Auto-detect and select the current month based on today's date
+  const todayStr = ymd(new Date());
+  const activeIdx = months.findIndex(m => todayStr >= m.gregStart && todayStr <= m.gregEnd);
+  if (activeIdx !== -1) {
+    curMoIdx = activeIdx;
+  } else {
+    // Fallback to the latest month if today doesn't strictly fall in any defined range
+    curMoIdx = months.length - 1;
+  }
+
   accrueDaily();
   scheduleMidnightCheck();
   buildCatBtns();
@@ -2616,3 +2627,4 @@ window.addEventListener('load', () => {
 </html>
 
 
+``
