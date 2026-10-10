@@ -7,11 +7,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<meta name="apple-mobile-web-app-title" content="35k Budget"/>
+<meta name="apple-mobile-web-app-title" content="My Budget"/>
 <meta name="description" content="Personal wealth & habit engine with Dawoodi Bohra calendar integration"/>
 <link rel="manifest" href="manifest.json"/>
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0iIzRmNDZlNSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTQlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZvbnQtc2l6ZT0iMjQwIiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5NQjwvdGV4dD48L3N2Zz4="/>
-<title>35k Budget Tracker — Personal Wealth & Habit Engine</title>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<title>My Personal Budget Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -770,9 +770,9 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- Top Sticky Header -->
 <header class="app-header">
   <div class="brand-pill">
-    <div class="brand-icon">35</div>
+    <div class="brand-icon" style="font-size:11px;">MB</div>
     <div>
-      <div class="brand-title">35k Budget Tracker</div>
+      <div class="brand-title">My Personal Budget</div>
     </div>
   </div>
   <div class="sync-badge" id="sync-pill" onclick="triggerManualSync()" title="Click to synchronize with Google Sheet">
@@ -1321,11 +1321,31 @@ function moEntries() { const m = curMo(); return entries.filter(e => e.date >= m
 
 // ── SAVINGS ACCRUAL ENGINE ──
 function accrueDaily() {
-  const todayStr = ymd(new Date());
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayStr = ymd(today);
+  
+  if (!dailySavings.lastDate) {
+    dailySavings.lastDate = todayStr;
+    dailySavings.total += 50;
+    ss('bt3_dailySavings', dailySavings);
+    saveAllData();
+    return;
+  }
+  
   if (dailySavings.lastDate === todayStr) return;
-  dailySavings.lastDate = todayStr;
-  dailySavings.total += 50;
-  ss('bt3_dailySavings', dailySavings);
+  
+  const lastD = parseYMD(dailySavings.lastDate);
+  lastD.setHours(0, 0, 0, 0);
+  
+  const diffDays = Math.max(1, Math.floor((today - lastD) / (1000 * 60 * 60 * 24)));
+  
+  if (diffDays > 0) {
+    dailySavings.total += (diffDays * 50);
+    dailySavings.lastDate = todayStr;
+    ss('bt3_dailySavings', dailySavings);
+    saveAllData();
+  }
 }
 
 function scheduleMidnightCheck() {
@@ -1534,6 +1554,7 @@ async function pullFromBackend(force = false) {
       _syncCache.lastPayloadHash = fastHash(JSON.stringify(buildPayload()));
       ss('bt3_lastPayloadHash', _syncCache.lastPayloadHash);
 
+      accrueDaily(); // Accrue immediately after pull in case backend had an old state
       renderDash(); renderLog();
       const elapsed = Math.round(performance.now() - t0);
       console.log(`[Sync] Pull completed in ${elapsed}ms — merged ${mergedCount} new entries`);
