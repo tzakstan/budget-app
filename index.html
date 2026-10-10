@@ -14,7 +14,7 @@
 <title>My Personal Budget Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,12,400;0,12,500;0,12,600;1,12,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 /* ── DESIGN TOKENS & RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -1546,8 +1546,6 @@ async function pullFromBackend(force = false) {
       if (data.catBud) { catBud = data.catBud; ss('bt3_catbud', catBud); }
       if (data.hijriOffset !== undefined) { hijriOffset = data.hijriOffset; ss('bt3_offset', hijriOffset); }
       if (data.categories && data.categories.length > 0) { categories = data.categories; ss('bt3_categories', categories); }
-      if (data.pendingSavings !== undefined) { pendingSavings = data.pendingSavings; ss('bt3_pendingSavings', pendingSavings); }
-      if (data.dailySavings) { dailySavings = data.dailySavings; ss('bt3_dailySavings', dailySavings); }
       if (data.savingsLog) { savingsLog = data.savingsLog; ss('bt3_savingsLog', savingsLog); }
 
       // Update the payload hash so we don't re-push what we just pulled
@@ -2270,4 +2268,5 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
+
 
