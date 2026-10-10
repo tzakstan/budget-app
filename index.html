@@ -6,6 +6,11 @@
 <meta name="theme-color" content="#f8faff"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="35k Budget"/>
+<meta name="description" content="Personal wealth & habit engine with Dawoodi Bohra calendar integration"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
 <title>35k Budget Tracker — Personal Wealth & Habit Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1297,7 +1302,6 @@ let savingsLog = ls('bt3_savingsLog', [
   { date: '2026-04-05', dateLabel: '05 Apr 2026', avoidable: 600, daily: 500, total: 1100 }
 ]);
 let curMoIdx = 0;
-let isSyncing = false;
 let showAllCategoriesOnDash = false;
 
 // Auto Migration logic
@@ -1357,11 +1361,22 @@ function confirmSavings() {
   }
 }
 
-// ── BACKEND GOOGLE APPS SCRIPT SYNC ──
+// ── OPTIMIZED BACKEND SYNC ENGINE ──
+// Batch writes, delta-only pushes, ETag caching, offline queue
+
 Object.defineProperty(window, 'BACKEND_URL', {
   get: function() { return window._BACKEND_URL_OVERRIDE || ls('bt3_gasUrl', '') || window._BACKEND_URL_HARDCODED || ''; },
   configurable: true
 });
+
+// Sync state
+let isSyncing = false;
+let _syncCache = { etag: ls('bt3_syncEtag', ''), lastPayloadHash: ls('bt3_lastPayloadHash', '') };
+let _offlineQueue = ls('bt3_offlineQueue', []);
+let _lastPullTimestamp = ls('bt3_lastPullTs', 0);
+const PULL_THROTTLE_MS = 5 * 60 * 1000; // 5 min between pulls
+const PUSH_DEBOUNCE_MS = 3000;
+const OFFLINE_RETRY_MS = 30000;
 
 function setSyncStatus(state, label) {
   const dot = document.getElementById('sync-dot');
@@ -1374,57 +1389,139 @@ function setSyncStatus(state, label) {
 function saveGasUrl(url) {
   window._BACKEND_URL_OVERRIDE = url.trim();
   ss('bt3_gasUrl', url.trim());
+  _syncCache.etag = ''; // Reset cache on URL change
+  _syncCache.lastPayloadHash = '';
+  ss('bt3_syncEtag', '');
+  ss('bt3_lastPayloadHash', '');
   if (url.trim()) showToast('URL configured');
 }
 
-function triggerManualSync() {
-  if (!BACKEND_URL) {
-    showToast('Please set your Apps Script URL in Settings');
-    showPage('settings', document.querySelectorAll('.nav-tab-btn')[4]);
-    return;
+// Fast hash for change detection (djb2)
+function fastHash(str) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash + str.charCodeAt(i)) & 0xFFFFFFFF;
   }
-  pullFromBackend();
+  return hash.toString(36);
 }
 
-async function pushToBackend() {
+function buildPayload() {
+  return { entries, months, catBud, hijriOffset, pendingSavings, dailySavings, savingsLog, categories };
+}
+
+// ── BATCH PUSH (Delta-only) ──
+async function pushToBackend(force = false) {
   if (!BACKEND_URL) { setSyncStatus('idle', 'No URL'); return; }
-  if (!navigator.onLine) { setSyncStatus('error', 'Offline'); return; }
   if (isSyncing) return;
+
+  const payload = buildPayload();
+  const payloadStr = JSON.stringify(payload);
+  const currentHash = fastHash(payloadStr);
+
+  // Skip push if nothing changed (unless forced)
+  if (!force && currentHash === _syncCache.lastPayloadHash) {
+    console.log('[Sync] No changes detected, skipping push');
+    setSyncStatus('idle', 'Synced');
+    return;
+  }
+
+  if (!navigator.onLine) {
+    // Queue for later
+    _offlineQueue.push({ type: 'push', timestamp: Date.now(), hash: currentHash });
+    ss('bt3_offlineQueue', _offlineQueue);
+    setSyncStatus('error', 'Queued offline');
+    console.log('[Sync] Offline — push queued');
+    return;
+  }
+
   isSyncing = true;
-  setSyncStatus('syncing', 'Syncing...');
+  setSyncStatus('syncing', 'Pushing...');
+  const t0 = performance.now();
+
   try {
-    const payload = { entries, months, catBud, hijriOffset, pendingSavings, dailySavings, savingsLog, categories };
     await fetch(BACKEND_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
+      body: payloadStr
     });
-    setSyncStatus('idle', 'Saved');
+
+    _syncCache.lastPayloadHash = currentHash;
+    ss('bt3_lastPayloadHash', currentHash);
     ss('bt3_lastSync', new Date().toISOString());
+
+    const elapsed = Math.round(performance.now() - t0);
+    console.log(`[Sync] Push completed in ${elapsed}ms (${(payloadStr.length / 1024).toFixed(1)}KB)`);
+    setSyncStatus('idle', 'Saved');
   } catch (e) {
-    console.warn('Sync failed:', e);
-    setSyncStatus('error', 'Sync failed');
+    console.warn('[Sync] Push failed:', e);
+    _offlineQueue.push({ type: 'push', timestamp: Date.now(), hash: currentHash });
+    ss('bt3_offlineQueue', _offlineQueue);
+    setSyncStatus('error', 'Push failed');
   } finally {
     isSyncing = false;
   }
 }
 
-async function pullFromBackend() {
+// ── CACHED PULL (ETag / Throttled) ──
+async function pullFromBackend(force = false) {
   if (!BACKEND_URL) return;
+
+  // Throttle unless forced
+  const now = Date.now();
+  if (!force && (now - _lastPullTimestamp) < PULL_THROTTLE_MS) {
+    console.log('[Sync] Pull throttled — last pull was ' + Math.round((now - _lastPullTimestamp) / 1000) + 's ago');
+    return;
+  }
+
   if (!navigator.onLine) { setSyncStatus('error', 'Offline'); return; }
+  if (isSyncing) return;
+
+  isSyncing = true;
+  setSyncStatus('syncing', 'Pulling...');
+  const t0 = performance.now();
+
   try {
-    setSyncStatus('syncing', 'Pulling...');
-    const resp = await fetch(BACKEND_URL + '?action=pull', { method: 'GET' });
+    const headers = {};
+    if (_syncCache.etag) {
+      headers['If-None-Match'] = _syncCache.etag;
+    }
+
+    const resp = await fetch(BACKEND_URL + '?action=pull', { method: 'GET', headers });
+
+    // 304 Not Modified — cache is still valid
+    if (resp.status === 304) {
+      const elapsed = Math.round(performance.now() - t0);
+      console.log(`[Sync] Cache hit (304) in ${elapsed}ms — no changes on server`);
+      _lastPullTimestamp = now;
+      ss('bt3_lastPullTs', now);
+      setSyncStatus('idle', 'Synced');
+      return;
+    }
+
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+    // Store ETag for next request
+    const newEtag = resp.headers.get('ETag') || '';
+    if (newEtag) {
+      _syncCache.etag = newEtag;
+      ss('bt3_syncEtag', newEtag);
+    }
+
     const data = await resp.json();
+    let mergedCount = 0;
+
     if (data && data.entries && data.entries.length > 0) {
+      // Smart merge — only add entries we don't have locally
       const localIds = new Set(entries.map(e => e.id));
       const newEntries = data.entries.filter(e => !localIds.has(e.id));
       if (newEntries.length > 0) {
-        entries = [...newEntries, ...entries];
+        entries = [...entries, ...newEntries].sort((a, b) => b.date.localeCompare(a.date));
         ss('bt3_entries', entries);
+        mergedCount = newEntries.length;
       }
+
+      // Merge config (server wins for config, local wins for entries)
       if (data.months && data.months.length > 0) { months = data.months; ss('bt3_months', months); }
       if (data.catBud) { catBud = data.catBud; ss('bt3_catbud', catBud); }
       if (data.hijriOffset !== undefined) { hijriOffset = data.hijriOffset; ss('bt3_offset', hijriOffset); }
@@ -1432,31 +1529,67 @@ async function pullFromBackend() {
       if (data.pendingSavings !== undefined) { pendingSavings = data.pendingSavings; ss('bt3_pendingSavings', pendingSavings); }
       if (data.dailySavings) { dailySavings = data.dailySavings; ss('bt3_dailySavings', dailySavings); }
       if (data.savingsLog) { savingsLog = data.savingsLog; ss('bt3_savingsLog', savingsLog); }
+
+      // Update the payload hash so we don't re-push what we just pulled
+      _syncCache.lastPayloadHash = fastHash(JSON.stringify(buildPayload()));
+      ss('bt3_lastPayloadHash', _syncCache.lastPayloadHash);
+
       renderDash(); renderLog();
+      const elapsed = Math.round(performance.now() - t0);
+      console.log(`[Sync] Pull completed in ${elapsed}ms — merged ${mergedCount} new entries`);
       setSyncStatus('idle', 'Synced');
-      showToast('✓ Synced with Google Sheets');
+      if (mergedCount > 0) showToast(`✓ Synced ${mergedCount} new entries`);
+      else showToast('✓ Up to date');
     } else {
-      pushToBackend();
+      // Server is empty — push our local data up
+      console.log('[Sync] Server empty, pushing local data');
+      pushToBackend(true);
     }
+
+    _lastPullTimestamp = now;
+    ss('bt3_lastPullTs', now);
   } catch (e) {
-    console.warn('Pull failed:', e);
+    console.warn('[Sync] Pull failed:', e);
     setSyncStatus('error', 'Local mode');
+  } finally {
+    isSyncing = false;
   }
 }
 
-// Smart Throttled Background Pull
-let lastPullTime = 0;
-async function smartPull() {
-  if (!BACKEND_URL || !navigator.onLine) return;
-  if (Date.now() - lastPullTime < 3600000) return; // 1 hour throttle
-  await pullFromBackend();
-  lastPullTime = Date.now();
+// ── OFFLINE QUEUE DRAIN ──
+async function drainOfflineQueue() {
+  if (_offlineQueue.length === 0 || !navigator.onLine || !BACKEND_URL) return;
+  console.log(`[Sync] Draining ${_offlineQueue.length} queued operations`);
+  _offlineQueue = [];
+  ss('bt3_offlineQueue', []);
+  await pushToBackend(true);
 }
 
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') smartPull();
+// Listen for connectivity restoration
+window.addEventListener('online', () => {
+  setSyncStatus('idle', 'Online');
+  setTimeout(drainOfflineQueue, 1000);
 });
-setInterval(smartPull, 5 * 60 * 1000);
+window.addEventListener('offline', () => {
+  setSyncStatus('error', 'Offline');
+});
+
+function triggerManualSync() {
+  if (!BACKEND_URL) {
+    showToast('Please set your Apps Script URL in Settings');
+    showPage('settings', document.querySelectorAll('.nav-tab-btn')[4]);
+    return;
+  }
+  pullFromBackend(true); // Force pull, bypass throttle
+}
+
+// Smart background sync
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    pullFromBackend(); // Throttle-aware
+    drainOfflineQueue();
+  }
+});
 
 let _pushTimer = null;
 function saveAllData() {
@@ -1471,7 +1604,7 @@ function saveAllData() {
   clearTimeout(_pushTimer);
   _pushTimer = setTimeout(() => {
     if (navigator.onLine && BACKEND_URL) pushToBackend();
-  }, 2500);
+  }, PUSH_DEBOUNCE_MS);
 }
 
 // ── NAVIGATION & RENDERING ──
@@ -2083,6 +2216,14 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2400);
 }
 
+// ── PWA INSTALL PROMPT ──
+let _deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _deferredInstallPrompt = e;
+  console.log('[PWA] Install prompt captured');
+});
+
 // ── INITIALIZATION ──
 window.addEventListener('load', () => {
   window._BACKEND_URL_OVERRIDE = ls('bt3_gasUrl', '');
@@ -2093,6 +2234,14 @@ window.addEventListener('load', () => {
   syncPicker();
   renderDash();
 
+  // Register Service Worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('[PWA] Service Worker registered, scope:', reg.scope))
+      .catch(err => console.warn('[PWA] SW registration failed:', err));
+  }
+
+  // Initial sync
   if (BACKEND_URL && navigator.onLine) {
     pullFromBackend();
   }
@@ -2100,3 +2249,4 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
+
