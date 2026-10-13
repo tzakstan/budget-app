@@ -674,6 +674,215 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 .log-item-amount { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
 .log-item-amount.inc { color: var(--amber); }
 
+/* ── CALENDAR LOG VIEW ── */
+.cal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin: 10px 16px 12px;
+  box-shadow: var(--shadow-sm);
+}
+.cal-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #eaeff5;
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+.cal-mode-btn {
+  border: none;
+  background: transparent;
+  padding: 9px 10px;
+  border-radius: 9px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.cal-mode-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+.cal-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 2px;
+}
+.cal-circle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: #eaeff5;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cal-circle-btn:active { background: #cbd5e1; }
+.cal-title-main {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  text-align: center;
+  line-height: 1.2;
+}
+.cal-title-sub {
+  font-size: 13px;
+  color: #475569;
+  text-align: center;
+  margin-top: 3px;
+  font-weight: 500;
+}
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  margin-bottom: 6px;
+}
+.cal-weekday {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  padding: 4px 0;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.cal-cell {
+  min-height: 54px;
+  border-radius: 10px;
+  padding: 4px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  border: 2px solid transparent;
+  background: transparent;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+.cal-cell.empty {
+  pointer-events: none;
+}
+.cal-cell.tint-Weekend {
+  background: #e9eef4;
+  color: #334155;
+}
+.cal-cell.tint-spend {
+  background: #dcebfb;
+  color: #0c4a6e;
+}
+.cal-cell.tint-high {
+  background: #fdebd3;
+  color: #9a3412;
+}
+.cal-cell.selected {
+  border-color: #0f172a !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+}
+.cal-cell .today-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #eab308;
+}
+.cal-day-pri {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+.cal-day-sec {
+  font-size: 10px;
+  opacity: 0.78;
+  line-height: 1.1;
+  margin-top: 1px;
+}
+.cal-day-amt {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-top: 2px;
+  padding: 1px 3px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #0f172a;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cal-day-detail-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 0 16px 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── DONUT CHART ── */
+.donut-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px 0 14px;
+}
+.donut-svg-box {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.donut-center-info {
+  position: absolute;
+  inset: 42px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  padding: 6px;
+}
+.donut-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 4px;
+}
+.donut-legend-row:hover, .donut-legend-row.active {
+  background: var(--surface-low);
+  border-color: var(--border);
+}
+
 /* ── MODALS ── */
 .modal-overlay {
   position: fixed;
@@ -1014,11 +1223,43 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 3. LOG PAGE                                -->
 <!-- ========================================== -->
 <div class="view-page" id="page-log">
-  <div style="padding:10px 16px 4px;display:flex;justify-content:space-between;align-items:center">
-    <div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text-muted)">Transaction History</div>
-    <div style="font-size:11px;font-family:var(--font-mono);color:var(--text-muted)" id="log-count-label">0 entries</div>
+  <!-- Dual Calendar Card (English & Hijri) -->
+  <div class="cal-card">
+    <div class="cal-mode-switch">
+      <button class="cal-mode-btn active" id="cal-mode-eng" onclick="setCalMode('eng')">English month</button>
+      <button class="cal-mode-btn" id="cal-mode-hijri" onclick="setCalMode('hijri')">Hijri month</button>
+    </div>
+    <div class="cal-nav-row">
+      <button class="cal-circle-btn" onclick="shiftCalMonth(-1)" aria-label="Previous month">‹</button>
+      <div>
+        <div class="cal-title-main" id="cal-header-title">—</div>
+        <div class="cal-title-sub" id="cal-header-sub">—</div>
+      </div>
+      <button class="cal-circle-btn" onclick="shiftCalMonth(1)" aria-label="Next month">›</button>
+    </div>
+    <div class="cal-weekdays">
+      <div class="cal-weekday">Mon</div>
+      <div class="cal-weekday">Tue</div>
+      <div class="cal-weekday">Wed</div>
+      <div class="cal-weekday">Thu</div>
+      <div class="cal-weekday">Fri</div>
+      <div class="cal-weekday">Sat</div>
+      <div class="cal-weekday">Sun</div>
+    </div>
+    <div class="cal-grid" id="log-cal-grid"></div>
   </div>
-  <div id="log-entries-list"></div>
+
+  <!-- Selected Date Details Card -->
+  <div class="cal-day-detail-card" id="log-day-detail-card"></div>
+
+  <!-- Optional Full Month List Accordion -->
+  <div class="accordion-toggle" onclick="toggleFullLogAccordion()">
+    <span>📋 View All Cycle Transactions (<span id="log-count-label">0 entries</span>)</span>
+    <span id="full-log-arrow">▾</span>
+  </div>
+  <div class="accordion-content" id="full-log-accordion" style="margin:0 0 16px">
+    <div id="log-entries-list"></div>
+  </div>
 </div>
 
 <!-- ========================================== -->
@@ -1041,7 +1282,23 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     </div>
   </div>
 
-  <!-- 2. Behavioral Insights Card -->
+  <!-- 2. Expense Share Donut Chart Card -->
+  <div class="metric-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🍩 Expense Share Breakdown</div>
+      <span class="badge-tag tag-indigo" id="donut-top-badge">Budget Share</span>
+    </div>
+    <div id="donut-top-hog-banner" style="margin-top:8px;margin-bottom:6px;"></div>
+    <div class="donut-wrap" id="analytics-donut-wrap">
+      <div class="donut-svg-box">
+        <svg id="analytics-donut-svg" viewBox="0 0 220 220" width="210" height="210"></svg>
+        <div class="donut-center-info" id="analytics-donut-center"></div>
+      </div>
+    </div>
+    <div id="analytics-donut-legend" style="margin-top:6px;"></div>
+  </div>
+
+  <!-- 3. Behavioral Insights Card -->
   <div class="metric-card">
     <div class="card-header-flex">
       <div class="card-heading">🧠 Behavioral Engine</div>
@@ -1966,15 +2223,311 @@ function saveEntry() {
   renderLog();
 }
 
-// ── LOG RENDER ──
+// ── LOG RENDER (DUAL CALENDAR + DAY DETAILS + FULL LIST) ──
+const HM_AR = [
+  'محرم الحرام', 'صفر المظفر', 'ربيع الأول', 'ربيع الآخر',
+  'جمادى الأولى', 'جمادى الآخرة', 'رجب الأصب', 'شعبان الكريم',
+  'رمضان المعظم', 'شوال المكرم', 'ذو القعدة الحرام', 'ذو الحجة الحرام'
+];
+
+function toArabicNum(n) {
+  return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+}
+
+function fmtCompactAmt(n) {
+  const v = Math.round(n);
+  if (v >= 100000) return '₹' + (v / 100000).toFixed(1).replace(/\.0$/, '') + 'L';
+  if (v >= 10000) return '₹' + (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return '₹' + v.toLocaleString('en-IN');
+}
+
+let calMode = 'eng'; // 'eng' | 'hijri'
+let calSelectedDate = ymd(new Date());
+let calEngYear = new Date().getFullYear();
+let calEngMonth = new Date().getMonth(); // 0-11
+let calHijriYear = null;
+let calHijriMonth = null; // 1-12
+let _calInitialized = false;
+
+function initCalStateIfNeeded() {
+  if (_calInitialized) return;
+  _calInitialized = true;
+  const today = new Date();
+  calSelectedDate = ymd(today);
+  calEngYear = today.getFullYear();
+  calEngMonth = today.getMonth();
+  const h = gregToHijriDisplay(today);
+  calHijriYear = h.y;
+  calHijriMonth = h.m;
+}
+
+function setCalMode(mode) {
+  initCalStateIfNeeded();
+  calMode = mode;
+  document.getElementById('cal-mode-eng').classList.toggle('active', mode === 'eng');
+  document.getElementById('cal-mode-hijri').classList.toggle('active', mode === 'hijri');
+
+  // Sync the displayed month to the currently selected date
+  const selD = parseYMD(calSelectedDate);
+  if (mode === 'eng') {
+    calEngYear = selD.getFullYear();
+    calEngMonth = selD.getMonth();
+  } else {
+    const h = gregToHijriDisplay(selD);
+    calHijriYear = h.y;
+    calHijriMonth = h.m;
+  }
+  renderCalendarGrid();
+}
+
+function shiftCalMonth(dir) {
+  initCalStateIfNeeded();
+  if (calMode === 'eng') {
+    calEngMonth += dir;
+    if (calEngMonth < 0) { calEngMonth = 11; calEngYear--; }
+    if (calEngMonth > 11) { calEngMonth = 0; calEngYear++; }
+  } else {
+    calHijriMonth += dir;
+    if (calHijriMonth < 1) { calHijriMonth = 12; calHijriYear--; }
+    if (calHijriMonth > 12) { calHijriMonth = 1; calHijriYear++; }
+  }
+  renderCalendarGrid();
+}
+
+function selectCalDate(dateStr) {
+  calSelectedDate = dateStr;
+  renderCalendarGrid();
+  renderSelectedDayDetails();
+}
+
+function addExpenseForDate(dateStr) {
+  const navBtns = document.querySelectorAll('.nav-tab-btn');
+  showPage('add', navBtns[1]);
+  const dateInput = document.getElementById('entry-date');
+  if (dateInput) {
+    dateInput.value = dateStr;
+    updPreview();
+  }
+}
+
+function toggleFullLogAccordion() {
+  const acc = document.getElementById('full-log-accordion');
+  const arrow = document.getElementById('full-log-arrow');
+  const isExp = acc.classList.contains('expanded');
+  acc.classList.toggle('expanded');
+  if (arrow) arrow.textContent = isExp ? '▾' : '▴';
+}
+
+function renderCalendarGrid() {
+  initCalStateIfNeeded();
+  const grid = document.getElementById('log-cal-grid');
+  const titleEl = document.getElementById('cal-header-title');
+  const subEl = document.getElementById('cal-header-sub');
+  if (!grid || !titleEl || !subEl) return;
+
+  // Map daily expense totals across all entries
+  const dayExpMap = {};
+  entries.forEach(e => {
+    const c = catById(e.cat);
+    if (c.type === 'exp') {
+      dayExpMap[e.date] = (dayExpMap[e.date] || 0) + e.amt;
+    }
+  });
+
+  const m = curMo();
+  const avgDailyBudget = (m && m.totalBudget && m.totalDays) ? (m.totalBudget / m.totalDays) : 1200;
+  const highThreshold = avgDailyBudget * 1.25;
+  const todayStr = ymd(new Date());
+
+  let cellsHtml = '';
+
+  if (calMode === 'eng') {
+    const firstDay = new Date(calEngYear, calEngMonth, 1);
+    const lastDay = new Date(calEngYear, calEngMonth + 1, 0);
+    const numDays = lastDay.getDate();
+
+    const hStart = gregToHijriDisplay(firstDay);
+    const hEnd = gregToHijriDisplay(lastDay);
+
+    titleEl.textContent = firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    if (hStart.m === hEnd.m) {
+      subEl.textContent = `${HM_AR[hStart.m - 1]} ${toArabicNum(hStart.y)}`;
+    } else {
+      subEl.textContent = `${HM_AR[hStart.m - 1]} - ${HM_AR[hEnd.m - 1]} ${toArabicNum(hEnd.y)}`;
+    }
+
+    // Monday-based weekday index (0 = Mon ... 6 = Sun)
+    const startOffset = (firstDay.getDay() + 6) % 7;
+    for (let i = 0; i < startOffset; i++) {
+      cellsHtml += `<div class="cal-cell empty"></div>`;
+    }
+
+    for (let d = 1; d <= numDays; d++) {
+      const gDate = new Date(calEngYear, calEngMonth, d);
+      const dStr = ymd(gDate);
+      const hd = gregToHijriDisplay(gDate);
+      const spent = dayExpMap[dStr] || 0;
+      const dow = (gDate.getDay() + 6) % 7; // 5=Sat, 6=Sun
+      const isWeekend = dow >= 5;
+
+      let tintClass = '';
+      if (spent >= highThreshold) tintClass = 'tint-high';
+      else if (spent > 0) tintClass = 'tint-spend';
+      else if (isWeekend) tintClass = 'tint-Weekend';
+
+      const selClass = (dStr === calSelectedDate) ? 'selected' : '';
+      const isToday = (dStr === todayStr);
+
+      cellsHtml += `
+        <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${dStr}')">
+          ${isToday ? '<span class="today-dot" title="Today"></span>' : ''}
+          <div class="cal-day-pri">${d}</div>
+          <div class="cal-day-sec">${toArabicNum(hd.d)}</div>
+          ${spent > 0 ? `<div class="cal-day-amt">${fmtCompactAmt(spent)}</div>` : ''}
+        </div>
+      `;
+    }
+  } else {
+    // Hijri month mode: collect all Gregorian dates belonging to (calHijriYear, calHijriMonth)
+    const approxStart = hijriToGreg(calHijriYear, calHijriMonth, 1);
+    const scanStart = addDays(approxStart, -5);
+    const hijriDays = [];
+    for (let i = 0; i < 40; i++) {
+      const g = addDays(scanStart, i);
+      const h = gregToHijriDisplay(g);
+      if (h.y === calHijriYear && h.m === calHijriMonth) {
+        hijriDays.push({ g, dStr: ymd(g), hd: h });
+      }
+    }
+
+    titleEl.textContent = `${HM[calHijriMonth - 1]} ${calHijriYear}`;
+    if (hijriDays.length > 0) {
+      const firstG = hijriDays[0].g;
+      const lastG = hijriDays[hijriDays.length - 1].g;
+      const gSpan = firstG.getMonth() === lastG.getMonth()
+        ? firstG.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        : `${firstG.toLocaleDateString('en-US', { month: 'short' })} – ${lastG.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`;
+      subEl.textContent = `${HM_AR[calHijriMonth - 1]} ${toArabicNum(calHijriYear)}  •  ${gSpan}`;
+
+      const startOffset = (firstG.getDay() + 6) % 7;
+      for (let i = 0; i < startOffset; i++) {
+        cellsHtml += `<div class="cal-cell empty"></div>`;
+      }
+
+      hijriDays.forEach(item => {
+        const spent = dayExpMap[item.dStr] || 0;
+        const dow = (item.g.getDay() + 6) % 7;
+        const isWeekend = dow >= 5;
+
+        let tintClass = '';
+        if (spent >= highThreshold) tintClass = 'tint-high';
+        else if (spent > 0) tintClass = 'tint-spend';
+        else if (isWeekend) tintClass = 'tint-Weekend';
+
+        const selClass = (item.dStr === calSelectedDate) ? 'selected' : '';
+        const isToday = (item.dStr === todayStr);
+        const gregShort = item.g.getDate() + ' ' + item.g.toLocaleDateString('en-US', { month: 'short' });
+
+        cellsHtml += `
+          <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${item.dStr}')">
+            ${isToday ? '<span class="today-dot" title="Today"></span>' : ''}
+            <div class="cal-day-pri">${item.hd.d}</div>
+            <div class="cal-day-sec">${gregShort}</div>
+            ${spent > 0 ? `<div class="cal-day-amt">${fmtCompactAmt(spent)}</div>` : ''}
+          </div>
+        `;
+      });
+    } else {
+      subEl.textContent = `${HM_AR[calHijriMonth - 1]} ${toArabicNum(calHijriYear)}`;
+    }
+  }
+
+  grid.innerHTML = cellsHtml;
+}
+
+function renderSelectedDayDetails() {
+  const card = document.getElementById('log-day-detail-card');
+  if (!card) return;
+
+  const gDate = parseYMD(calSelectedDate);
+  const hd = gregToHijriDisplay(gDate);
+
+  const engFull = gDate.toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+  const hijriAr = `${toArabicNum(hd.d)} ${HM_AR[hd.m - 1]} ${toArabicNum(hd.y)}`;
+  const hijriEn = `${hd.d} ${HM[hd.m - 1]} ${hd.y}`;
+
+  const dayEntries = entries.filter(e => e.date === calSelectedDate);
+  const dayExp = dayEntries.filter(e => catById(e.cat).type !== 'income').reduce((s, e) => s + e.amt, 0);
+  const dayInc = dayEntries.filter(e => catById(e.cat).type === 'income').reduce((s, e) => s + e.amt, 0);
+
+  let listHtml = '';
+  if (dayEntries.length === 0) {
+    listHtml = `
+      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <span style="font-size:13px;color:var(--text-muted)">Nothing marked on this day.</span>
+        <button class="quick-chip" style="padding:6px 10px;font-size:11px" onclick="addExpenseForDate('${calSelectedDate}')">+ Add Expense</button>
+      </div>
+    `;
+  } else {
+    listHtml = `
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+        ${dayEntries.map(e => {
+          const cat = catById(e.cat);
+          const isInc = cat.type === 'income';
+          const payCat = e.paymentCat ? catById(e.paymentCat) : null;
+          const sub = [e.what, e.qty, e.where, payCat ? `${payCat.icon} ${payCat.label}` : ''].filter(Boolean).join(' • ');
+          return `
+            <div class="log-item-row" onclick="openDetail('${e.id}')">
+              <div class="log-item-icon">${cat.icon}</div>
+              <div class="log-item-content">
+                <div class="log-item-title">${cat.label} ${e.where ? `· <span style="font-weight:400;color:var(--text-muted)">${e.where}</span>` : ''}</div>
+                <div class="log-item-desc">${sub || 'Tap for details'}</div>
+              </div>
+              <div class="log-item-amount ${isInc ? 'inc' : ''}">${isInc ? '+' : ''}${fmt(e.amt)}</div>
+            </div>
+          `;
+        }).join('')}
+        <div style="text-align:right;margin-top:8px;">
+          <button class="quick-chip" style="padding:5px 10px;font-size:11px" onclick="addExpenseForDate('${calSelectedDate}')">+ Add Another on ${gDate.getDate()} ${gDate.toLocaleDateString('en-US', { month: 'short' })}</button>
+        </div>
+      </div>
+    `;
+  }
+
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:var(--text-main);line-height:1.25">${engFull}</div>
+        <div style="font-size:16px;font-weight:600;color:var(--text-main);margin-top:4px;line-height:1.3">${hijriAr}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${hijriEn}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted)">Day Total</div>
+        <div style="font-family:var(--font-mono);font-size:17px;font-weight:800;color:${dayExp > 0 ? 'var(--rose)' : 'var(--text-muted)'}">${fmt(dayExp)}</div>
+        ${dayInc > 0 ? `<div style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--emerald)">+${fmt(dayInc)}</div>` : ''}
+      </div>
+    </div>
+    ${listHtml}
+  `;
+}
+
 function renderLog() {
   updateHeaderDates();
+  initCalStateIfNeeded();
+  renderCalendarGrid();
+  renderSelectedDayDetails();
+
   const me = moEntries();
   document.getElementById('log-count-label').textContent = me.length + ' entries';
   const container = document.getElementById('log-entries-list');
 
   if (!me.length) {
-    container.innerHTML = `<div style="text-align:center;padding:48px 16px;color:var(--text-muted)"><p>No entries logged for this month</p></div>`;
+    container.innerHTML = `<div style="text-align:center;padding:24px 16px;color:var(--text-muted)"><p>No entries logged for this cycle</p></div>`;
     return;
   }
 
@@ -2008,6 +2561,127 @@ function renderLog() {
             </div>
           `;
         }).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+// ── ANALYTICS & INTERACTIVE DONUT CHART ──
+const DONUT_PALETTE = [
+  '#e11d48', '#4f46e5', '#d97706', '#059669', '#7c3aed',
+  '#0284c7', '#db2777', '#ea580c', '#0d9488', '#475569'
+];
+let selectedDonutCatId = null;
+
+function selectDonutCat(catId) {
+  selectedDonutCatId = catId;
+  renderAnalytics();
+}
+
+function renderDonutChart(catList, me, spent, effBud) {
+  const svg = document.getElementById('analytics-donut-svg');
+  const centerEl = document.getElementById('analytics-donut-center');
+  const legendEl = document.getElementById('analytics-donut-legend');
+  const bannerEl = document.getElementById('donut-top-hog-banner');
+  const badgeEl = document.getElementById('donut-top-badge');
+  if (!svg || !centerEl || !legendEl || !bannerEl) return;
+
+  const activeCats = catList.map(cat => {
+    const s = me.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
+    return {
+      id: cat.id,
+      label: cat.label,
+      icon: cat.icon,
+      spent: s,
+      sharePct: spent > 0 ? Math.round((s / spent) * 100) : 0,
+      exactShare: spent > 0 ? (s / spent) : 0,
+      budPct: effBud > 0 ? Math.round((s / effBud) * 100) : 0,
+      catLimit: catBud[cat.id] || 0
+    };
+  }).filter(x => x.spent > 0).sort((a, b) => b.spent - a.spent);
+
+  if (activeCats.length === 0 || spent <= 0) {
+    if (badgeEl) badgeEl.textContent = 'No Spend Yet';
+    bannerEl.innerHTML = `<div style="font-size:11px;color:var(--text-muted);text-align:center;padding:4px 0;">Log expenses this month to see which category is taking over your budget.</div>`;
+    svg.innerHTML = `<circle cx="110" cy="110" r="76" fill="none" stroke="#e2e8f0" stroke-width="26"></circle>`;
+    centerEl.innerHTML = `
+      <div style="font-size:20px">🍩</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-top:2px">₹0 Spent</div>
+    `;
+    legendEl.innerHTML = '';
+    return;
+  }
+
+  activeCats.forEach((item, idx) => {
+    item.color = DONUT_PALETTE[idx % DONUT_PALETTE.length];
+  });
+
+  const topHog = activeCats[0];
+  if (!selectedDonutCatId || !activeCats.some(x => x.id === selectedDonutCatId)) {
+    selectedDonutCatId = topHog.id;
+  }
+  const selItem = activeCats.find(x => x.id === selectedDonutCatId) || topHog;
+
+  if (badgeEl) badgeEl.textContent = `Top: ${topHog.icon} ${topHog.sharePct}%`;
+
+  bannerEl.innerHTML = `
+    <div style="background:var(--rose-bg);border:1px solid var(--rose-border);border-radius:var(--radius-sm);padding:10px 12px;font-size:11.5px;color:var(--rose);line-height:1.45;">
+      🔥 <strong>${topHog.icon} ${topHog.label}</strong> is taking the biggest bite out of your budget — <strong>${topHog.sharePct}%</strong> of total spending (<strong>${fmt(topHog.spent)}</strong>, or <strong>${topHog.budPct}%</strong> of your monthly budget).
+    </div>
+  `;
+
+  // Render SVG Donut rings using stroke-dasharray
+  const r = 76;
+  const circum = 2 * Math.PI * r;
+  let accum = 0;
+
+  const circlesHtml = activeCats.map(item => {
+    const segLen = Math.max(0, item.exactShare * circum);
+    const gap = activeCats.length > 1 ? Math.min(2.5, segLen * 0.15) : 0;
+    const drawLen = Math.max(0.5, segLen - gap);
+    const dashArray = `${drawLen} ${circum - drawLen}`;
+    const dashOffset = -accum;
+    accum += segLen;
+    const isSel = item.id === selItem.id;
+    const sw = isSel ? 32 : 25;
+
+    return `<circle cx="110" cy="110" r="${r}" fill="none"
+      stroke="${item.color}"
+      stroke-width="${sw}"
+      stroke-dasharray="${dashArray}"
+      stroke-dashoffset="${dashOffset}"
+      transform="rotate(-90 110 110)"
+      style="cursor:pointer;transition:stroke-width 0.18s ease, opacity 0.18s ease;opacity:${isSel ? '1' : '0.88'}"
+      onclick="selectDonutCat('${item.id}')">
+    </circle>`;
+  }).join('');
+
+  svg.innerHTML = `
+    <circle cx="110" cy="110" r="${r}" fill="none" stroke="#f1f5f9" stroke-width="25"></circle>
+    ${circlesHtml}
+  `;
+
+  centerEl.innerHTML = `
+    <div style="font-size:22px;line-height:1">${selItem.icon}</div>
+    <div style="font-size:11px;font-weight:800;color:var(--text-main);margin-top:3px;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${selItem.label}</div>
+    <div style="font-family:var(--font-mono);font-size:14px;font-weight:800;color:${selItem.color};margin-top:2px">${fmt(selItem.spent)}</div>
+    <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:1px">${selItem.sharePct}% of spend</div>
+  `;
+
+  legendEl.innerHTML = activeCats.map((item, idx) => {
+    const isSel = item.id === selItem.id;
+    return `
+      <div class="donut-legend-row ${isSel ? 'active' : ''}" onclick="selectDonutCat('${item.id}')">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+          <span style="width:10px;height:10px;border-radius:3px;background:${item.color};flex-shrink:0;"></span>
+          <span style="font-size:14px">${item.icon}</span>
+          <span style="font-size:12px;font-weight:${isSel ? '800' : '600'};color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.label}</span>
+          ${idx === 0 ? `<span style="font-size:9px;font-weight:800;background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-border);padding:1px 5px;border-radius:4px;">#1 HOG</span>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+          <span style="font-size:10px;font-family:var(--font-mono);color:var(--text-muted)">${item.sharePct}% spend • ${item.budPct}% bud</span>
+          <span style="font-size:12px;font-family:var(--font-mono);font-weight:700;color:var(--text-main)">${fmt(item.spent)}</span>
+        </div>
       </div>
     `;
   }).join('');
@@ -2080,9 +2754,12 @@ function renderAnalytics() {
     runwayText.textContent = `At ${fmt(dailyBurn)}/d • Covers remaining ${daysLeftInMonth} days safely`;
   }
 
-  // 2. Behavioral Insights
-  const insights = [];
+  // 2. Expense Share Donut Chart
   const catList = categories.filter(c => c.type === 'exp');
+  renderDonutChart(catList, me, spent, effBud);
+
+  // 3. Behavioral Insights
+  const insights = [];
   const expectedDepletionPct = (elapsed / m.totalDays) * 100;
 
   catList.forEach(cat => {
@@ -2626,5 +3303,3 @@ window.addEventListener('load', () => {
 </body>
 </html>
 
-
-``
