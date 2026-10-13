@@ -1,20 +1,29 @@
 {
-  "id": "?source=pwa",
+  "id": "/budget-app/",
   "name": "My Personal Budget Tracker",
   "short_name": "My Budget",
   "description": "Personal Wealth & Habit Engine with Dawoodi Bohra Calendar",
-  "start_url": "./index.html",
+  "start_url": "/budget-app/index.html",
   "display": "standalone",
   "background_color": "#f8faff",
   "theme_color": "#4f46e5",
   "orientation": "portrait",
-  "scope": "./",
+  "scope": "/budget-app/",
   "icons": [
-    { "src": "./icons/cropped.jpg", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "./icons/1001060095-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "https://tzakstan.github.io/budget-app/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://tzakstan.github.io/budget-app/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ],
   "categories": ["finance", "productivity"],
   "lang": "en",
   "dir": "ltr"
 }
-
