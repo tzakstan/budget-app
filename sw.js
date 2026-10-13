@@ -1,10 +1,9 @@
-const CACHE_NAME = 'budget-cache-v5';
+const CACHE_NAME = 'budget-cache-v6';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  'icon-192.png',
-  'icon-512.png'
+  './icons/1001060095-512x512.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -44,4 +43,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-
