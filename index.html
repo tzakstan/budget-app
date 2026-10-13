@@ -16,6 +16,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,12,400;0,12,500;0,12,600;1,12,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
+/* ── CUSTOM ARABIC FONT (Kanz al-Lulu) ── */
+@font-face {
+  font-family: 'KanzalLulu';
+  src: url('./KanzalLulu-Regular.ttf') format('truetype');
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ── DESIGN TOKENS & RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 :root {
@@ -50,7 +60,8 @@
   --purple-border: #ddd6fe;
 
   --font-serif: 'Newsreader', serif;
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-arabic: 'KanzalLulu', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'KanzalLulu', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
@@ -739,7 +750,8 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   line-height: 1.2;
 }
 .cal-title-sub {
-  font-size: 13px;
+  font-family: var(--font-arabic);
+  font-size: 15px;
   color: #475569;
   text-align: center;
   margin-top: 3px;
@@ -811,8 +823,9 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   line-height: 1.15;
 }
 .cal-day-sec {
-  font-size: 10px;
-  opacity: 0.78;
+  font-family: var(--font-arabic);
+  font-size: 11.5px;
+  opacity: 0.85;
   line-height: 1.1;
   margin-top: 1px;
 }
