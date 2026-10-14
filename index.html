@@ -1173,6 +1173,8 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       <input type="number" id="amt" class="amount-text-field" placeholder="0" inputmode="decimal" min="0"/>
     </div>
     <div class="quick-chips-row">
+      <button class="quick-chip" onclick="incrementAmount(1)">+₹1</button>
+      <button class="quick-chip" onclick="incrementAmount(10)">+₹10</button>
       <button class="quick-chip" onclick="incrementAmount(50)">+₹50</button>
       <button class="quick-chip" onclick="incrementAmount(100)">+₹100</button>
       <button class="quick-chip" onclick="incrementAmount(250)">+₹250</button>
@@ -1522,36 +1524,131 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <script>
 // ── CONFIGURATION & CONSTANTS ──
 window._BACKEND_URL_HARDCODED = ''; 
-const HM = ['Muharram','Safar','Rabi ul Awwal','Rabi ul Aakhar',
-            'Jumada ul Awwal','Jumada ul Aakhar','Rajab',"Sha'ban",
-            'Ramadan','Shawwal','Zilqad','Zilhaj'];
+const HM = [
+  'Moharram al-Haraam', 'Safar al-Muzaffar', 'Rabi al-Awwal', 'Rabi al-Aakhar',
+  'Jumadal Ula', 'Jumadal Ukhra', 'Rajab al-Asab', "Shabaan al-Karim",
+  'Ramadaan al-Moazzam', 'Shawwal al-Mukarram', 'Zilqadah al-Haraam', 'Zilhaj al-Haraam'
+];
 
-// ── HIJRI ASTRONOMICAL ENGINE ──
-function hijriToGreg(hy, hm, hd) {
-  const N = hd + Math.ceil(29.5001 * (hm - 1)) + (hy - 1) * 354 + Math.floor((3 + 11 * hy) / 30) + 1948440 - 385;
-  let l = N + 68569; const n = Math.floor(4 * l / 146097);
-  l = l - Math.floor((146097 * n + 3) / 4); const i = Math.floor(4000 * (l + 1) / 1461001);
-  l = l - Math.floor(1461 * i / 4) + 31; const j = Math.floor(80 * l / 2447);
-  const day = l - Math.floor(2447 * j / 80); const lx = Math.floor(j / 11);
-  return new Date(100 * (n - 49) + i + lx, j + 2 - 12 * lx - 1, day);
-}
+const HM_SHORT = [
+  'Moharram', 'Safar', 'Rabi I', 'Rabi II',
+  'Jumadal Ula', 'Jumadal Ukhra', 'Rajab', "Shabaan",
+  'Ramadaan', 'Shawwal', 'Zilqadah', 'Zilhaj'
+];
 
-function gregToHijri(g) {
-  const Y = g.getFullYear(), M = g.getMonth() + 1, D = g.getDate();
-  const JD = Math.floor((1461 * (Y + 4800 + Math.floor((M - 14) / 12))) / 4) +
-             Math.floor((367 * (M - 2 - 12 * Math.floor((M - 14) / 12))) / 12) -
-             Math.floor((3 * Math.floor((Y + 4900 + Math.floor((M - 14) / 12)) / 100)) / 4) + D - 32075;
-  const l = JD - 1948440 + 10632, n = Math.floor((l - 1) / 10631), ll = l - 10631 * n + 354;
-  const j = Math.floor((10985 - ll) / 5316) * Math.floor((50 * ll) / 17719) + Math.floor(ll / 5670) * Math.floor((43 * ll) / 15238);
-  const lll = ll - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) - Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29;
-  const hMo = Math.floor((24 * lll) / 709), hD = lll - Math.floor((709 * hMo) / 24), hY = 30 * n + j - 30;
-  return { y: hY, m: hMo, d: hD };
-}
+const HM_AR = [
+  'محرم الحرام',
+  'صفر المظفر',
+  'ربيع الاول',
+  'ربيع الاْخر',
+  'جمادى الاولى',
+  'جمادى الاخرى',
+  'رجب الاصب',
+  'شعبان الكريم',
+  'شهر رمضان المعظم',
+  'شوال المكرم',
+  'ذي القعدة الحرام',
+  'ذي الحجة الحرام'
+];
+
+// ── FATIMID / DAWOODI BOHRA HIJRI CALENDAR ENGINE (Verified with mumineencalendar.com) ──
+const BohraCalendar = (() => {
+  const kabisaYears = [2, 5, 8, 10, 13, 16, 19, 21, 24, 27, 29];
+  const monthCum = [30, 59, 89, 118, 148, 177, 207, 236, 266, 295, 325];
+  const cycleCum = [354, 708, 1063, 1417, 1771, 2126, 2480, 2834, 3189, 3543, 3898, 4252, 4606, 4961, 5315, 5669, 6024, 6378, 6732, 7087, 7441, 7796, 8150, 8504, 8859, 9213, 9567, 9922, 10276, 10631];
+
+  function isKabisa(y) {
+    return kabisaYears.includes(y % 30);
+  }
+
+  function daysInMonth(y, m) { // m is 0..11
+    if (m === 11 && isKabisa(y)) return 30;
+    return (m % 2 === 0) ? 30 : 29;
+  }
+
+  function dayOfYear(m, d) { // m is 0..11, d is 1..30
+    return m === 0 ? d : monthCum[m - 1] + d;
+  }
+
+  function toAJD(y, m, d) {
+    const e = Math.floor(y / 30);
+    let t = 1948083.5 + 10631 * e + dayOfYear(m, d);
+    const rem = y % 30;
+    if (rem !== 0) t += cycleCum[rem - 1];
+    return t;
+  }
+
+  function ajdToGreg(e) {
+    const s = Math.floor(e + 0.5);
+    const i = e + 0.5 - s;
+    let t;
+    if (s < 2299161) {
+      t = s;
+    } else {
+      const c = Math.floor((s - 1867216.25) / 36524.25);
+      t = s + 1 + c - Math.floor(0.25 * c);
+    }
+    const n = t + 1524;
+    const r = Math.floor((n - 122.1) / 365.25);
+    const o = Math.floor(365.25 * r);
+    const a = Math.floor((n - o) / 30.6001);
+    const l = n - o - Math.floor(30.6001 * a) + i;
+    const p = a < 14 ? a - 2 : a - 14;
+    const u = p < 2 ? r - 4715 : r - 4716;
+    return new Date(u, p, Math.floor(l));
+  }
+
+  function gregToAJD(d) {
+    let r = d.getFullYear();
+    let a = d.getMonth() + 1;
+    const i = d.getDate();
+    if (a < 3) { r--; a += 12; }
+    let n;
+    if (r < 1582 || (r === 1582 && (d.getMonth() < 9 || (d.getMonth() === 9 && d.getDate() < 5)))) {
+      n = 0;
+    } else {
+      const t = Math.floor(r / 100);
+      n = 2 - t + Math.floor(t / 4);
+    }
+    return Math.floor(365.25 * (r + 4716)) + Math.floor(30.6001 * (a + 1)) + i + n - 1524.5;
+  }
+
+  function fromAJD(e) {
+    let s = 0;
+    let c = Math.floor(e - 1948083.5);
+    const u = Math.floor(c / 10631);
+    c -= 10631 * u;
+    while (s < cycleCum.length && c > cycleCum[s]) s++;
+    const r = Math.round(30 * u + s);
+    if (s > 0) c -= cycleCum[s - 1];
+    s = 0;
+    while (s < monthCum.length && c > monthCum[s]) s++;
+    const a = Math.round(s);
+    const i = s > 0 ? Math.round(c - monthCum[s - 1]) : Math.round(c);
+    return { y: r, m: a + 1, d: i };
+  }
+
+  function toGregorian(hy, hm, hd) {
+    return ajdToGreg(toAJD(hy, hm - 1, hd));
+  }
+
+  function fromGregorian(gDate) {
+    return fromAJD(gregToAJD(gDate));
+  }
+
+  return { isKabisa, daysInMonth, toGregorian, fromGregorian };
+})();
 
 function gregToHijriDisplay(gDate) {
   const shifted = new Date(gDate);
-  shifted.setDate(shifted.getDate() + hijriOffset);
-  return gregToHijri(shifted);
+  if (hijriOffset) shifted.setDate(shifted.getDate() + hijriOffset);
+  return BohraCalendar.fromGregorian(shifted);
+}
+
+function hijriToGregDisplay(hy, hm, hd) {
+  const g = BohraCalendar.toGregorian(hy, hm, hd);
+  if (hijriOffset) g.setDate(g.getDate() - hijriOffset);
+  return g;
 }
 
 function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -1616,6 +1713,7 @@ let savingsLog = ls('bt3_savingsLog', [
   { date: '2026-04-12', dateLabel: '12 Apr 2026', avoidable: 500, daily: 750, total: 1250 },
   { date: '2026-04-05', dateLabel: '05 Apr 2026', avoidable: 600, daily: 500, total: 1100 }
 ]);
+let dayNotes = ls('bt3_dayNotes', {});
 let curMoIdx = 0;
 let showAllCategoriesOnDash = false;
 
@@ -1741,7 +1839,7 @@ function fastHash(str) {
 }
 
 function buildPayload() {
-  return { entries, months, catBud, hijriOffset, pendingSavings, dailySavings, savingsLog, categories };
+  return { entries, months, catBud, hijriOffset, pendingSavings, dailySavings, savingsLog, categories, dayNotes };
 }
 
 // ── BATCH PUSH (Delta-only) ──
@@ -1862,6 +1960,7 @@ async function pullFromBackend(force = false) {
       if (data.hijriOffset !== undefined) { hijriOffset = data.hijriOffset; ss('bt3_offset', hijriOffset); }
       if (data.categories && data.categories.length > 0) { categories = data.categories; ss('bt3_categories', categories); }
       if (data.savingsLog) { savingsLog = data.savingsLog; ss('bt3_savingsLog', savingsLog); }
+      if (data.dayNotes) { dayNotes = Object.assign(dayNotes, data.dayNotes); ss('bt3_dayNotes', dayNotes); }
 
       // Update the payload hash so we don't re-push what we just pulled
       _syncCache.lastPayloadHash = fastHash(JSON.stringify(buildPayload()));
@@ -1935,6 +2034,7 @@ function saveAllData() {
   ss('bt3_dailySavings', dailySavings);
   ss('bt3_savingsLog', savingsLog);
   ss('bt3_categories', categories);
+  ss('bt3_dayNotes', dayNotes);
   clearTimeout(_pushTimer);
   _pushTimer = setTimeout(() => {
     if (navigator.onLine && BACKEND_URL) pushToBackend();
@@ -2331,6 +2431,17 @@ function toggleFullLogAccordion() {
   if (arrow) arrow.textContent = isExp ? '▾' : '▴';
 }
 
+function saveDayNote(dateStr, note) {
+  if (!note || !note.trim()) {
+    delete dayNotes[dateStr];
+  } else {
+    dayNotes[dateStr] = note.trim();
+  }
+  ss('bt3_dayNotes', dayNotes);
+  saveAllData();
+  renderCalendarGrid();
+}
+
 function renderCalendarGrid() {
   initCalStateIfNeeded();
   const grid = document.getElementById('log-cal-grid');
@@ -2363,11 +2474,16 @@ function renderCalendarGrid() {
     const hEnd = gregToHijriDisplay(lastDay);
 
     titleEl.textContent = firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    titleEl.style.fontFamily = 'var(--font-sans)';
+    titleEl.style.fontSize = '18px';
+
     if (hStart.m === hEnd.m) {
       subEl.textContent = `${HM_AR[hStart.m - 1]} ${toArabicNum(hStart.y)}`;
     } else {
       subEl.textContent = `${HM_AR[hStart.m - 1]} - ${HM_AR[hEnd.m - 1]} ${toArabicNum(hEnd.y)}`;
     }
+    subEl.style.fontFamily = 'var(--font-arabic)';
+    subEl.style.fontSize = '15px';
 
     // Monday-based weekday index (0 = Mon ... 6 = Sun)
     const startOffset = (firstDay.getDay() + 6) % 7;
@@ -2390,69 +2506,69 @@ function renderCalendarGrid() {
 
       const selClass = (dStr === calSelectedDate) ? 'selected' : '';
       const isToday = (dStr === todayStr);
+      const hasNote = Boolean(dayNotes[dStr]);
 
       cellsHtml += `
         <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${dStr}')">
           ${isToday ? '<span class="today-dot" title="Today"></span>' : ''}
+          ${hasNote ? '<span style="position:absolute;top:3px;left:4px;font-size:8px;">✏️</span>' : ''}
           <div class="cal-day-pri">${d}</div>
-          <div class="cal-day-sec">${toArabicNum(hd.d)}</div>
+          <div class="cal-day-sec" style="font-family:var(--font-arabic);font-size:11.5px;">${toArabicNum(hd.d)}</div>
           ${spent > 0 ? `<div class="cal-day-amt">${fmtCompactAmt(spent)}</div>` : ''}
         </div>
       `;
     }
   } else {
-    // Hijri month mode: collect all Gregorian dates belonging to (calHijriYear, calHijriMonth)
-    const approxStart = hijriToGreg(calHijriYear, calHijriMonth, 1);
-    const scanStart = addDays(approxStart, -5);
+    // Hijri month mode: exact Fatimid month days calculation
+    const numDays = BohraCalendar.daysInMonth(calHijriYear, calHijriMonth - 1);
     const hijriDays = [];
-    for (let i = 0; i < 40; i++) {
-      const g = addDays(scanStart, i);
-      const h = gregToHijriDisplay(g);
-      if (h.y === calHijriYear && h.m === calHijriMonth) {
-        hijriDays.push({ g, dStr: ymd(g), hd: h });
-      }
+    for (let hd = 1; hd <= numDays; hd++) {
+      const g = hijriToGregDisplay(calHijriYear, calHijriMonth, hd);
+      hijriDays.push({ g, dStr: ymd(g), hd: { y: calHijriYear, m: calHijriMonth, d: hd } });
     }
 
-    titleEl.textContent = `${HM[calHijriMonth - 1]} ${calHijriYear}`;
-    if (hijriDays.length > 0) {
-      const firstG = hijriDays[0].g;
-      const lastG = hijriDays[hijriDays.length - 1].g;
-      const gSpan = firstG.getMonth() === lastG.getMonth()
-        ? firstG.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-        : `${firstG.toLocaleDateString('en-US', { month: 'short' })} – ${lastG.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`;
-      subEl.textContent = `${HM_AR[calHijriMonth - 1]} ${toArabicNum(calHijriYear)}  •  ${gSpan}`;
+    titleEl.textContent = `${HM_AR[calHijriMonth - 1]} ${toArabicNum(calHijriYear)}`;
+    titleEl.style.fontFamily = 'var(--font-arabic)';
+    titleEl.style.fontSize = '22px';
 
-      const startOffset = (firstG.getDay() + 6) % 7;
-      for (let i = 0; i < startOffset; i++) {
-        cellsHtml += `<div class="cal-cell empty"></div>`;
-      }
+    const firstG = hijriDays[0].g;
+    const lastG = hijriDays[hijriDays.length - 1].g;
+    const gSpan = `${firstG.getDate()} ${firstG.toLocaleDateString('en-US', { month: 'short' })} - ${lastG.getDate()} ${lastG.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`;
+    subEl.textContent = `${HM_SHORT[calHijriMonth - 1]} ${calHijriYear}, ${gSpan}`;
+    subEl.style.fontFamily = 'var(--font-sans)';
+    subEl.style.fontSize = '12px';
 
-      hijriDays.forEach(item => {
-        const spent = dayExpMap[item.dStr] || 0;
-        const dow = (item.g.getDay() + 6) % 7;
-        const isWeekend = dow >= 5;
-
-        let tintClass = '';
-        if (spent >= highThreshold) tintClass = 'tint-high';
-        else if (spent > 0) tintClass = 'tint-spend';
-        else if (isWeekend) tintClass = 'tint-Weekend';
-
-        const selClass = (item.dStr === calSelectedDate) ? 'selected' : '';
-        const isToday = (item.dStr === todayStr);
-        const gregShort = item.g.getDate() + ' ' + item.g.toLocaleDateString('en-US', { month: 'short' });
-
-        cellsHtml += `
-          <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${item.dStr}')">
-            ${isToday ? '<span class="today-dot" title="Today"></span>' : ''}
-            <div class="cal-day-pri">${item.hd.d}</div>
-            <div class="cal-day-sec">${gregShort}</div>
-            ${spent > 0 ? `<div class="cal-day-amt">${fmtCompactAmt(spent)}</div>` : ''}
-          </div>
-        `;
-      });
-    } else {
-      subEl.textContent = `${HM_AR[calHijriMonth - 1]} ${toArabicNum(calHijriYear)}`;
+    // Monday-based weekday index (0 = Mon ... 6 = Sun)
+    const startOffset = (firstG.getDay() + 6) % 7;
+    for (let i = 0; i < startOffset; i++) {
+      cellsHtml += `<div class="cal-cell empty"></div>`;
     }
+
+    hijriDays.forEach(item => {
+      const spent = dayExpMap[item.dStr] || 0;
+      const dow = (item.g.getDay() + 6) % 7;
+      const isWeekend = dow >= 5;
+
+      let tintClass = '';
+      if (spent >= highThreshold) tintClass = 'tint-high';
+      else if (spent > 0) tintClass = 'tint-spend';
+      else if (isWeekend) tintClass = 'tint-Weekend';
+
+      const selClass = (item.dStr === calSelectedDate) ? 'selected' : '';
+      const isToday = (item.dStr === todayStr);
+      const hasNote = Boolean(dayNotes[item.dStr]);
+      const gregShort = `${item.g.getDate()}${item.hd.d === 1 || item.g.getDate() === 1 ? ' ' + item.g.toLocaleDateString('en-US', { month: 'short' }) : ''}`;
+
+      cellsHtml += `
+        <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${item.dStr}')">
+          ${isToday ? '<span class="today-dot" title="Today"></span>' : ''}
+          ${hasNote ? '<span style="position:absolute;top:3px;left:4px;font-size:8px;">✏️</span>' : ''}
+          <div class="cal-day-pri" style="font-family:var(--font-arabic);font-size:16px;">${toArabicNum(item.hd.d)}</div>
+          <div class="cal-day-sec">${gregShort}</div>
+          ${spent > 0 ? `<div class="cal-day-amt">${fmtCompactAmt(spent)}</div>` : ''}
+        </div>
+      `;
+    });
   }
 
   grid.innerHTML = cellsHtml;
@@ -2477,6 +2593,7 @@ function renderSelectedDayDetails() {
   const dayEntries = entries.filter(e => e.date === calSelectedDate);
   const dayExp = dayEntries.filter(e => catById(e.cat).type !== 'income').reduce((s, e) => s + e.amt, 0);
   const dayInc = dayEntries.filter(e => catById(e.cat).type === 'income').reduce((s, e) => s + e.amt, 0);
+  const currentNote = dayNotes[calSelectedDate] || '';
 
   let listHtml = '';
   if (dayEntries.length === 0) {
@@ -2516,7 +2633,7 @@ function renderSelectedDayDetails() {
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
       <div>
         <div style="font-size:16px;font-weight:800;color:var(--text-main);line-height:1.25">${engFull}</div>
-        <div style="font-size:16px;font-weight:600;color:var(--text-main);margin-top:4px;line-height:1.3">${hijriAr}</div>
+        <div style="font-family:var(--font-arabic);font-size:18px;font-weight:600;color:var(--text-main);margin-top:4px;line-height:1.3">${hijriAr}</div>
         <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${hijriEn}</div>
       </div>
       <div style="text-align:right;flex-shrink:0;">
@@ -2525,6 +2642,16 @@ function renderSelectedDayDetails() {
         ${dayInc > 0 ? `<div style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--emerald)">+${fmt(dayInc)}</div>` : ''}
       </div>
     </div>
+
+    <!-- Personal Day Note -->
+    <div style="margin-top:12px;padding:10px 12px;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase">📝 Personal Note for This Day</span>
+        ${currentNote ? '<span style="font-size:10px;color:var(--emerald);font-weight:700">✓ Saved</span>' : ''}
+      </div>
+      <textarea id="day-note-input" class="styled-field" placeholder="Add a note (e.g., family dinner, car service, event)..." style="height:48px;font-size:12px;padding:6px 8px;resize:none;background:white;" oninput="saveDayNote('${calSelectedDate}', this.value)">${currentNote}</textarea>
+    </div>
+
     ${listHtml}
   `;
 }
