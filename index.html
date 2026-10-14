@@ -2337,12 +2337,6 @@ function saveEntry() {
 }
 
 // ── LOG RENDER (DUAL CALENDAR + DAY DETAILS + FULL LIST) ──
-const HM_AR = [
-  'محرم الحرام', 'صفر المظفر', 'ربيع الأول', 'ربيع الآخر',
-  'جمادى الأولى', 'جمادى الآخرة', 'رجب الأصب', 'شعبان الكريم',
-  'رمضان المعظم', 'شوال المكرم', 'ذو القعدة الحرام', 'ذو الحجة الحرام'
-];
-
 function toArabicNum(n) {
   return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 }
