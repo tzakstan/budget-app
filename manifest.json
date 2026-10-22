@@ -1,8 +1,8 @@
 {
-  "id": "my-personal-budget-tracker",
+  "id": "my-personal-budget-tracker-bohra",
   "name": "My Personal Budget Tracker",
   "short_name": "My Budget",
-  "description": "Personal Wealth & Habit Engine with Dawoodi Bohra Calendar",
+  "description": "Personal Wealth & Habit Engine with Fatimid Dawoodi Bohra Hijri Calendar",
   "start_url": "./?source=pwa",
   "display": "standalone",
   "background_color": "#f8faff",
@@ -23,7 +23,48 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["finance", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Quick Add Expense",
+      "short_name": "+ Expense",
+      "description": "Quickly record a new transaction",
+      "url": "./?page=add",
+      "icons": [
+        {
+          "src": "./icons/1001060095-512x512.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Calendar Log",
+      "short_name": "Calendar",
+      "description": "View English and Bohra Hijri calendar",
+      "url": "./?page=log",
+      "icons": [
+        {
+          "src": "./icons/1001060095-512x512.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Analytics & Trends",
+      "short_name": "Analytics",
+      "description": "View expense share and cycle trend curve",
+      "url": "./?page=analytics",
+      "icons": [
+        {
+          "src": "./icons/1001060095-512x512.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "categories": [
+    "finance",
+    "productivity"
+  ],
   "lang": "en",
   "dir": "ltr"
 }

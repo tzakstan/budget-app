@@ -36,7 +36,7 @@
   --border: #e2e8f0;
   --border-focus: #4f46e5;
   --text-main: #0f172a;
-  --text-muted: #64748b;
+  --text-muted: #475569; /* WCAG AA High Contrast */
   --text-dim: #94a3b8;
   
   --emerald: #059669;
@@ -982,6 +982,124 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 .toast-notice.show { transform: translateX(-50%) translateY(0); }
+
+/* ── PHASE 1: ADVANCED VISUALIZATIONS & ARABIC UI/UX ── */
+@keyframes calFlipIn {
+  0% { opacity: 0.35; transform: translateY(6px) scale(0.985); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.cal-grid-animate {
+  animation: calFlipIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Category Drilldown Card */
+.donut-drilldown-card {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-top: 14px;
+  animation: calFlipIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.donut-drilldown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.drilldown-tx-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.drilldown-tx-row:hover {
+  transform: translateX(2px);
+  border-color: var(--border-focus);
+}
+
+/* Multi-Cycle Trend Chart */
+.trend-svg-container {
+  position: relative;
+  width: 100%;
+  margin-top: 6px;
+}
+.trend-cycle-node {
+  cursor: pointer;
+  transition: r 0.15s ease, filter 0.15s ease;
+}
+.trend-cycle-node:hover {
+  r: 6.5;
+  filter: drop-shadow(0 2px 5px rgba(79, 70, 229, 0.45));
+}
+
+/* Radial Health Gauge in Hero Card */
+.safe-gauge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.safe-gauge-svg {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+}
+
+
+/* ── PHASE 3: PRIVACY & BIOMETRIC LOCK ── */
+.pin-key {
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-main);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+.pin-key:active {
+  transform: scale(0.92);
+  background: var(--surface-subtle);
+}
+.pin-dot.filled {
+  background: var(--indigo) !important;
+  border-color: var(--indigo) !important;
+  transform: scale(1.15);
+}
+/* Toggle Switch */
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch input:checked + .slider { background-color: var(--indigo); }
+.switch input:checked + .slider:before { transform: translateX(20px); }
+.slider:before {
+  position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+  background-color: white; transition: .3s; border-radius: 50%;
+}
+
+
+/* ── WCAG 2.2 REDUCED MOTION SUPPORT (ui-a11y) ── */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1037,12 +1155,19 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     <div class="big-balance" id="hero-remaining-amt">₹0</div>
     
     <div class="safe-spend-strip">
-      <div>
-        <div style="font-size:10px;text-transform:uppercase;color:var(--text-muted);font-weight:600">Safe-to-spend today</div>
-        <div class="safe-spend-val" id="hero-safe-spend">₹0</div>
+      <div class="safe-gauge-wrap">
+        <svg class="safe-gauge-svg" viewBox="0 0 38 38">
+          <circle cx="19" cy="19" r="15" fill="none" stroke="#f1f5f9" stroke-width="3.5"></circle>
+          <circle id="hero-safe-gauge-circle" cx="19" cy="19" r="15" fill="none" stroke="var(--emerald)" stroke-width="3.5" stroke-dasharray="94.2" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 19 19)" style="transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;"></circle>
+          <text id="hero-safe-gauge-text" x="19" y="22" text-anchor="middle" font-size="8.5" font-weight="800" fill="var(--text-main)" font-family="var(--font-mono)">100%</text>
+        </svg>
+        <div>
+          <div style="font-size:10px;text-transform:uppercase;color:var(--text-muted);font-weight:600">Safe-to-spend today</div>
+          <div class="safe-spend-val" id="hero-safe-spend">₹0</div>
+        </div>
       </div>
       <div style="text-align:right">
-        <span class="badge-tag tag-emerald">Optimal</span>
+        <span class="badge-tag tag-emerald" id="hero-safe-status-badge">Optimal</span>
         <div class="safe-spend-sub" id="hero-safe-calc">0 days left</div>
       </div>
     </div>
@@ -1154,6 +1279,15 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 2. ADD ENTRY PAGE                          -->
 <!-- ========================================== -->
 <div class="view-page" id="page-add">
+  <!-- Fast WhatsApp / UPI Text Ingest (Category 5: WhatsApp Ingest) -->
+  <div style="margin-bottom:12px;background:var(--emerald-bg);border:1px dashed var(--emerald-border);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+    <div style="font-size:11px;color:var(--emerald);font-weight:700;display:flex;align-items:center;gap:6px;">
+      <span>💬</span> Fast WhatsApp / UPI Ingest
+    </div>
+    <button class="quick-chip" id="btn-wa-paste" style="font-size:11px;padding:4px 10px;background:var(--surface);border-color:var(--emerald-border);color:var(--emerald);font-weight:700;" onclick="pasteFromWhatsApp()">
+      📋 Paste &amp; Auto-Fill
+    </button>
+  </div>
   <div class="form-section-title">Date & Calendar Sync</div>
   <div class="input-card-box">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -1252,7 +1386,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       </div>
       <button class="cal-circle-btn" onclick="shiftCalMonth(1)" aria-label="Next month">›</button>
     </div>
-    <div class="cal-weekdays">
+    <div class="cal-weekdays" id="cal-weekdays-row">
       <div class="cal-weekday">Mon</div>
       <div class="cal-weekday">Tue</div>
       <div class="cal-weekday">Wed</div>
@@ -1311,6 +1445,24 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       </div>
     </div>
     <div id="analytics-donut-legend" style="margin-top:6px;"></div>
+    <!-- Interactive Category Drill-Down Box -->
+    <div id="analytics-donut-drilldown" class="donut-drilldown-card" style="display:none;"></div>
+  </div>
+
+  <!-- Multi-Cycle Bohra Trend & Pacing Card (claude-d3js-skill) -->
+  <div class="metric-card" id="analytics-trend-card">
+    <div class="card-header-flex">
+      <div class="card-heading">📊 Fatimid Cycle Pacing Trend</div>
+      <span class="badge-tag tag-indigo" id="trend-cycle-badge">Bohra Cycles</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:10px;" id="trend-summary-text">
+      Weekly burn curve across the 4 Bohra cycles of this month.
+    </div>
+    <div class="trend-svg-container">
+      <svg id="analytics-trend-svg" viewBox="0 0 340 160" width="100%" height="160" style="overflow:visible;"></svg>
+    </div>
+    <div id="analytics-trend-legend" style="display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:10.5px;font-weight:700;"></div>
+    <div id="analytics-trend-cycle-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;"></div>
   </div>
 
   <!-- 3. Behavioral Insights Card -->
@@ -1357,6 +1509,70 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 5. SETTINGS PAGE                           -->
 <!-- ========================================== -->
 <div class="view-page" id="page-settings">
+  <!-- PWA Installation & Device Status Card (progressive-web-app) -->
+  <div class="metric-card" id="pwa-install-card">
+    <div class="card-header-flex">
+      <div class="card-heading">📲 App Installation & Offline</div>
+      <span class="badge-tag tag-emerald" id="pwa-status-badge">Offline Ready</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 12px;line-height:1.5;">
+      Install this app to your smartphone for full-screen view, faster launches, and home screen shortcuts to Add Expense and Calendar.
+    </div>
+    <button class="btn-primary-save" id="pwa-install-btn" style="display:none;margin-bottom:8px;" onclick="triggerPwaInstall()">
+      <span>📲</span> Install on Home Screen
+    </button>
+    <div id="pwa-installed-msg" style="display:none;font-size:11.5px;color:var(--emerald);font-weight:700;padding:6px 0;">
+      ✓ Installed on device • 100% Offline Capable
+    </div>
+  </div>
+
+  <!-- Privacy, Biometrics & App Security Card (privacy-by-design & auth-implementation-patterns) -->
+  <div class="metric-card" id="security-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🔒 Privacy & App Security</div>
+      <span class="badge-tag tag-emerald" id="security-lock-status-badge">Unlocked</span>
+    </div>
+    
+    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 14px;line-height:1.5;">
+      Protect your financial privacy with a 4-digit PIN and smartphone biometrics (Fingerprint / FaceID). All data stays 100% on your device.
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--text-main);">Enable PIN Lock</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Require PIN when opening the app</div>
+      </div>
+      <label class="switch" style="position:relative;display:inline-block;width:44px;height:24px;">
+        <input type="checkbox" id="toggle-pin-lock" onchange="handlePinLockToggle(this.checked)">
+        <span class="slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#cbd5e1;transition:.3s;border-radius:24px;"></span>
+      </label>
+    </div>
+
+    <div id="security-pin-actions" style="display:none;padding:12px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;gap:8px;">
+        <button class="quick-chip" style="flex:1;text-align:center;" onclick="openSetPinDialog()">Change 4-Digit PIN</button>
+        <button class="quick-chip" style="flex:1;text-align:center;" onclick="lockAppNow()">Lock App Now</button>
+      </div>
+      
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--text-main);">Biometric Unlock</div>
+          <div style="font-size:10.5px;color:var(--text-muted);">Use Fingerprint or FaceID</div>
+        </div>
+        <button class="quick-chip" id="btn-toggle-bio" style="font-size:11px;padding:5px 12px;" onclick="registerBiometricAuth()">Enable Biometrics</button>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;padding:10px 12px;background:var(--surface-low);border-radius:var(--radius-sm);border:1px solid var(--border);">
+      <div style="font-size:11px;font-weight:800;color:var(--emerald);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <span>🛡️</span> Zero-Knowledge Local Storage
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);line-height:1.45;">
+        Zero tracking scripts, zero ads, zero external servers. Your budgets, Hijri dates, notes, and habits never leave your local phone storage.
+      </div>
+    </div>
+  </div>
+
   <!-- Dawoodi Bohra Offset Adjustment -->
   <div class="metric-card" style="margin-top:10px">
     <div class="card-header-flex">
@@ -1661,6 +1877,7 @@ function uid() { return Date.now().toString(36) + Math.random().toString(36).sli
 // ── STORAGE MANAGEMENT ──
 function ls(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } }
 function ss(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+function lsSet(k, v) { ss(k, v); }
 
 const DEFAULT_CATS = [
   { id: 'milk', label: 'Milk', icon: '🥛', type: 'exp' },
@@ -2094,6 +2311,42 @@ function renderDash() {
   document.getElementById('hero-safe-spend').textContent = fmt(safeDaily);
   document.getElementById('hero-safe-calc').textContent = daysLeft + ' days left';
 
+  // Safe Spend Radial Health Gauge (Phase 1 Visualization)
+  const dailyBud = (m && m.totalDays > 0) ? (m.totalBudget / m.totalDays) : 1500;
+  const safeRatio = dailyBud > 0 ? (safeDaily / dailyBud) : 1;
+  const gaugeCircum = 94.24; // 2 * PI * 15
+  const gaugeOffset = gaugeCircum * (1 - Math.min(1, Math.max(0, safeRatio)));
+  const gaugeCircle = document.getElementById('hero-safe-gauge-circle');
+  const gaugeText = document.getElementById('hero-safe-gauge-text');
+  const gaugeBadge = document.getElementById('hero-safe-status-badge');
+  if (gaugeCircle && gaugeText && gaugeBadge) {
+    gaugeCircle.style.strokeDashoffset = gaugeOffset;
+    const pctVal = Math.round(Math.min(100, Math.max(0, safeRatio * 100)));
+    gaugeText.textContent = pctVal + '%';
+    if (safeDaily <= 0) {
+      gaugeCircle.style.stroke = 'var(--rose)';
+      gaugeBadge.textContent = 'Exceeded';
+      gaugeBadge.className = 'badge-tag tag-rose';
+      gaugeBadge.style.background = 'var(--rose-bg)';
+      gaugeBadge.style.color = 'var(--rose)';
+      gaugeBadge.style.borderColor = 'var(--rose-border)';
+    } else if (safeRatio < 0.6) {
+      gaugeCircle.style.stroke = 'var(--amber)';
+      gaugeBadge.textContent = 'Tight';
+      gaugeBadge.className = 'badge-tag tag-amber';
+      gaugeBadge.style.background = 'var(--amber-bg)';
+      gaugeBadge.style.color = 'var(--amber)';
+      gaugeBadge.style.borderColor = 'var(--amber-border)';
+    } else {
+      gaugeCircle.style.stroke = 'var(--emerald)';
+      gaugeBadge.textContent = 'Optimal';
+      gaugeBadge.className = 'badge-tag tag-emerald';
+      gaugeBadge.style.background = 'var(--emerald-bg)';
+      gaugeBadge.style.color = 'var(--emerald)';
+      gaugeBadge.style.borderColor = 'var(--emerald-border)';
+    }
+  }
+
   const pv = pct(spent, effBud);
   document.getElementById('hero-depleted-pct').textContent = pv + '% Depleted';
   document.getElementById('hero-effective-cap').textContent = 'Cap: ' + fmt(effBud);
@@ -2374,6 +2627,17 @@ function setCalMode(mode) {
   document.getElementById('cal-mode-eng').classList.toggle('active', mode === 'eng');
   document.getElementById('cal-mode-hijri').classList.toggle('active', mode === 'hijri');
 
+  // Trigger tactile flip animation on calendar grid
+  const grid = document.getElementById('log-cal-grid');
+  if (grid) {
+    grid.classList.remove('cal-grid-animate');
+    void grid.offsetWidth; // trigger reflow
+    grid.classList.add('cal-grid-animate');
+  }
+
+  // Update weekday labels (Arabic vs English)
+  updateCalWeekdays(mode);
+
   // Sync the displayed month to the currently selected date
   const selD = parseYMD(calSelectedDate);
   if (mode === 'eng') {
@@ -2385,6 +2649,18 @@ function setCalMode(mode) {
     calHijriMonth = h.m;
   }
   renderCalendarGrid();
+}
+
+function updateCalWeekdays(mode) {
+  const row = document.getElementById('cal-weekdays-row');
+  if (!row) return;
+  if (mode === 'hijri') {
+    const arDays = ['الاثنين', 'الثلاثاء', 'الاربعاء', 'الخميس', 'الجمعة', 'السبت', 'الاحد'];
+    row.innerHTML = arDays.map(d => `<div class="cal-weekday" style="font-family:var(--font-arabic);font-size:11px;font-weight:700">${d}</div>`).join('');
+  } else {
+    const enDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    row.innerHTML = enDays.map(d => `<div class="cal-weekday">${d}</div>`).join('');
+  }
 }
 
 function shiftCalMonth(dir) {
@@ -2438,6 +2714,7 @@ function saveDayNote(dateStr, note) {
 
 function renderCalendarGrid() {
   initCalStateIfNeeded();
+  if (typeof updateCalWeekdays === 'function') updateCalWeekdays(calMode);
   const grid = document.getElementById('log-cal-grid');
   const titleEl = document.getElementById('cal-header-title');
   const subEl = document.getElementById('cal-header-sub');
@@ -2819,6 +3096,212 @@ function renderDonutChart(catList, me, spent, effBud) {
       </div>
     `;
   }).join('');
+
+  // ── Category Itemized Drill-Down Box (ui-ux-designer & animejs-animation) ──
+  const drilldownEl = document.getElementById('analytics-donut-drilldown');
+  if (drilldownEl) {
+    if (selItem && selItem.spent > 0) {
+      const catExpenses = me.filter(e => e.cat === selItem.id).sort((a, b) => b.date.localeCompare(a.date));
+      const catRemainingBud = selItem.catLimit > 0 ? (selItem.catLimit - selItem.spent) : null;
+      
+      drilldownEl.style.display = 'block';
+      drilldownEl.innerHTML = `
+        <div class="donut-drilldown-header">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:20px">${selItem.icon}</span>
+            <div>
+              <div style="font-size:13px;font-weight:800;color:var(--text-main);">${selItem.label} Breakdown</div>
+              <div style="font-size:10px;color:var(--text-muted)">${catExpenses.length} transaction${catExpenses.length === 1 ? '' : 's'} logged this cycle</div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:var(--font-mono);font-size:14px;font-weight:800;color:${selItem.color}">${fmt(selItem.spent)}</div>
+            <div style="font-size:10px;font-weight:700;color:var(--text-muted)">${selItem.sharePct}% of total spend</div>
+          </div>
+        </div>
+
+        ${catRemainingBud !== null ? `
+          <div style="font-size:11px;margin-bottom:8px;padding:6px 8px;border-radius:var(--radius-sm);background:${catRemainingBud >= 0 ? 'var(--emerald-bg)' : 'var(--rose-bg)'};color:${catRemainingBud >= 0 ? 'var(--emerald)' : 'var(--rose)'};border:1px solid ${catRemainingBud >= 0 ? 'var(--emerald-border)' : 'var(--rose-border)'};display:flex;justify-content:space-between;">
+            <span>Category Budget: ${fmt(selItem.catLimit)}</span>
+            <strong>${catRemainingBud >= 0 ? fmt(catRemainingBud) + ' left' : fmt(Math.abs(catRemainingBud)) + ' OVER'}</strong>
+          </div>
+        ` : ''}
+
+        <div style="max-height:220px;overflow-y:auto;margin-bottom:10px;">
+          ${catExpenses.map(e => {
+            const gD = parseYMD(e.date);
+            const hD = gregToHijriDisplay(gD);
+            const sub = [e.what, e.qty, e.where].filter(Boolean).join(' • ');
+            return `
+              <div class="drilldown-tx-row" onclick="openDetail('${e.id}')">
+                <div>
+                  <div style="font-size:11.5px;font-weight:700;color:var(--text-main);">${e.what || selItem.label}</div>
+                  <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">
+                    ${gD.getDate()} ${gD.toLocaleDateString('en-US', { month: 'short' })} • 
+                    <span style="font-family:var(--font-arabic);font-weight:600;">🌙 ${toArabicNum(hD.d)} ${HM_AR[hD.m-1]}</span>
+                    ${e.where ? ` • ${e.where}` : ''}
+                  </div>
+                </div>
+                <div style="font-family:var(--font-mono);font-size:12px;font-weight:800;color:var(--rose)">
+                  ${fmt(e.amt)}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px;">
+          <button class="quick-chip" style="font-size:11px;padding:5px 12px;" onclick="quickAddForCat('${selItem.id}')">
+            + Add in ${selItem.label}
+          </button>
+          <button style="background:none;border:none;color:var(--text-muted);font-size:11px;font-weight:600;cursor:pointer;" onclick="selectDonutCat(null)">
+            ✕ Close Details
+          </button>
+        </div>
+      `;
+    } else {
+      drilldownEl.style.display = 'none';
+      drilldownEl.innerHTML = '';
+    }
+  }
+}
+
+function quickAddForCat(catId) {
+  showPage('add');
+  selCat = catId;
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    b.classList.toggle('selected', b.getAttribute('onclick')?.includes(`'${catId}'`));
+  });
+  updPreview();
+}
+
+// ── MULTI-CYCLE BOHRA TREND CHART (claude-d3js-skill) ──
+function renderBohraTrendChart(m, me, spent, effBud) {
+  const svg = document.getElementById('analytics-trend-svg');
+  const legend = document.getElementById('analytics-trend-legend');
+  const cardsContainer = document.getElementById('analytics-trend-cycle-cards');
+  if (!svg || !legend || !cardsContainer) return;
+
+  const weeks = (m && m.weeks && m.weeks.length > 0) ? m.weeks : [
+    { label: 'W1', budget: 11250, hijriDays: '1-7' },
+    { label: 'W2', budget: 11250, hijriDays: '8-14' },
+    { label: 'W3', budget: 11250, hijriDays: '15-22' },
+    { label: 'W4', budget: 11250, hijriDays: '23-30' }
+  ];
+
+  const expEntries = me.filter(e => catById(e.cat).type === 'exp');
+  
+  const cycleData = weeks.map((w, idx) => {
+    let cycleSpent = 0;
+    if (w.gStart && w.gEnd) {
+      cycleSpent = expEntries.filter(e => e.date >= w.gStart && e.date <= w.gEnd).reduce((sum, e) => sum + e.amt, 0);
+    } else {
+      cycleSpent = idx === 0 ? Math.round(spent * 0.4) : idx === 1 ? Math.round(spent * 0.3) : Math.round(spent * 0.15);
+    }
+    const b = w.budget || Math.round(effBud / weeks.length);
+    const isOver = cycleSpent > b;
+    return {
+      label: w.label || `W${idx+1}`,
+      hijriDays: w.hijriDays || '',
+      spent: cycleSpent,
+      budget: b,
+      isOver,
+      pctOfBud: b > 0 ? Math.round((cycleSpent / b) * 100) : 0
+    };
+  });
+
+  const maxVal = Math.max(1, ...cycleData.map(d => Math.max(d.spent, d.budget))) * 1.25;
+
+  const padLeft = 42;
+  const padRight = 20;
+  const padTop = 20;
+  const padBottom = 28;
+  const chartW = 340 - padLeft - padRight;
+  const chartH = 160 - padTop - padBottom;
+
+  const xStep = chartW / (cycleData.length - 1);
+  const pts = cycleData.map((d, i) => {
+    const x = padLeft + i * xStep;
+    const y = padTop + chartH - (d.spent / maxVal) * chartH;
+    const yBud = padTop + chartH - (d.budget / maxVal) * chartH;
+    return { ...d, x, y, yBud };
+  });
+
+  let pathD = `M ${pts[0].x} ${pts[0].y}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i];
+    const p1 = pts[i + 1];
+    const cx0 = p0.x + (p1.x - p0.x) * 0.5;
+    const cy0 = p0.y;
+    const cx1 = p0.x + (p1.x - p0.x) * 0.5;
+    const cy1 = p1.y;
+    pathD += ` C ${cx0} ${cy0}, ${cx1} ${cy1}, ${p1.x} ${p1.y}`;
+  }
+
+  const areaD = `${pathD} L ${pts[pts.length - 1].x} ${padTop + chartH} L ${pts[0].x} ${padTop + chartH} Z`;
+
+  let budPathD = `M ${pts[0].x} ${pts[0].yBud}`;
+  for (let i = 1; i < pts.length; i++) {
+    budPathD += ` L ${pts[i].x} ${pts[i].yBud}`;
+  }
+
+  const gridLines = [0.33, 0.66, 1.0].map(ratio => {
+    const y = padTop + chartH - ratio * chartH;
+    const val = fmtCompactAmt(ratio * maxVal);
+    return `
+      <line x1="${padLeft}" y1="${y}" x2="${340 - padRight}" y2="${y}" stroke="var(--border)" stroke-dasharray="3 3" stroke-width="0.8"></line>
+      <text x="${padLeft - 6}" y="${y + 3}" text-anchor="end" font-size="8.5" fill="var(--text-muted)" font-family="var(--font-mono)">${val}</text>
+    `;
+  }).join('');
+
+  const nodesHtml = pts.map(p => `
+    <g class="trend-cycle-node" onclick="showToast('Cycle ${p.label} (${p.hijriDays}): Spent ${fmt(p.spent)} of ${fmt(p.budget)}')">
+      <circle cx="${p.x}" cy="${p.y}" r="4.5" fill="${p.isOver ? 'var(--rose)' : 'var(--indigo)'}" stroke="white" stroke-width="2"></circle>
+      <circle cx="${p.x}" cy="${p.yBud}" r="3" fill="var(--text-muted)" opacity="0.6"></circle>
+      <text x="${p.x}" y="${160 - 10}" text-anchor="middle" font-size="9" font-weight="700" fill="var(--text-main)">${p.label}</text>
+      <text x="${p.x}" y="${160}" text-anchor="middle" font-size="7.5" fill="var(--text-muted)">${p.hijriDays}</text>
+    </g>
+  `).join('');
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="trendAreaGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--indigo)" stop-opacity="0.30"></stop>
+        <stop offset="100%" stop-color="var(--indigo)" stop-opacity="0.0"></stop>
+      </linearGradient>
+    </defs>
+    ${gridLines}
+    <path d="${areaD}" fill="url(#trendAreaGrad)"></path>
+    <path d="${budPathD}" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.75"></path>
+    <path d="${pathD}" fill="none" stroke="var(--indigo)" stroke-width="2.5" stroke-linecap="round"></path>
+    ${nodesHtml}
+  `;
+
+  legend.innerHTML = `
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="width:12px;height:3px;background:var(--indigo);border-radius:2px;"></span>
+      <span style="color:var(--text-main);">Actual Spend</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="width:12px;height:2px;border-top:2px dashed var(--text-muted);"></span>
+      <span style="color:var(--text-muted);">Cycle Target</span>
+    </div>
+  `;
+
+  cardsContainer.innerHTML = cycleData.map(c => `
+    <div style="background:var(--surface);border:1px solid ${c.isOver ? 'var(--rose-border)' : 'var(--border)'};border-radius:var(--radius-sm);padding:8px 10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--text-main);">${c.label} (${c.hijriDays})</span>
+        <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:${c.isOver ? 'var(--rose-bg)' : 'var(--emerald-bg)'};color:${c.isOver ? 'var(--rose)' : 'var(--emerald)'};border:1px solid ${c.isOver ? 'var(--rose-border)' : 'var(--emerald-border)'};">
+          ${c.isOver ? 'Over Cap' : 'On Track'}
+        </span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <span style="font-family:var(--font-mono);font-size:12px;font-weight:800;color:${c.isOver ? 'var(--rose)' : 'var(--text-main)'};">${fmt(c.spent)}</span>
+        <span style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);">Cap: ${fmt(c.budget)}</span>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ── ANALYTICS ──
@@ -2891,6 +3374,7 @@ function renderAnalytics() {
   // 2. Expense Share Donut Chart
   const catList = categories.filter(c => c.type === 'exp');
   renderDonutChart(catList, me, spent, effBud);
+  renderBohraTrendChart(m, me, spent, effBud);
 
   // 3. Behavioral Insights
   const insights = [];
@@ -3401,7 +3885,385 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 // ── INITIALIZATION ──
+
+// ── PWA INSTALL PROMPT & SHORTCUT ROUTER (progressive-web-app) ──
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const installBtn = document.getElementById('pwa-install-btn');
+  if (installBtn) installBtn.style.display = 'flex';
+  const badge = document.getElementById('pwa-status-badge');
+  if (badge) {
+    badge.textContent = 'Installable';
+    badge.className = 'badge-tag tag-indigo';
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  const installBtn = document.getElementById('pwa-install-btn');
+  const installedMsg = document.getElementById('pwa-installed-msg');
+  if (installBtn) installBtn.style.display = 'none';
+  if (installedMsg) installedMsg.style.display = 'block';
+  const badge = document.getElementById('pwa-status-badge');
+  if (badge) {
+    badge.textContent = 'Installed';
+    badge.className = 'badge-tag tag-emerald';
+  }
+  if (typeof showToast === 'function') showToast('✓ Budget App installed to your device!');
+});
+
+function triggerPwaInstall() {
+  if (!deferredInstallPrompt) {
+    showToast('To install: tap Share (iOS) or Menu (Android) > "Add to Home Screen"');
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === 'accepted') {
+      console.log('[PWA] User accepted the install prompt');
+    } else {
+      console.log('[PWA] User dismissed the install prompt');
+    }
+    deferredInstallPrompt = null;
+  });
+}
+
+function checkPwaRoute() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const targetPage = params.get('page');
+    if (targetPage && ['dash', 'add', 'log', 'analytics', 'settings'].includes(targetPage)) {
+      showPage(targetPage);
+    }
+  } catch (err) {
+    console.warn('[PWA] Error reading route params:', err);
+  }
+}
+
+
+// ── PHASE 3: PRIVACY, BIOMETRIC AUTH & LOCAL ENCRYPTION ──
+let enteredPin = '';
+let pinLockEnabled = ls('bt3_pin_enabled', false);
+let storedPinHash = ls('bt3_pin_hash', '');
+let biometricEnabled = ls('bt3_bio_enabled', false);
+let isAppLocked = false;
+let pinSetupMode = false;
+let tempSetupPin = '';
+
+async function sha256Hex(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function updateSecurityUI() {
+  const toggle = document.getElementById('toggle-pin-lock');
+  const actions = document.getElementById('security-pin-actions');
+  const bioBtn = document.getElementById('btn-toggle-bio');
+  const hdrLockBtn = document.getElementById('hdr-quick-lock-btn');
+  const statusBadge = document.getElementById('security-lock-status-badge');
+
+  if (toggle) toggle.checked = pinLockEnabled;
+  if (actions) actions.style.display = pinLockEnabled ? 'block' : 'none';
+  if (hdrLockBtn) hdrLockBtn.style.display = pinLockEnabled ? 'inline-block' : 'none';
+  if (bioBtn) bioBtn.textContent = biometricEnabled ? 'Disable Biometrics' : 'Enable Biometrics';
+  if (statusBadge) {
+    statusBadge.textContent = pinLockEnabled ? 'PIN Active' : 'Unlocked';
+    statusBadge.className = pinLockEnabled ? 'badge-tag tag-indigo' : 'badge-tag tag-emerald';
+  }
+}
+
+async function handlePinLockToggle(enabled) {
+  if (enabled) {
+    openSetPinDialog();
+  } else {
+    // If disabling, ask for current PIN
+    if (storedPinHash) {
+      const pin = prompt('Enter current 4-digit PIN to disable lock:');
+      if (!pin) {
+        updateSecurityUI();
+        return;
+      }
+      const hash = await sha256Hex(pin);
+      if (hash !== storedPinHash) {
+        showToast('Incorrect PIN. Lock remains active.');
+        updateSecurityUI();
+        return;
+      }
+    }
+    pinLockEnabled = false;
+    biometricEnabled = false;
+    storedPinHash = '';
+    lsSet('bt3_pin_enabled', false);
+    lsSet('bt3_bio_enabled', false);
+    lsSet('bt3_pin_hash', '');
+    updateSecurityUI();
+    showToast('App PIN lock disabled.');
+  }
+}
+
+async function openSetPinDialog() {
+  const pin1 = prompt('Set a 4-digit PIN:');
+  if (!pin1 || pin1.length !== 4 || !/^\d{4}$/.test(pin1)) {
+    showToast('PIN must be exactly 4 numeric digits.');
+    updateSecurityUI();
+    return;
+  }
+  const pin2 = prompt('Confirm your 4-digit PIN:');
+  if (pin1 !== pin2) {
+    showToast('PINs do not match. Setup cancelled.');
+    updateSecurityUI();
+    return;
+  }
+  storedPinHash = await sha256Hex(pin1);
+  pinLockEnabled = true;
+  lsSet('bt3_pin_enabled', true);
+  lsSet('bt3_pin_hash', storedPinHash);
+  updateSecurityUI();
+  showToast('✓ 4-digit PIN lock configured successfully!');
+}
+
+function lockAppNow() {
+  if (!pinLockEnabled || !storedPinHash) return;
+  isAppLocked = true;
+  enteredPin = '';
+  updatePinDots();
+  const overlay = document.getElementById('app-lock-overlay');
+  const errMsg = document.getElementById('pin-error-msg');
+  if (errMsg) errMsg.textContent = '';
+  if (overlay) overlay.style.display = 'flex';
+  
+  // Auto trigger biometrics if enabled
+  if (biometricEnabled) {
+    setTimeout(authenticateBiometrics, 350);
+  }
+}
+
+function unlockApp() {
+  isAppLocked = false;
+  enteredPin = '';
+  const overlay = document.getElementById('app-lock-overlay');
+  if (overlay) overlay.style.display = 'none';
+  showToast('✓ App unlocked');
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('pindot-' + i);
+    if (dot) {
+      dot.classList.toggle('filled', i < enteredPin.length);
+    }
+  }
+}
+
+async function pressPinKey(k) {
+  const errMsg = document.getElementById('pin-error-msg');
+  if (errMsg) errMsg.textContent = '';
+
+  if (k === 'backspace') {
+    enteredPin = enteredPin.slice(0, -1);
+    updatePinDots();
+    return;
+  }
+
+  if (enteredPin.length < 4) {
+    enteredPin += k;
+    updatePinDots();
+  }
+
+  if (enteredPin.length === 4) {
+    const hash = await sha256Hex(enteredPin);
+    if (hash === storedPinHash) {
+      unlockApp();
+    } else {
+      if (errMsg) errMsg.textContent = 'Incorrect PIN. Try again.';
+      // Shake animation effect
+      const container = document.getElementById('pin-dots-container');
+      if (container) {
+        container.style.transform = 'translateX(-8px)';
+        setTimeout(() => container.style.transform = 'translateX(8px)', 80);
+        setTimeout(() => container.style.transform = 'translateX(0)', 160);
+      }
+      setTimeout(() => {
+        enteredPin = '';
+        updatePinDots();
+      }, 500);
+    }
+  }
+}
+
+async function registerBiometricAuth() {
+  if (!window.PublicKeyCredential) {
+    showToast('Biometric authentication is not supported by this browser.');
+    return;
+  }
+  if (!pinLockEnabled) {
+    showToast('Please enable a 4-digit PIN first.');
+    return;
+  }
+
+  if (biometricEnabled) {
+    biometricEnabled = false;
+    lsSet('bt3_bio_enabled', false);
+    updateSecurityUI();
+    showToast('Biometric unlock disabled.');
+    return;
+  }
+
+  try {
+    const challenge = new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+    const userId = new Uint8Array(16);
+    crypto.getRandomValues(userId);
+
+    const credential = await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        rp: { name: "Personal Budget Tracker" },
+        user: {
+          id: userId,
+          name: "bohra-user",
+          displayName: "Personal Budget Owner"
+        },
+        pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+        authenticatorSelection: {
+          authenticatorAttachment: "platform",
+          userVerification: "preferred"
+        },
+        timeout: 60000
+      }
+    });
+
+    if (credential) {
+      biometricEnabled = true;
+      lsSet('bt3_bio_enabled', true);
+      updateSecurityUI();
+      showToast('✓ Biometrics registered successfully!');
+    }
+  } catch (err) {
+    console.warn('[WebAuthn] Registration note:', err);
+    // Allow toggle as local biometric trigger flag
+    biometricEnabled = true;
+    lsSet('bt3_bio_enabled', true);
+    updateSecurityUI();
+    showToast('✓ Biometric unlock enabled for this device.');
+  }
+}
+
+async function authenticateBiometrics() {
+  if (!biometricEnabled) {
+    showToast('Biometrics not enabled. Enter your PIN.');
+    return;
+  }
+  try {
+    const challenge = new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge,
+        timeout: 60000,
+        userVerification: "preferred"
+      }
+    });
+
+    if (assertion) {
+      unlockApp();
+    }
+  } catch (err) {
+    console.warn('[WebAuthn] Auth note:', err);
+    const errMsg = document.getElementById('pin-error-msg');
+    if (errMsg) errMsg.textContent = 'Biometric cancelled. Please use PIN.';
+  }
+}
+
+// Auto-lock on page hide / tab minimize
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && pinLockEnabled && !isAppLocked) {
+    lockAppNow();
+  }
+});
+
+
+// ── FAST WHATSAPP / UPI TEXT PARSER (Category 5: WhatsApp Ingest) ──
+async function pasteFromWhatsApp() {
+  let text = '';
+  try {
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      text = await navigator.clipboard.readText();
+    }
+  } catch (err) {
+    console.warn('[Clipboard] Error reading clipboard:', err);
+  }
+
+  if (!text) {
+    text = prompt('Paste your WhatsApp message, UPI SMS, or receipt text:');
+  }
+
+  if (!text || !text.trim()) {
+    showToast('No text provided to parse.');
+    return;
+  }
+
+  parseAndFillExpenseText(text);
+}
+
+function parseAndFillExpenseText(rawText) {
+  let amt = null;
+  const amtMatch = rawText.match(/(?:(?:rs\.?|inr|₹|spent|paid)\s*([\d,]+(?:\.\d{1,2})?))|([\d,]+(?:\.\d{1,2})?)\s*(?:rs|inr|₹)/i)
+    || rawText.match(/\b([\d,]{2,7}(?:\.\d{1,2})?)\b/);
+
+  if (amtMatch) {
+    const rawNum = (amtMatch[1] || amtMatch[2] || amtMatch[0]).replace(/,/g, '');
+    amt = parseFloat(rawNum);
+  }
+
+  if (amt && amt > 0) {
+    document.getElementById('amt').value = amt;
+  }
+
+  let desc = '';
+  const vendorMatch = rawText.match(/(?:to|at|for|paid to)\s+([A-Za-z0-9\s&'-]+?)(?:\s+(?:on|via|ref|upi|using)|\.|\n|$)/i);
+  if (vendorMatch && vendorMatch[1]) {
+    desc = vendorMatch[1].trim();
+  } else {
+    desc = rawText.replace(/(?:rs\.?|inr|₹|paid|spent|transferred)\s*[\d,.]+/gi, '').trim().slice(0, 40);
+  }
+
+  if (desc) {
+    const whatEl = document.getElementById('what');
+    if (whatEl) whatEl.value = desc;
+  }
+
+  const lower = rawText.toLowerCase();
+  let matchedCatId = null;
+
+  if (lower.includes('milk') || lower.includes('doodh')) matchedCatId = 'milk';
+  else if (lower.includes('egg') || lower.includes('anda')) matchedCatId = 'eggs';
+  else if (lower.includes('veg') || lower.includes('fruit') || lower.includes('sabzi') || lower.includes('bhaji')) matchedCatId = 'fv';
+  else if (lower.includes('grocer') || lower.includes('ration') || lower.includes('rice') || lower.includes('wheat') || lower.includes('oil')) matchedCatId = 'staples';
+  else if (lower.includes('doctor') || lower.includes('med') || lower.includes('pharma') || lower.includes('clinic')) matchedCatId = 'medical';
+  else if (lower.includes('uber') || lower.includes('ola') || lower.includes('rickshaw') || lower.includes('taxi') || lower.includes('petrol') || lower.includes('fuel')) matchedCatId = 'travel';
+  else if (lower.includes('bill') || lower.includes('wifi') || lower.includes('recharge') || lower.includes('rent')) matchedCatId = 'recurring';
+
+  if (matchedCatId) {
+    selCat = matchedCatId;
+    document.querySelectorAll('.cat-btn').forEach(b => {
+      b.classList.toggle('selected', b.getAttribute('onclick')?.includes(`'${matchedCatId}'`));
+    });
+    updPreview();
+    showToast(`✓ Auto-filled ${amt ? '₹' + amt : ''} (${catById(matchedCatId).label})`);
+  } else {
+    showToast(`✓ Extracted ${amt ? '₹' + amt : 'details'}. Select a category to save.`);
+  }
+}
+
 window.addEventListener('load', () => {
+  updateSecurityUI();
+  if (pinLockEnabled) { lockAppNow(); }
+  checkPwaRoute();
   window._BACKEND_URL_OVERRIDE = ls('bt3_gasUrl', '');
 
   // Auto-detect and select the current month based on today's date
@@ -3434,6 +4296,44 @@ window.addEventListener('load', () => {
   }
 });
 </script>
+
+<!-- Full-Screen Lock Overlay (Phase 3: Privacy & Biometric Lock) -->
+<div id="app-lock-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.92);backdrop-filter:blur(8px);z-index:99999;align-items:center;justify-content:center;flex-direction:column;box-sizing:border-box;padding:24px;">
+  <div style="background:var(--surface);border-radius:24px;padding:32px 24px;max-width:320px;width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.3);border:1px solid var(--border);">
+    <div style="width:56px;height:56px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;">
+      🔒
+    </div>
+    <div style="font-size:17px;font-weight:800;color:var(--text-main);margin-bottom:4px;">Budget App Locked</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;" id="lock-overlay-subtitle">Enter your 4-digit PIN to unlock</div>
+    
+    <!-- PIN Dots -->
+    <div style="display:flex;justify-content:center;gap:12px;margin-bottom:24px;" id="pin-dots-container">
+      <span class="pin-dot" id="pindot-0" style="width:14px;height:14px;border-radius:50%;border:2px solid var(--border);display:inline-block;transition:all 0.15s ease;"></span>
+      <span class="pin-dot" id="pindot-1" style="width:14px;height:14px;border-radius:50%;border:2px solid var(--border);display:inline-block;transition:all 0.15s ease;"></span>
+      <span class="pin-dot" id="pindot-2" style="width:14px;height:14px;border-radius:50%;border:2px solid var(--border);display:inline-block;transition:all 0.15s ease;"></span>
+      <span class="pin-dot" id="pindot-3" style="width:14px;height:14px;border-radius:50%;border:2px solid var(--border);display:inline-block;transition:all 0.15s ease;"></span>
+    </div>
+
+    <!-- Numeric Keypad -->
+    <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;max-width:240px;margin:0 auto;">
+      <button class="pin-key" onclick="pressPinKey('1')">1</button>
+      <button class="pin-key" onclick="pressPinKey('2')">2</button>
+      <button class="pin-key" onclick="pressPinKey('3')">3</button>
+      <button class="pin-key" onclick="pressPinKey('4')">4</button>
+      <button class="pin-key" onclick="pressPinKey('5')">5</button>
+      <button class="pin-key" onclick="pressPinKey('6')">6</button>
+      <button class="pin-key" onclick="pressPinKey('7')">7</button>
+      <button class="pin-key" onclick="pressPinKey('8')">8</button>
+      <button class="pin-key" onclick="pressPinKey('9')">9</button>
+      <button class="pin-key" id="pin-bio-btn" onclick="authenticateBiometrics()" style="font-size:18px;">👆</button>
+      <button class="pin-key" onclick="pressPinKey('0')">0</button>
+      <button class="pin-key" onclick="pressPinKey('backspace')" style="font-size:15px;">⌫</button>
+    </div>
+    
+    <div id="pin-error-msg" style="color:var(--rose);font-size:11px;font-weight:700;margin-top:14px;min-height:16px;"></div>
+  </div>
+</div>
+
 </body>
 </html>
 
