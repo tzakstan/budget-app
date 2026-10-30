@@ -1389,6 +1389,116 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   100% { transform: translate(-50%, 0); opacity: 1; }
 }
 
+
+/* ── ASK BUDGET ENHANCED INPUT & CONTRAST FIX ── */
+.ask-search-wrap {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  margin-top: 6px !important;
+  box-sizing: border-box !important;
+}
+.ask-input-box {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.ask-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: #64748b;
+  pointer-events: none;
+}
+.ask-query-field {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 12px !important;
+  padding: 12px 36px 12px 36px !important;
+  font-size: 14px !important;
+  font-family: var(--font-sans) !important;
+  outline: none !important;
+  line-height: 1.4 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+}
+.ask-query-field:focus {
+  border-color: #4f46e5 !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+  background: #ffffff !important;
+}
+.ask-query-field::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 0.9 !important;
+  font-size: 13px !important;
+}
+.ask-clear-icon-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-ask-submit {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 82px !important;
+  background: linear-gradient(135deg, var(--emerald, #059669), #047857) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 0 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2) !important;
+  transition: all 0.15s ease !important;
+}
+.btn-ask-submit:active {
+  transform: scale(0.97) !important;
+}
+#omni-search-input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+  font-size: 14px !important;
+}
+#omni-search-input::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 0.9 !important;
+}
+#gemini-api-key-input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+  font-size: 13.5px !important;
+}
+
 </style>
 </head>
 <body>
@@ -1824,10 +1934,15 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     </div>
 
     <!-- Query Input Area -->
-    <div style="display:flex;gap:6px;align-items:flex-start;">
-      <input type="text" id="ask-budget-input" class="styled-field" style="margin:0;flex:1;font-size:12.5px;" placeholder="e.g. Which categories took more than 20% of spend?" onkeydown="if(event.key==='Enter')runAskBudget()" />
-      <button type="button" class="btn-primary-save" style="margin:0;padding:9px 14px;font-size:12px;font-weight:700;white-space:nowrap;" onclick="runAskBudget()">
-        Ask
+    <div class="ask-search-wrap">
+      <div class="ask-input-box">
+        <span class="ask-search-icon">🔍</span>
+        <input type="text" id="ask-budget-input" class="ask-query-field" placeholder="Ask anything, e.g. Avoidable expenses..." oninput="handleAskInput(this.value)" onkeydown="if(event.key==='Enter')runAskBudget()" />
+        <button type="button" id="ask-clear-btn" class="ask-clear-icon-btn" onclick="clearAskInput()" style="display:none;" title="Clear">✕</button>
+      </div>
+      <button type="button" class="btn-ask-submit" onclick="runAskBudget()">
+        <span>Ask</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
       </button>
     </div>
 
@@ -4375,9 +4490,26 @@ Error: ${e.message}`);
 }
 
 // ── ASK BUDGET QUERY ENGINE ──
+function handleAskInput(val) {
+  const btn = document.getElementById('ask-clear-btn');
+  if (btn) btn.style.display = (val && val.trim().length > 0) ? 'flex' : 'none';
+}
+
+function clearAskInput() {
+  const inp = document.getElementById('ask-budget-input');
+  if (inp) {
+    inp.value = '';
+    inp.focus();
+    handleAskInput('');
+  }
+}
+
 function fillAndRunAsk(q) {
   const inp = document.getElementById('ask-budget-input');
-  if (inp) inp.value = q;
+  if (inp) {
+    inp.value = q;
+    handleAskInput(q);
+  }
   runAskBudget(q);
 }
 
