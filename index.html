@@ -2173,7 +2173,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       <button class="quick-chip" onclick="document.getElementById('import-json-file').click()">Restore JSON</button>
       <input type="file" id="import-json-file" style="display:none" accept=".json" onchange="importJSONData(event)">
       <button class="quick-chip" onclick="openCatManager()">Manage Categories</button>
-      <button class="quick-chip" style="grid-column: span 2" onclick="openMonthsManager()">Manage Months &amp; Budgets</button>
+      <button class="quick-chip" style="grid-column: span 2; font-weight:700;" onclick="openMonthsManager()">💰 Monthly &amp; Weekly Budget Planner</button>
     </div>
   </div>
 </div>
@@ -2257,7 +2257,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <div class="modal-overlay hidden" id="months-modal" onclick="closeMonthsModal(event)">
   <div class="modal-bottom-sheet" style="max-height:85vh;overflow-y:auto;padding-bottom:20px;" onclick="event.stopPropagation()">
     <div class="sheet-drag-handle"></div>
-    <div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:14px">Manage Months &amp; Budgets</div>
+    <div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:14px">💰 Monthly &amp; Weekly Budget Planner</div>
     <div id="months-modal-body"></div>
     <button style="width:100%;background:var(--card-bg);border:1px solid var(--border-color);padding:12px;font-size:13px;color:var(--text-color);border-radius:var(--radius-sm);cursor:pointer;margin-top:16px;font-weight:600;" onclick="document.getElementById('months-modal').classList.add('hidden')">Close</button>
   </div>
@@ -2829,9 +2829,56 @@ function showPage(name, btn) {
 }
 
 function changeMonth(dir) {
-  curMoIdx = Math.max(0, Math.min(months.length - 1, curMoIdx + dir));
+  if (dir > 0) {
+    if (curMoIdx < months.length - 1) {
+      curMoIdx++;
+    } else {
+      const cm = curMo();
+      const hm = getHijriMonthNumber(cm);
+      const hy = cm.hijriYear;
+      let nextM = hm + 1, nextY = hy;
+      if (nextM > 12) { nextM = 1; nextY++; }
+      
+      const existingIdx = months.findIndex(m => m.hijriYear === nextY && getHijriMonthNumber(m) === nextM);
+      if (existingIdx !== -1) {
+        curMoIdx = existingIdx;
+      } else {
+        const newMo = generateBohraMonth(nextY, nextM, cm.totalBudget || defaultMonthlyBudget);
+        months.push(newMo);
+        curMoIdx = months.length - 1;
+        saveAllData();
+        showToast(`🌙 Integrated ${newMo.name} ${newMo.hijriYear} AH`);
+      }
+    }
+  } else if (dir < 0) {
+    if (curMoIdx > 0) {
+      curMoIdx--;
+    } else {
+      const cm = curMo();
+      const hm = getHijriMonthNumber(cm);
+      const hy = cm.hijriYear;
+      let prevM = hm - 1, prevY = hy;
+      if (prevM < 1) { prevM = 12; prevY--; }
+
+      const existingIdx = months.findIndex(m => m.hijriYear === prevY && getHijriMonthNumber(m) === prevM);
+      if (existingIdx !== -1) {
+        curMoIdx = existingIdx;
+      } else {
+        const newMo = generateBohraMonth(prevY, prevM, cm.totalBudget || defaultMonthlyBudget);
+        months.unshift(newMo);
+        curMoIdx = 0;
+        saveAllData();
+        showToast(`🌙 Integrated ${newMo.name} ${newMo.hijriYear} AH`);
+      }
+    }
+  }
+
   renderDash();
   renderLog();
+  const analyticsPage = document.getElementById('page-analytics');
+  if (analyticsPage && analyticsPage.classList.contains('active')) {
+    renderAnalytics();
+  }
 }
 
 function updateHeaderDates() {
@@ -5388,6 +5435,8 @@ function renderSettings() {
 function changeOffset(dir) {
   hijriOffset = Math.max(-3, Math.min(3, hijriOffset + dir));
   ss('bt3_offset', hijriOffset);
+  months.forEach(recalculateMonthDates);
+  saveAllData();
   updateOffsetPreview();
   renderDash();
 }
@@ -5504,197 +5553,364 @@ function closeCatModal(e) {
 }
 
 // ── MANAGE MONTHS & BUDGETS ──
+// ── AUTOMATED BOHRA HIJRI MONTH & WEEK ENGINE ──
+const BOHRA_MONTH_NAMES = [
+  'Moharram', 'Safar', 'Rabi I', 'Rabi II',
+  'Jumada I', 'Jumada II', 'Rajab', 'Shabaan',
+  'Ramadan', 'Shawwal', 'Zilqad', 'Zilhaj'
+];
+
+let defaultMonthlyBudget = ls('bt3_default_budget', 45000);
+let plannerSelectedMoIdx = 0;
+
+function getHijriMonthNumber(mo) {
+  if (mo && mo.hijriMonth && mo.hijriMonth >= 1 && mo.hijriMonth <= 12) return mo.hijriMonth;
+  if (!mo) return 1;
+  const nameLower = (mo.name || '').toLowerCase();
+  for (let i = 0; i < HM.length; i++) {
+    if (HM[i].toLowerCase().includes(nameLower) || nameLower.includes(BOHRA_MONTH_NAMES[i].toLowerCase())) {
+      return i + 1;
+    }
+  }
+  if (mo.gregStart) {
+    const hd = gregToHijriDisplay(parseYMD(mo.gregStart));
+    return hd.m;
+  }
+  return 1;
+}
+
+function generateBohraMonth(hy, hm, budget = null) {
+  const name = BOHRA_MONTH_NAMES[hm - 1] || `Month ${hm}`;
+  const id = name.toLowerCase().replace(/[^a-z0-9]/g, '') + '-' + hy;
+  const totalDays = BohraCalendar.daysInMonth(hy, hm - 1);
+  const totalBudget = (budget !== null && budget > 0) ? budget : defaultMonthlyBudget;
+
+  const gStart = ymd(hijriToGregDisplay(hy, hm, 1));
+  const gEnd = ymd(hijriToGregDisplay(hy, hm, totalDays));
+
+  // Default Bohra pacing: W1: ~31%, W2: ~38%, W3: ~15.5%, W4: remainder
+  const w1Bud = Math.round(totalBudget * 0.31);
+  const w2Bud = Math.round(totalBudget * 0.38);
+  const w3Bud = Math.round(totalBudget * 0.155);
+  const w4Bud = totalBudget - (w1Bud + w2Bud + w3Bud);
+
+  const weeks = [
+    {
+      label: 'W1',
+      hijriDays: '1 – 7',
+      gStart: ymd(hijriToGregDisplay(hy, hm, 1)),
+      gEnd: ymd(hijriToGregDisplay(hy, hm, 7)),
+      budget: w1Bud
+    },
+    {
+      label: 'W2',
+      hijriDays: '8 – 14',
+      gStart: ymd(hijriToGregDisplay(hy, hm, 8)),
+      gEnd: ymd(hijriToGregDisplay(hy, hm, 14)),
+      budget: w2Bud
+    },
+    {
+      label: 'W3',
+      hijriDays: '15 – 22',
+      gStart: ymd(hijriToGregDisplay(hy, hm, 15)),
+      gEnd: ymd(hijriToGregDisplay(hy, hm, 22)),
+      budget: w3Bud
+    },
+    {
+      label: 'W4',
+      hijriDays: `23 – ${totalDays}`,
+      gStart: ymd(hijriToGregDisplay(hy, hm, 23)),
+      gEnd: ymd(hijriToGregDisplay(hy, hm, totalDays)),
+      budget: w4Bud
+    }
+  ];
+
+  return {
+    id,
+    name,
+    hijriYear: hy,
+    hijriMonth: hm,
+    gregStart: gStart,
+    gregEnd: gEnd,
+    totalDays,
+    totalBudget,
+    weeks
+  };
+}
+
+function recalculateMonthDates(mo) {
+  if (!mo) return;
+  const hy = mo.hijriYear || 1447;
+  const hm = getHijriMonthNumber(mo);
+  mo.hijriMonth = hm;
+  const totalDays = BohraCalendar.daysInMonth(hy, hm - 1);
+  mo.totalDays = totalDays;
+  mo.gregStart = ymd(hijriToGregDisplay(hy, hm, 1));
+  mo.gregEnd = ymd(hijriToGregDisplay(hy, hm, totalDays));
+
+  if (!mo.weeks || mo.weeks.length !== 4) {
+    const budget = mo.totalBudget || defaultMonthlyBudget;
+    const w1 = Math.round(budget * 0.31);
+    const w2 = Math.round(budget * 0.38);
+    const w3 = Math.round(budget * 0.155);
+    mo.weeks = [
+      { label: 'W1', hijriDays: '1 – 7', gStart: '', gEnd: '', budget: w1 },
+      { label: 'W2', hijriDays: '8 – 14', gStart: '', gEnd: '', budget: w2 },
+      { label: 'W3', hijriDays: '15 – 22', gStart: '', gEnd: '', budget: w3 },
+      { label: 'W4', hijriDays: `23 – ${totalDays}`, gStart: '', gEnd: '', budget: budget - (w1 + w2 + w3) }
+    ];
+  }
+
+  mo.weeks[0].gStart = ymd(hijriToGregDisplay(hy, hm, 1));
+  mo.weeks[0].gEnd = ymd(hijriToGregDisplay(hy, hm, 7));
+  mo.weeks[0].hijriDays = '1 – 7';
+
+  mo.weeks[1].gStart = ymd(hijriToGregDisplay(hy, hm, 8));
+  mo.weeks[1].gEnd = ymd(hijriToGregDisplay(hy, hm, 14));
+  mo.weeks[1].hijriDays = '8 – 14';
+
+  mo.weeks[2].gStart = ymd(hijriToGregDisplay(hy, hm, 15));
+  mo.weeks[2].gEnd = ymd(hijriToGregDisplay(hy, hm, 22));
+  mo.weeks[2].hijriDays = '15 – 22';
+
+  mo.weeks[3].gStart = ymd(hijriToGregDisplay(hy, hm, 23));
+  mo.weeks[3].gEnd = ymd(hijriToGregDisplay(hy, hm, totalDays));
+  mo.weeks[3].hijriDays = `23 – ${totalDays}`;
+}
+
+// Ensure all loaded months have calculated dates
+months.forEach(recalculateMonthDates);
+
+// ── FLEXIBLE MONTHLY & WEEKLY BUDGET PLANNER UI ──
 function openMonthsManager() {
+  plannerSelectedMoIdx = curMoIdx;
   renderMonthsManagerBody();
   document.getElementById('months-modal').classList.remove('hidden');
 }
 
 function renderMonthsManagerBody() {
   const container = document.getElementById('months-modal-body');
-  const m = months[curMoIdx];
-  
-  let html = `<div style="margin-bottom:20px;">
-    <h3 style="font-size:14px;margin-bottom:10px;color:var(--indigo);">Existing Months</h3>`;
-  
-  months.forEach((mo, idx) => {
-    html += `
-      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px;margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <strong style="font-size:14px;">${mo.name} ${mo.hijriYear}</strong>
-          <button style="background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-border);border-radius:var(--radius-sm);padding:4px 8px;font-size:11px;cursor:pointer;" onclick="deleteMonth(${idx})" ${months.length <= 1 ? 'disabled' : ''}>Delete</button>
-        </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">${mo.gregStart} &ndash; ${mo.gregEnd}</div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <label style="font-size:11px;color:var(--text-muted);">Total Budget:</label>
-          <input type="number" min="0" value="${mo.totalBudget}" class="styled-field" style="padding:4px 8px;font-size:12px;width:100px;" oninput="updateMonthBudget(${idx}, this.value)">
-        </div>
-      </div>
-    `;
-  });
-  html += `</div>`;
+  if (!container) return;
 
-  html += `
-    <div style="margin-bottom:20px;background:var(--surface-low);padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border-color);">
-      <h3 style="font-size:14px;margin-bottom:10px;color:var(--indigo);">Add New Month</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <input type="text" id="new-mo-name" class="styled-field" placeholder="Name (e.g. Zilhaj)">
-        <input type="number" id="new-mo-year" class="styled-field" placeholder="Hijri Year" value="${m ? m.hijriYear : ''}">
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <input type="date" id="new-mo-start" class="styled-field">
-        <input type="date" id="new-mo-end" class="styled-field">
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;align-items:center;">
-        <input type="number" min="0" id="new-mo-bud" class="styled-field" placeholder="Total Budget">
-        <button class="btn-primary-save" style="padding:8px;margin:0;" onclick="addNewMonth()">Add Month</button>
-      </div>
-    </div>
-  `;
+  if (plannerSelectedMoIdx < 0 || plannerSelectedMoIdx >= months.length) {
+    plannerSelectedMoIdx = curMoIdx;
+  }
+  const m = months[plannerSelectedMoIdx] || curMo();
+  recalculateMonthDates(m);
 
-  if (m) {
-    html += `
-      <div style="margin-bottom:20px;">
-        <h3 style="font-size:14px;margin-bottom:10px;color:var(--indigo);">Weekly Targets (${m.name} ${m.hijriYear})</h3>
-        ${m.weeks.map((w, wIdx) => `
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;margin-bottom:8px;font-size:12px;">
-            <div style="width:40px;font-weight:600;">${w.label}</div>
-            <div style="flex:1;font-size:11px;color:var(--text-muted);">${w.hijriDays}<br>${w.gStart} &ndash; ${w.gEnd}</div>
-            <input type="number" min="0" value="${w.budget}" class="styled-field" style="width:80px;padding:4px;font-size:12px;" oninput="updateWeekBudget(${curMoIdx}, ${wIdx}, this.value)">
-          </div>
-        `).join('')}
-        
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:10px;padding:8px;background:var(--surface-low);border:1px solid var(--border-color);border-radius:var(--radius-sm);">
-          <div style="width:100%;font-size:12px;font-weight:600;margin-bottom:4px;color:var(--text-muted)">Add New Week</div>
-          <input type="text" id="new-wk-label" placeholder="Label (e.g. W5)" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
-          <input type="text" id="new-wk-hdays" placeholder="Hijri Days (1-7)" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
-          <input type="date" id="new-wk-start" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
-          <input type="date" id="new-wk-end" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
-          <input type="number" min="0" id="new-wk-bud" placeholder="Budget" class="styled-field" style="width:calc(50% - 2px);padding:4px;font-size:11px;">
-          <button style="width:calc(50% - 2px);padding:4px;background:var(--indigo);color:white;border:none;border-radius:var(--radius-sm);font-size:11px;cursor:pointer;" onclick="addWeekToMonth(${curMoIdx})">Add Week</button>
-        </div>
-        <div style="margin-top:10px;text-align:right;">
-          <button style="padding:4px 8px;background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer;" onclick="removeLastWeek(${curMoIdx})" ${m.weeks.length === 0 ? 'disabled' : ''}>- Remove Last Week</button>
-        </div>
-      </div>
-    `;
+  // Calculate week sum and balance
+  const weekSum = (m.weeks || []).reduce((s, w) => s + (w.budget || 0), 0);
+  const diff = (m.totalBudget || 0) - weekSum;
+  let statusBadge = '';
+  if (diff === 0) {
+    statusBadge = `<span class="badge-tag tag-emerald">✓ Fully Balanced (${fmt(m.totalBudget)} / ${fmt(m.totalBudget)})</span>`;
+  } else if (diff > 0) {
+    statusBadge = `<span class="badge-tag tag-indigo">${fmt(diff)} Unallocated</span>`;
+  } else {
+    statusBadge = `<span class="badge-tag tag-rose">Overallocated by ${fmt(Math.abs(diff))}</span>`;
   }
 
-  html += `
-    <div style="margin-bottom:20px;">
-      <h3 style="font-size:14px;margin-bottom:10px;color:var(--indigo);">Category Budgets (Monthly)</h3>
+  const s = parseYMD(m.gregStart), e = parseYMD(m.gregEnd);
+  const f = d => d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
+  container.innerHTML = `
+    <!-- Active Month Card -->
+    <div style="background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <label style="font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px;">Active Bohra Month</label>
+        <span class="badge-tag tag-indigo">${m.totalDays} Days</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select class="styled-field" style="margin:0;font-weight:700;font-size:13.5px;flex:1;background:#fff;" onchange="selectPlannerMonth(parseInt(this.value, 10))">
+          ${months.map((mo, idx) => `
+            <option value="${idx}" ${idx === plannerSelectedMoIdx ? 'selected' : ''}>
+              ${mo.name} ${mo.hijriYear} AH (${mo.gregStart.slice(0, 7)})
+            </option>
+          `).join('')}
+        </select>
+        <button type="button" class="quick-chip" style="white-space:nowrap;" onclick="plannerJumpNextMonth()">+ Next Month</button>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">
+        ${f(s)} – ${f(e)} ${s.getFullYear()} • Auto-calculated from Fatimid Misri Calendar
+      </div>
+    </div>
+
+    <!-- Monthly Total Budget Card -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;box-shadow:var(--shadow-sm);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-main);">Monthly Total Budget</label>
+        <span style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--emerald);">${fmt(m.totalBudget || 0)}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div style="position:relative;flex:1;">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--text-muted);">₹</span>
+          <input type="number" min="0" step="500" value="${m.totalBudget}" class="styled-field" style="margin:0;padding-left:24px;font-family:var(--font-mono);font-size:14px;font-weight:700;background:#fff;" oninput="updatePlannerMonthBudget(${plannerSelectedMoIdx}, this.value)" />
+        </div>
+      </div>
+
+      <!-- Quick Preset Allocators -->
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button type="button" class="quick-chip" style="flex:1;text-align:center;font-size:10.5px;" onclick="splitBudgetEvenly(${plannerSelectedMoIdx})">⚡ Split Evenly (25% each)</button>
+        <button type="button" class="quick-chip" style="flex:1;text-align:center;font-size:10.5px;" onclick="splitBudgetBohra(${plannerSelectedMoIdx})">🌙 Bohra Frontloaded</button>
+      </div>
+    </div>
+
+    <!-- Weekly Budget Allocation (W1 - W4) -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;box-shadow:var(--shadow-sm);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div>
+          <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;color:var(--text-main);">Bohra Weekly Cycles</div>
+          <div style="font-size:10.5px;color:var(--text-muted);">Adjust budgets across the 4 cycles of this month</div>
+        </div>
+        ${statusBadge}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${(m.weeks || []).map((w, wIdx) => {
+          const ws = parseYMD(w.gStart), we = parseYMD(w.gEnd);
+          return `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--surface-low);border:1px solid var(--border);border-radius:8px;padding:8px 10px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="badge-tag tag-indigo" style="font-weight:800;">${w.label}</span>
+                <div>
+                  <div style="font-size:11.5px;font-weight:600;color:var(--text-main);">Hijri Days ${w.hijriDays}</div>
+                  <div style="font-size:10px;color:var(--text-muted);">${f(ws)} – ${f(we)}</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;width:120px;">
+                <span style="font-size:12px;font-weight:700;color:var(--text-muted);">₹</span>
+                <input type="number" min="0" step="100" value="${w.budget}" class="styled-field" style="margin:0;padding:6px 8px;font-size:12.5px;font-family:var(--font-mono);font-weight:700;background:#fff;text-align:right;" oninput="updatePlannerWeekBudget(${plannerSelectedMoIdx}, ${wIdx}, this.value)" />
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Category Budgets (Monthly Envelope) -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;box-shadow:var(--shadow-sm);">
+      <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;color:var(--text-main);margin-bottom:4px;">Category Budgets (Monthly Envelopes)</div>
+      <div style="font-size:10.5px;color:var(--text-muted);margin-bottom:10px;">Allocated spending limits per category</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         ${categories.filter(c => c.type === 'exp').map(c => `
-          <div style="display:flex;flex-direction:column;gap:4px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;">
-            <label style="font-size:11px;">${c.icon} ${c.label}</label>
-            <input type="number" min="0" value="${catBud[c.id] || 0}" class="styled-field" style="padding:4px;font-size:12px;" oninput="updateCatBudget('${c.id}', this.value)">
+          <div style="background:var(--surface-low);border:1px solid var(--border);border-radius:8px;padding:8px 10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;font-weight:600;">
+              <span>${c.icon}</span> <span>${c.label}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="font-size:11px;color:var(--text-muted);">₹</span>
+              <input type="number" min="0" step="100" value="${catBud[c.id] || 0}" class="styled-field" style="margin:0;padding:4px 6px;font-size:11.5px;font-family:var(--font-mono);font-weight:700;background:#fff;" oninput="updatePlannerCatBudget('${c.id}', this.value)" />
+            </div>
           </div>
         `).join('')}
       </div>
     </div>
+
+    <!-- Default Monthly Budget Setting for Future Months -->
+    <div style="background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-main);margin-bottom:4px;">⚙️ Future Month Defaults</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <span style="font-size:11px;color:var(--text-muted);">Default budget for new months:</span>
+        <div style="display:flex;align-items:center;gap:4px;width:120px;">
+          <span style="font-size:11px;color:var(--text-muted);">₹</span>
+          <input type="number" min="0" step="500" value="${defaultMonthlyBudget}" class="styled-field" style="margin:0;padding:4px 6px;font-size:12px;font-family:var(--font-mono);font-weight:700;background:#fff;" onchange="updateDefaultMonthlyBudget(this.value)" />
+        </div>
+      </div>
+    </div>
   `;
-
-  container.innerHTML = html;
 }
 
-function addNewMonth() {
-  const name = document.getElementById('new-mo-name').value.trim();
-  const year = parseInt(document.getElementById('new-mo-year').value);
-  const start = document.getElementById('new-mo-start').value;
-  const end = document.getElementById('new-mo-end').value;
-  const bud = parseInt(document.getElementById('new-mo-bud').value);
+function selectPlannerMonth(idx) {
+  plannerSelectedMoIdx = idx;
+  renderMonthsManagerBody();
+}
 
-  if (!name || isNaN(year) || !start || !end || isNaN(bud)) {
-    alert("Please fill all month fields correctly.");
-    return;
+function plannerJumpNextMonth() {
+  const cm = months[plannerSelectedMoIdx] || curMo();
+  const hm = getHijriMonthNumber(cm);
+  const hy = cm.hijriYear;
+  let nextM = hm + 1, nextY = hy;
+  if (nextM > 12) { nextM = 1; nextY++; }
+
+  let existingIdx = months.findIndex(m => m.hijriYear === nextY && getHijriMonthNumber(m) === nextM);
+  if (existingIdx !== -1) {
+    plannerSelectedMoIdx = existingIdx;
+  } else {
+    const newMo = generateBohraMonth(nextY, nextM, cm.totalBudget || defaultMonthlyBudget);
+    months.push(newMo);
+    plannerSelectedMoIdx = months.length - 1;
+    saveAllData();
+    showToast(`🌙 Integrated ${newMo.name} ${newMo.hijriYear} AH`);
   }
-
-  const startDate = parseYMD(start);
-  const endDate = parseYMD(end);
-  const totalDays = Math.round((endDate - startDate) / 86400000) + 1;
-
-  const newMo = {
-    id: name.toLowerCase().replace(/\\s+/g, '-') + '-' + year,
-    name: name,
-    hijriYear: year,
-    gregStart: start,
-    gregEnd: end,
-    totalDays: totalDays,
-    totalBudget: bud,
-    weeks: []
-  };
-
-  months.push(newMo);
-  curMoIdx = months.length - 1;
-  saveAllData();
-  renderDash();
   renderMonthsManagerBody();
-}
-
-function deleteMonth(idx) {
-  if (months.length <= 1) return;
-  if (!confirm('Are you sure you want to delete this month?')) return;
-  
-  months.splice(idx, 1);
-  if (curMoIdx >= months.length) curMoIdx = months.length - 1;
-  
-  saveAllData();
-  renderDash();
-  renderMonthsManagerBody();
-}
-
-function updateMonthBudget(idx, val) {
-  months[idx].totalBudget = parseInt(val) || 0;
-  saveAllData();
   renderDash();
 }
 
-function addWeekToMonth(idx) {
-  const label = document.getElementById('new-wk-label').value.trim();
-  const hdays = document.getElementById('new-wk-hdays').value.trim();
-  const start = document.getElementById('new-wk-start').value;
-  const end = document.getElementById('new-wk-end').value;
-  const bud = parseInt(document.getElementById('new-wk-bud').value);
-
-  if (!label || !hdays || !start || !end || isNaN(bud)) {
-    alert("Please fill all week fields.");
-    return;
+function updatePlannerMonthBudget(idx, val) {
+  const num = parseInt(val, 10) || 0;
+  if (months[idx]) {
+    months[idx].totalBudget = num;
+    saveAllData();
+    renderDash();
+    renderMonthsManagerBody();
   }
+}
 
-  months[idx].weeks.push({
-    label: label,
-    hijriDays: hdays,
-    gStart: start,
-    gEnd: end,
-    budget: bud
-  });
+function updatePlannerWeekBudget(moIdx, wkIdx, val) {
+  const num = parseInt(val, 10) || 0;
+  if (months[moIdx] && months[moIdx].weeks && months[moIdx].weeks[wkIdx]) {
+    months[moIdx].weeks[wkIdx].budget = num;
+    saveAllData();
+    renderDash();
+    renderMonthsManagerBody();
+  }
+}
 
+function splitBudgetEvenly(moIdx) {
+  const m = months[moIdx];
+  if (!m || !m.weeks) return;
+  const each = Math.round(m.totalBudget / 4);
+  m.weeks[0].budget = each;
+  m.weeks[1].budget = each;
+  m.weeks[2].budget = each;
+  m.weeks[3].budget = m.totalBudget - (each * 3);
   saveAllData();
   renderDash();
   renderMonthsManagerBody();
+  showToast('✓ Split evenly (25% each)');
 }
 
-function removeLastWeek(idx) {
-  if (months[idx].weeks.length === 0) return;
-  months[idx].weeks.pop();
+function splitBudgetBohra(moIdx) {
+  const m = months[moIdx];
+  if (!m || !m.weeks) return;
+  const b = m.totalBudget;
+  const w1 = Math.round(b * 0.31);
+  const w2 = Math.round(b * 0.38);
+  const w3 = Math.round(b * 0.155);
+  m.weeks[0].budget = w1;
+  m.weeks[1].budget = w2;
+  m.weeks[2].budget = w3;
+  m.weeks[3].budget = b - (w1 + w2 + w3);
   saveAllData();
   renderDash();
   renderMonthsManagerBody();
+  showToast('✓ Bohra pacing applied (Frontloaded)');
 }
 
-function updateWeekBudget(moIdx, wkIdx, val) {
-  months[moIdx].weeks[wkIdx].budget = parseInt(val) || 0;
+function updatePlannerCatBudget(catId, val) {
+  catBud[catId] = parseInt(val, 10) || 0;
   saveAllData();
   renderDash();
 }
 
-function updateCatBudget(catId, val) {
-  catBud[catId] = parseInt(val) || 0;
-  saveAllData();
-  renderDash();
+function updateDefaultMonthlyBudget(val) {
+  defaultMonthlyBudget = parseInt(val, 10) || 45000;
+  ss('bt3_default_budget', defaultMonthlyBudget);
+  showToast('Default budget saved');
 }
 
 function closeMonthsModal(e) {
-  if (e.target.id === 'months-modal') {
+  if (!e || e.target.id === 'months-modal') {
     document.getElementById('months-modal').classList.add('hidden');
   }
 }
