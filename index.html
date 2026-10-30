@@ -1100,6 +1100,295 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   }
 }
 
+
+/* ── AI BEHAVIORAL & CROSS-MONTH SUITE ── */
+.behavior-pulse-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+.behavior-pulse-card {
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.behavior-pulse-card:hover {
+  border-color: var(--indigo-border);
+}
+.behavior-pulse-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.behavior-pulse-val {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 2px;
+}
+.behavior-pulse-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+.ai-coach-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--indigo);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.ai-coach-card.danger { border-left-color: var(--rose); background: linear-gradient(to right, var(--rose-bg), var(--surface) 25%); }
+.ai-coach-card.warn { border-left-color: var(--amber); background: linear-gradient(to right, var(--amber-bg), var(--surface) 25%); }
+.ai-coach-card.good { border-left-color: var(--emerald); background: linear-gradient(to right, var(--emerald-bg), var(--surface) 25%); }
+.ai-coach-card.purple { border-left-color: var(--purple); background: linear-gradient(to right, var(--purple-bg), var(--surface) 25%); }
+
+.ai-coach-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ai-coach-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ai-coach-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.ai-coach-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.ai-coach-body {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.ai-coach-action-tip {
+  margin-top: 4px;
+  background: var(--surface-low);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 11px;
+  color: var(--text-main);
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.ai-coach-action-tip b {
+  color: var(--indigo);
+  white-space: nowrap;
+}
+.ai-drilldown-btn {
+  background: transparent;
+  border: 1px solid var(--indigo-border);
+  color: var(--indigo);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.ai-drilldown-btn:hover {
+  background: var(--indigo-light);
+}
+.cross-month-banner {
+  background: linear-gradient(135deg, var(--indigo-light) 0%, var(--surface) 100%);
+  border: 1px solid var(--indigo-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+
+/* ── PHASE B: ASK BUDGET & GEMINI ADVISOR SUITE ── */
+.q-chip-ask {
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.q-chip-ask:hover {
+  background: var(--indigo-light);
+  border-color: var(--indigo-border);
+  color: var(--indigo);
+  transform: translateY(-1px);
+}
+.ask-results-card {
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+.ask-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  margin-top: 8px;
+}
+.ask-table th {
+  text-align: left;
+  padding: 6px 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.ask-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-main);
+}
+.ask-table tr:last-child td {
+  border-bottom: none;
+}
+.ai-narrative-card {
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.ai-narrative-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--indigo);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ai-narrative-section-body {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+.ai-loading-pulse {
+  display: inline-block;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+
+/* ── PHASE C: OMNI-SEARCH, EXCEL SUITE & AUDIT TRAIL ── */
+.nav-icon-search-btn {
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.nav-icon-search-btn:hover {
+  background: var(--indigo-light);
+  border-color: var(--indigo-border);
+  color: var(--indigo);
+}
+.omni-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+.omni-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.omni-item:hover, .omni-item.selected {
+  background: var(--surface);
+  border-color: var(--indigo-border);
+  transform: translateX(2px);
+}
+.undo-toast-wrap {
+  position: fixed;
+  bottom: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: #0f172a;
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  animation: slideUpToast 0.25s ease-out;
+}
+.undo-toast-btn {
+  background: #c7d2fe;
+  color: #1e1b4b;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+@keyframes slideUpToast {
+  0% { transform: translate(-50%, 20px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
 </style>
 </head>
 <body>
@@ -1115,9 +1404,14 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       <div class="brand-title">My Personal Budget</div>
     </div>
   </div>
+  <div style="display:flex;align-items:center;gap:6px;">
+    <button type="button" class="nav-icon-search-btn" id="hdr-search-btn" onclick="openOmniSearch()" title="Omni-Search (Ctrl+K)" aria-label="Search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </button>
   <div class="sync-badge" id="sync-pill" onclick="triggerManualSync()" title="Click to synchronize with Google Sheet">
     <span class="pulse-dot" id="sync-dot"></span>
     <span id="sync-label">Synced</span>
+  </div>
   </div>
 </header>
 
@@ -1465,17 +1759,90 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     <div id="analytics-trend-cycle-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;"></div>
   </div>
 
-  <!-- 3. Behavioral Insights Card -->
-  <div class="metric-card">
+  <!-- 3. AI Behavioral Engine & Cross-Month Intelligence Card -->
+  <div class="metric-card" id="analytics-ai-engine-card">
     <div class="card-header-flex">
-      <div class="card-heading">🧠 Behavioral Engine</div>
+      <div class="card-heading">🧠 AI Behavioral & Cross-Month Intelligence</div>
+      <span class="badge-tag tag-indigo" id="ai-engine-status-badge">Deterministic AI</span>
     </div>
-    <div id="analytics-insights-container" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+    <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:6px;">
+      Spending psychology diagnostics, pacing cadence & longitudinal trajectory.
+    </div>
+
+    <!-- Cross-Month Longitudinal Delta Banner (Injected if prior month exists) -->
+    <div id="analytics-cross-month-banner" style="display:none;"></div>
+
+    <!-- 4-Tile Behavioral Pulse KPI Strip -->
+    <div class="behavior-pulse-grid">
+      <div class="behavior-pulse-card">
+        <div class="behavior-pulse-label">🛡️ Smart Safe Spend</div>
+        <div class="behavior-pulse-val" id="pulse-smart-safe">₹0/d</div>
+        <div class="behavior-pulse-sub" id="pulse-smart-safe-sub">Net of recurring dues</div>
+      </div>
+      <div class="behavior-pulse-card">
+        <div class="behavior-pulse-label">⚡ Weekend Surge</div>
+        <div class="behavior-pulse-val" id="pulse-weekend-surge">1.0x</div>
+        <div class="behavior-pulse-sub" id="pulse-weekend-sub">Fri – Sun vs Mon – Thu</div>
+      </div>
+      <div class="behavior-pulse-card">
+        <div class="behavior-pulse-label">☕ Micro-Leakage</div>
+        <div class="behavior-pulse-val" id="pulse-micro-leakage">₹0</div>
+        <div class="behavior-pulse-sub" id="pulse-micro-sub">0 small txns (≤ ₹250)</div>
+      </div>
+      <div class="behavior-pulse-card">
+        <div class="behavior-pulse-label">📊 Bohra Pacing</div>
+        <div class="behavior-pulse-val" id="pulse-cycle-drift">Optimal</div>
+        <div class="behavior-pulse-sub" id="pulse-cycle-sub">W1 – W4 distribution</div>
+      </div>
+    </div>
+
+    <!-- Diagnostic Cards & Action Tips Container -->
+    <div id="analytics-insights-container" style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
       <!-- Insights injected here -->
     </div>
   </div>
 
-  <div class="metric-card">
+  
+  <!-- 💬 Ask Your Budget (Natural Language Query & Coach) -->
+  <div class="metric-card" id="analytics-ask-budget-card">
+    <div class="card-header-flex">
+      <div class="card-heading">💬 Ask Your Budget</div>
+      <span class="badge-tag tag-indigo" id="ask-budget-badge">Natural Language</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:10px;">
+      Ask any question in plain words about your expenses, categories, or trends.
+    </div>
+
+    <!-- Quick Suggestions Chips -->
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+      <button type="button" class="q-chip-ask" onclick="fillAndRunAsk('Avoidable expenses this month')">🍟 Avoidable Spends</button>
+      <button type="button" class="q-chip-ask" onclick="fillAndRunAsk('Weekend vs weekday breakdown')">⚡ Weekend Breakdown</button>
+      <button type="button" class="q-chip-ask" onclick="fillAndRunAsk('Small spends under 250')">☕ Micro-Spends ≤ ₹250</button>
+      <button type="button" class="q-chip-ask" onclick="fillAndRunAsk('Expenses above 1000')">💰 Large Spends > ₹1,000</button>
+      <button type="button" class="q-chip-ask" onclick="fillAndRunAsk('Groceries and food purchases')">🥦 Groceries & Food</button>
+      <button type="button" class="q-chip-ask" onclick="fillAndRunAsk('Top 5 highest expenses')">🏆 Top 5 Expenses</button>
+    </div>
+
+    <!-- Query Input Area -->
+    <div style="display:flex;gap:6px;align-items:flex-start;">
+      <input type="text" id="ask-budget-input" class="styled-field" style="margin:0;flex:1;font-size:12.5px;" placeholder="e.g. Which categories took more than 20% of spend?" onkeydown="if(event.key==='Enter')runAskBudget()" />
+      <button type="button" class="btn-primary-save" style="margin:0;padding:9px 14px;font-size:12px;font-weight:700;white-space:nowrap;" onclick="runAskBudget()">
+        Ask
+      </button>
+    </div>
+
+    <!-- In-Depth AI Coach Report Trigger -->
+    <div style="margin-top:10px;display:flex;gap:8px;">
+      <button type="button" class="quick-chip" id="btn-generate-ai-narrative" style="flex:1;background:linear-gradient(135deg, var(--indigo-light) 0%, #fff 100%);border-color:var(--indigo-border);color:var(--indigo);font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;" onclick="generateAiNarrativeReport()">
+        <span>✨</span> In-Depth AI Narrative Report
+      </button>
+    </div>
+
+    <!-- Results Container -->
+    <div id="ask-budget-results" style="display:none;margin-top:14px;border-top:1px dashed var(--border);padding-top:12px;"></div>
+  </div>
+
+<div class="metric-card">
     <div class="card-header-flex">
       <div class="card-heading">Capital Velocity Breakdown</div>
       <span class="badge-tag tag-indigo">Current Cycle</span>
@@ -1573,7 +1940,61 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     </div>
   </div>
 
-  <!-- Dawoodi Bohra Offset Adjustment -->
+  
+  <!-- 🤖 AI Assistant & Gemini Configuration (Phase B) -->
+  <div class="metric-card" id="ai-settings-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🤖 AI Advisor & Gemini Setup</div>
+      <span class="badge-tag tag-indigo" id="ai-conn-status-badge">Local Mode</span>
+    </div>
+    
+    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 12px;line-height:1.5;">
+      Power natural language budget queries and in-depth financial coaching with Google Gemini.
+      <span style="color:var(--emerald);font-weight:600;">Completely free tier supported.</span>
+    </div>
+
+    <!-- API Key Input -->
+    <div style="margin-bottom:12px;">
+      <label style="font-size:11px;text-transform:uppercase;color:var(--text-muted);font-weight:700;display:block;margin-bottom:4px;">Google Gemini API Key</label>
+      <div style="display:flex;gap:6px;">
+        <input type="password" id="gemini-api-key-input" class="styled-field" style="margin:0;flex:1;" placeholder="AIzaSy..." oninput="handleGeminiKeyInput(this.value)" />
+        <button type="button" class="quick-chip" id="btn-toggle-key-visibility" style="padding:0 12px;" onclick="toggleKeyVisibility()">Show</button>
+      </div>
+      <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px;">
+        Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--indigo);text-decoration:underline;">aistudio.google.com</a>. Stored 100% locally.
+      </div>
+    </div>
+
+    <!-- Model Selector & Test Button -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+      <div>
+        <label style="font-size:10.5px;text-transform:uppercase;color:var(--text-muted);font-weight:700;display:block;margin-bottom:4px;">AI Model</label>
+        <select id="gemini-model-select" class="styled-field" style="margin:0;padding:8px 10px;font-size:12px;" onchange="handleModelChange(this.value)">
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash (Fast & Free)</option>
+          <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep Analysis)</option>
+          <option value="gemini-1.5-flash">Gemini 1.5 Flash (Legacy)</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:10.5px;text-transform:uppercase;color:var(--text-muted);font-weight:700;display:block;margin-bottom:4px;">Connectivity</label>
+        <button type="button" class="quick-chip" id="btn-test-gemini" style="width:100%;height:38px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;" onclick="testGeminiConnection()">
+          Test API Key
+        </button>
+      </div>
+    </div>
+
+    <!-- Zero-Leakage Privacy Guarantee -->
+    <div style="padding:10px 12px;background:var(--surface-low);border-radius:var(--radius-sm);border:1px solid var(--border);">
+      <div style="font-size:11px;font-weight:800;color:var(--indigo);display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+        <span>🔒</span> Zero-Data-Leakage Prompting
+      </div>
+      <div style="font-size:10.5px;color:var(--text-muted);line-height:1.4;">
+        Only anonymized, high-level statistical summaries (totals, burn rates, category ratios) are sent when generating coaching reports. Your personal store names, descriptions, and account notes never leave your device.
+      </div>
+    </div>
+  </div>
+
+<!-- Dawoodi Bohra Offset Adjustment -->
   <div class="metric-card" style="margin-top:10px">
     <div class="card-header-flex">
       <div class="card-heading">🌙 Dawoodi Bohra Calendar Offset</div>
@@ -1607,7 +2028,26 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     </div>
   </div>
 
-  <!-- Backup & Export -->
+  
+  <!-- 🕒 Activity & Audit Trail (Phase C) -->
+  <div class="metric-card" id="audit-trail-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🕒 Activity & Audit Trail</div>
+      <span class="badge-tag tag-indigo" id="audit-count-badge">0 Changes</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 12px;line-height:1.5;">
+      Every addition, modification, and deletion is recorded locally with 1-tap restore capability.
+    </div>
+    <div id="audit-trail-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
+      <!-- Audit entries injected here -->
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button type="button" class="quick-chip" style="flex:1;text-align:center;" onclick="undoLastAction()">↩️ Undo Last Change</button>
+      <button type="button" class="quick-chip" style="text-align:center;" onclick="clearAuditTrail()">Clear Log</button>
+    </div>
+  </div>
+
+<!-- Backup & Export -->
   <div class="metric-card">
     <div class="card-header-flex">
       <div class="card-heading">Data Management & Backup</div>
@@ -1654,8 +2094,8 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     <div style="margin-bottom:16px">
       <label style="font-size:11px;text-transform:uppercase;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px">Format</label>
       <select id="exp-fmt-sel" class="styled-field">
-        <option value="csv">Google Sheets Ready (.csv)</option>
-        <option value="xlsx">Excel Compatible (.csv)</option>
+        <option value="excel">📊 Formatted Excel Workbook (.xls / .xlsx)</option>
+        <option value="csv">📄 Clean CSV Spreadsheet (.csv)</option>
       </select>
     </div>
     <button class="btn-primary-save" style="width:100%;margin:0 0 8px" onclick="doExport()">Download File</button>
@@ -2574,6 +3014,7 @@ function saveEntry() {
   };
 
   entries.unshift(entry);
+  logAudit('add', entry, `Added ${entry.what || cat.label} (${fmt(entry.amt)})`);
 
   if (selCat === 'avoidable') {
     const saveAmt = amt * 0.1;
@@ -3305,8 +3746,22 @@ function renderBohraTrendChart(m, me, spent, effBud) {
 }
 
 // ── ANALYTICS ──
-function renderAnalytics() {
-  const m = curMo(), me = moEntries();
+// ── AI BEHAVIORAL INTELLIGENCE & CROSS-MONTH ENGINE ──
+function getPreviousMonth() {
+  const current = curMo();
+  const sorted = [...months].sort((a, b) => a.gregStart.localeCompare(b.gregStart));
+  const idx = sorted.findIndex(m => m.id === current.id || m.gregStart === current.gregStart);
+  if (idx > 0) return sorted[idx - 1];
+  return null;
+}
+
+function computeBehavioralDiagnostics(m, me) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const start = parseYMD(m.gregStart), end = parseYMD(m.gregEnd);
+  const elapsed = Math.max(1, Math.min(m.totalDays, Math.round((Math.min(today, end) - start) / 86400000) + 1));
+  const daysLeft = Math.max(0, m.totalDays - elapsed);
+  const elapsedPct = (elapsed / m.totalDays) * 100;
+
   const expEntries = me.filter(e => catById(e.cat).type === 'exp');
   const incEntries = me.filter(e => catById(e.cat).type === 'income');
   const spent = expEntries.reduce((s, e) => s + e.amt, 0);
@@ -3314,119 +3769,441 @@ function renderAnalytics() {
   const effBud = m.totalBudget + income;
   const rem = effBud - spent;
   const pv = pct(spent, effBud);
-
-  // Time metrics for pacing
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const start = parseYMD(m.gregStart), end = parseYMD(m.gregEnd);
-  const elapsed = Math.max(1, Math.min(m.totalDays, Math.round((Math.min(today, end) - start) / 86400000) + 1));
-  const daysLeftInMonth = Math.max(0, m.totalDays - elapsed);
-  
-  // 1. Runway Forecasting
   const dailyBurn = spent / elapsed;
-  let runwayDays = 0;
-  if (dailyBurn > 0) {
-    runwayDays = Math.floor(rem / dailyBurn);
-  } else {
-    runwayDays = daysLeftInMonth;
+
+  // 1. Smart Safe-to-Spend & Discretionary Recalibration
+  const spentRecurring = expEntries.filter(e => e.cat === 'recurring').reduce((s, e) => s + e.amt, 0);
+  const budgetRecurring = catBud['recurring'] || 0;
+  const remainingRecurringReserve = Math.max(0, budgetRecurring - spentRecurring);
+  const discretionaryCapital = Math.max(0, rem - remainingRecurringReserve);
+  const smartDailySafe = daysLeft > 0 ? Math.floor(discretionaryCapital / daysLeft) : 0;
+  const rawDailySafe = daysLeft > 0 ? Math.floor(rem / daysLeft) : 0;
+
+  // 2. Weekend vs Weekday Surge Index (Fri, Sat, Sun)
+  let weekendSpent = 0, weekendTxns = 0, weekendDaysPassed = 0;
+  let weekdaySpent = 0, weekdayTxns = 0, weekdayDaysPassed = 0;
+
+  for (let d = new Date(start); d <= Math.min(today, end); d.setDate(d.getDate() + 1)) {
+    const dow = d.getDay();
+    if (dow === 5 || dow === 6 || dow === 0) weekendDaysPassed++;
+    else weekdayDaysPassed++;
   }
-  
+
+  expEntries.forEach(e => {
+    const d = parseYMD(e.date);
+    const dow = d.getDay();
+    if (dow === 5 || dow === 6 || dow === 0) {
+      weekendSpent += e.amt;
+      weekendTxns++;
+    } else {
+      weekdaySpent += e.amt;
+      weekdayTxns++;
+    }
+  });
+
+  const weekendDailyAvg = weekendDaysPassed > 0 ? Math.round(weekendSpent / weekendDaysPassed) : 0;
+  const weekdayDailyAvg = weekdayDaysPassed > 0 ? Math.round(weekdaySpent / weekdayDaysPassed) : 0;
+  let weekendRatio = 1.0;
+  if (weekdayDailyAvg > 0) {
+    weekendRatio = weekendDailyAvg / weekdayDailyAvg;
+  } else if (weekendDailyAvg > 0) {
+    weekendRatio = 2.0;
+  }
+
+  // 3. Micro-Leakage Score (<= Rs 250)
+  const microEntries = expEntries.filter(e => e.amt <= 250);
+  const microSum = microEntries.reduce((s, e) => s + e.amt, 0);
+  const microCount = microEntries.length;
+  const microPct = spent > 0 ? Math.round((microSum / spent) * 100) : 0;
+
+  // 4. Bohra 4-Week Cycle Pacing Drift (W1-W4)
+  const weekBreakdown = (m.weeks || []).map((w) => {
+    const wEntries = expEntries.filter(e => e.date >= w.gStart && e.date <= w.gEnd);
+    const wSpent = wEntries.reduce((s, e) => s + e.amt, 0);
+    const wBudget = w.budget || Math.round(m.totalBudget / 4);
+    const wBurnPct = wBudget > 0 ? Math.round((wSpent / wBudget) * 100) : 0;
+    return { label: w.label, spent: wSpent, budget: wBudget, burnPct: wBurnPct };
+  });
+
+  let cycleDriftState = 'Optimal Pacing';
+  let cycleDriftSub = 'Balanced weekly distribution';
+  if (weekBreakdown[0] && weekBreakdown[0].burnPct > 125) {
+    cycleDriftState = 'W1 Heavy';
+    cycleDriftSub = `W1 overspent by ${weekBreakdown[0].burnPct - 100}%`;
+  } else if (weekBreakdown[1] && weekBreakdown[1].burnPct > 130) {
+    cycleDriftState = 'W2 Surge';
+    cycleDriftSub = `W2 overspent by ${weekBreakdown[1].burnPct - 100}%`;
+  } else if (daysLeft > 0 && rem < (effBud * 0.15)) {
+    cycleDriftState = 'W4 Stress';
+    cycleDriftSub = `${fmt(rem)} left for ${daysLeft} days`;
+  }
+
+  // 5. Cross-Month Longitudinal Delta
+  const prevMo = getPreviousMonth();
+  let crossMonth = null;
+  if (prevMo) {
+    const prevEntries = entries.filter(e => e.date >= prevMo.gregStart && e.date <= prevMo.gregEnd);
+    if (prevEntries.length > 0) {
+      const prevExp = prevEntries.filter(e => catById(e.cat).type === 'exp');
+      const prevSpent = prevExp.reduce((s, e) => s + e.amt, 0);
+      const deltaSpentPct = prevSpent > 0 ? Math.round(((spent - prevSpent) / prevSpent) * 100) : 0;
+
+      let topGrowingCat = null;
+      let maxCatGrowthAmt = 0;
+      categories.filter(c => c.type === 'exp').forEach(cat => {
+        const curCatSpent = expEntries.filter(e => e.cat === cat.id).reduce((s, e) => s + e.amt, 0);
+        const prevCatSpent = prevExp.filter(e => e.cat === cat.id).reduce((s, e) => s + e.amt, 0);
+        const growthAmt = curCatSpent - prevCatSpent;
+        if (growthAmt > maxCatGrowthAmt) {
+          maxCatGrowthAmt = growthAmt;
+          topGrowingCat = { cat, curCatSpent, prevCatSpent, growthAmt };
+        }
+      });
+
+      crossMonth = {
+        prevName: prevMo.name,
+        prevHijriYear: prevMo.hijriYear,
+        prevSpent,
+        curSpent: spent,
+        deltaSpentPct,
+        topGrowingCat
+      };
+    }
+  }
+
+  // 6. Actionable Behavioral Cards
+  const cards = [];
+
+  // A. Smart Safe-to-Spend Card
+  if (daysLeft > 0) {
+    if (rem <= 0) {
+      cards.push({
+        type: 'danger',
+        icon: '🚨',
+        badge: 'Capital Exhausted',
+        badgeClass: 'tag-rose',
+        title: 'Runway Depleted',
+        summary: `You have exhausted the ${m.name} capital with ${daysLeft} days remaining. Current burn is running on zero margin.`,
+        action: `Switch to strict zero-discretionary spending mode. Consider transferring emergency buffer from your Habit Vault.`
+      });
+    } else if (remainingRecurringReserve > 0 && smartDailySafe < rawDailySafe) {
+      cards.push({
+        type: 'smart_safe',
+        icon: '🛡️',
+        badge: 'Committed Bills Protected',
+        badgeClass: 'tag-indigo',
+        title: `Smart Safe Cap: ${fmt(smartDailySafe)} / day`,
+        summary: `Your raw balance suggests ${fmt(rawDailySafe)}/day, but holding ${fmt(remainingRecurringReserve)} for upcoming fixed recurring bills leaves a true discretionary cap of ${fmt(smartDailySafe)}/day.`,
+        action: `Limit unbudgeted lifestyle expenses to ${fmt(smartDailySafe)}/day so scheduled monthly dues clear smoothly.`
+      });
+    } else {
+      cards.push({
+        type: 'good',
+        icon: '🎯',
+        badge: 'Pacing On Track',
+        badgeClass: 'tag-emerald',
+        title: `Safe Allowance: ${fmt(smartDailySafe)} / day`,
+        summary: `Your spending velocity is sustainable. Maintaining ${fmt(smartDailySafe)}/day covers the remaining ${daysLeft} days with an estimated surplus.`,
+        action: `Maintain your current rhythm. Surplus funds at month-end can be routed to your Habit Vault.`
+      });
+    }
+  }
+
+  // B. Weekend Surge Card
+  if (weekendRatio >= 1.35 && weekendSpent > 0) {
+    cards.push({
+      type: 'warn',
+      icon: '⚡',
+      badge: `${weekendRatio.toFixed(1)}x Weekend Surge`,
+      badgeClass: 'tag-amber',
+      title: 'Jumoa & Weekend Acceleration',
+      summary: `Your daily spend on weekends and Jumoa averages ${fmt(weekendDailyAvg)}, which is ${Math.round((weekendRatio - 1) * 100)}% higher than weekdays (${fmt(weekdayDailyAvg)}/day).`,
+      action: `Set a soft "Weekend Social Cap" of ${fmt(Math.round(weekdayDailyAvg * 1.25))} to keep your month balanced without restricting family leisure.`,
+      filterType: 'weekend'
+    });
+  } else if (weekendDaysPassed >= 3 && weekendRatio <= 1.15 && spent > 0) {
+    cards.push({
+      type: 'good',
+      icon: '⚖️',
+      badge: 'Balanced Cadence',
+      badgeClass: 'tag-emerald',
+      title: 'Steady Day-to-Day Discipline',
+      summary: `Your weekend spending (${fmt(weekendDailyAvg)}/d) matches your weekday pace (${fmt(weekdayDailyAvg)}/d). No disruptive weekend impulse spikes detected.`,
+      action: `Excellent emotional discipline on family & leisure days. Keep this consistent cadence.`
+    });
+  }
+
+  // C. Micro-Leakage Card
+  if (microCount >= 4 && microSum >= 400) {
+    cards.push({
+      type: 'purple',
+      icon: '☕',
+      badge: `${fmt(microSum)} in Small Spends`,
+      badgeClass: 'tag-purple',
+      title: 'Micro-Expense Accumulation',
+      summary: `You made ${microCount} small transactions under ₹250 totaling ${fmt(microSum)} (${microPct}% of total expenditure this cycle).`,
+      action: `Trimming 1 in 3 micro-purchases recovers approximately ${fmt(Math.round(microSum * 0.33))} directly into your savings buffer.`,
+      filterType: 'micro'
+    });
+  }
+
+  // D. Cross-Month Longitudinal Card
+  if (crossMonth) {
+    if (crossMonth.deltaSpentPct > 15) {
+      cards.push({
+        type: 'warn',
+        icon: '📈',
+        badge: `+${crossMonth.deltaSpentPct}% vs ${crossMonth.prevName}`,
+        badgeClass: 'tag-amber',
+        title: 'Longitudinal Burn Increase',
+        summary: `At this stage, your outflow is ${crossMonth.deltaSpentPct}% higher than in ${crossMonth.prevName}.` + (crossMonth.topGrowingCat ? ` Main growth driver: <b>${crossMonth.topGrowingCat.cat.label}</b> (+${fmt(crossMonth.topGrowingCat.growthAmt)}).` : ''),
+        action: crossMonth.topGrowingCat ? `Audit your ${crossMonth.topGrowingCat.cat.label} purchases to determine if this is a one-off seasonal cost or ongoing habit drift.` : 'Review recent discretionary transactions.'
+      });
+    } else if (crossMonth.deltaSpentPct < -10) {
+      cards.push({
+        type: 'good',
+        icon: '📉',
+        badge: `${crossMonth.deltaSpentPct}% vs ${crossMonth.prevName}`,
+        badgeClass: 'tag-emerald',
+        title: 'Improved Capital Efficiency',
+        summary: `Your burn rate is ${Math.abs(crossMonth.deltaSpentPct)}% leaner than in ${crossMonth.prevName} (${fmt(spent)} vs ${fmt(crossMonth.prevSpent)}).`,
+        action: `Celebrate this disciplined trajectory! Sustaining this margin directly builds your financial independence.`
+      });
+    }
+  }
+
+  // E. Category Runaway Alerts
+  categories.filter(c => c.type === 'exp').forEach(cat => {
+    const s = expEntries.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
+    const b = catBud[cat.id] || 0;
+    if (b > 0) {
+      const catDepletion = (s / b) * 100;
+      if (catDepletion > elapsedPct + 25) {
+        cards.push({
+          type: 'danger',
+          icon: cat.icon || '⚠️',
+          badge: `${Math.round(catDepletion)}% Used`,
+          badgeClass: 'tag-rose',
+          title: `${cat.label} Velocity Alert`,
+          summary: `You have consumed ${Math.round(catDepletion)}% of your ${cat.label} budget (${fmt(s)}/${fmt(b)}), but only ${Math.round(elapsedPct)}% of ${m.name} has passed.`,
+          action: `Pause discretionary ${cat.label} purchases for the next ${Math.min(5, daysLeft)} days to realign with your monthly ceiling.`
+        });
+      } else if (s > 0 && catDepletion < elapsedPct - 20) {
+        cards.push({
+          type: 'good',
+          icon: cat.icon || '🏆',
+          badge: 'High Efficiency',
+          badgeClass: 'tag-emerald',
+          title: `${cat.label} Pacing Well`,
+          summary: `You have spent only ${fmt(s)} of your ${fmt(b)} ${cat.label} budget with ${daysLeft} days remaining.`,
+          action: `Maintain this lean footprint to carry over extra surplus.`
+        });
+      }
+    }
+  });
+
+  // F. Avoidable Habit Vault Tithe
+  const avoidS = expEntries.filter(e => e.cat === 'avoidable').reduce((a, e) => a + e.amt, 0);
+  if (avoidS > 0) {
+    cards.push({
+      type: 'warn',
+      icon: '🎯',
+      badge: `${fmt(avoidS)} Avoidable`,
+      badgeClass: 'tag-amber',
+      title: 'Habit Vault Discipline Active',
+      summary: `Your ${fmt(avoidS)} spending on Avoidable categories has automatically routed a 10% penalty (${fmt(avoidS * 0.1)}) to your Habit Vault.`,
+      action: `Every avoidable splurge redirects 10% to long-term savings. Aim to reduce base avoidable outflow next week.`
+    });
+  }
+
+  return {
+    elapsed,
+    daysLeft,
+    elapsedPct,
+    spent,
+    income,
+    effBud,
+    rem,
+    pv,
+    dailyBurn,
+    smartDailySafe,
+    rawDailySafe,
+    remainingRecurringReserve,
+    weekendDailyAvg,
+    weekdayDailyAvg,
+    weekendRatio,
+    microCount,
+    microSum,
+    cycleDriftState,
+    cycleDriftSub,
+    crossMonth,
+    cards
+  };
+}
+
+function renderAnalytics() {
+  const m = curMo(), me = moEntries();
+  const diag = computeBehavioralDiagnostics(m, me);
+
+  // 1. Runway Forecasting Card
   const runwayEl = document.getElementById('runway-days-left');
   const runwayBadge = document.getElementById('runway-status-badge');
   const runwayBar = document.getElementById('runway-progress-bar');
   const runwayText = document.getElementById('runway-projection-text');
-  
-  if (rem <= 0) {
+
+  let runwayDays = 0;
+  if (diag.dailyBurn > 0) {
+    runwayDays = Math.floor(diag.rem / diag.dailyBurn);
+  } else {
+    runwayDays = diag.daysLeft;
+  }
+
+  if (diag.rem <= 0) {
     runwayEl.textContent = 'Out of Capital';
     runwayEl.style.color = 'var(--rose)';
     runwayBadge.textContent = 'Depleted';
-    runwayBadge.className = 'badge-tag tag-amber';
-    runwayBadge.style.background = 'var(--rose-bg)';
-    runwayBadge.style.color = 'var(--rose)';
-    runwayBadge.style.borderColor = 'var(--rose-border)';
+    runwayBadge.className = 'badge-tag tag-rose';
     runwayBar.style.width = '100%';
     runwayBar.style.background = 'var(--rose)';
-    runwayText.textContent = `Burned ${fmt(dailyBurn)}/d • 0 runway left`;
-  } else if (runwayDays < daysLeftInMonth) {
-    const shortfall = daysLeftInMonth - runwayDays;
+    runwayText.textContent = `Burned ${fmt(diag.dailyBurn)}/d • 0 runway left`;
+  } else if (runwayDays < diag.daysLeft) {
+    const shortfall = diag.daysLeft - runwayDays;
     runwayEl.textContent = runwayDays + ' Days Runway';
     runwayEl.style.color = 'var(--text-main)';
     runwayBadge.textContent = shortfall + 'd Shortfall';
     runwayBadge.className = 'badge-tag tag-amber';
-    runwayBadge.style.background = 'var(--amber-bg)';
-    runwayBadge.style.color = 'var(--amber)';
-    runwayBadge.style.borderColor = 'var(--amber-border)';
-    runwayBar.style.width = Math.min(100, (runwayDays / daysLeftInMonth) * 100) + '%';
+    runwayBar.style.width = Math.min(100, (runwayDays / diag.daysLeft) * 100) + '%';
     runwayBar.style.background = 'var(--amber)';
-    runwayText.textContent = `At ${fmt(dailyBurn)}/d • Runs out before month ends`;
+    runwayText.textContent = `At ${fmt(diag.dailyBurn)}/d • Runs out before month ends`;
   } else {
     runwayEl.textContent = runwayDays + ' Days Runway';
     runwayEl.style.color = 'var(--text-main)';
     runwayBadge.textContent = 'On Track';
     runwayBadge.className = 'badge-tag tag-emerald';
-    runwayBadge.style.background = 'var(--emerald-bg)';
-    runwayBadge.style.color = 'var(--emerald)';
-    runwayBadge.style.borderColor = 'var(--emerald-border)';
     runwayBar.style.width = '100%';
     runwayBar.style.background = 'var(--emerald)';
-    runwayText.textContent = `At ${fmt(dailyBurn)}/d • Covers remaining ${daysLeftInMonth} days safely`;
+    runwayText.textContent = `At ${fmt(diag.dailyBurn)}/d • Covers remaining ${diag.daysLeft} days safely`;
   }
 
-  // 2. Expense Share Donut Chart
+  // 2. Charts
   const catList = categories.filter(c => c.type === 'exp');
-  renderDonutChart(catList, me, spent, effBud);
-  renderBohraTrendChart(m, me, spent, effBud);
+  renderDonutChart(catList, me, diag.spent, diag.effBud);
+  renderBohraTrendChart(m, me, diag.spent, diag.effBud);
 
-  // 3. Behavioral Insights
-  const insights = [];
-  const expectedDepletionPct = (elapsed / m.totalDays) * 100;
+  // 3. AI Behavioral Pulse KPI Strip
+  const pulseSafeEl = document.getElementById('pulse-smart-safe');
+  const pulseSafeSubEl = document.getElementById('pulse-smart-safe-sub');
+  if (pulseSafeEl) {
+    pulseSafeEl.textContent = `${fmt(diag.smartDailySafe)}/d`;
+    pulseSafeSubEl.textContent = diag.remainingRecurringReserve > 0 
+      ? `Net of ${fmt(diag.remainingRecurringReserve)} bills` 
+      : `${diag.daysLeft} days remaining`;
+  }
 
-  catList.forEach(cat => {
-    const s = me.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
-    const b = catBud[cat.id] || 0;
-    if (b > 0) {
-      const catDepletion = (s / b) * 100;
-      if (catDepletion > expectedDepletionPct + 25) {
-        insights.push({ type: 'warn', text: `You've burned ${Math.round(catDepletion)}% of your ${cat.label} budget, but only ${Math.round(expectedDepletionPct)}% of the month has passed.` });
-      } else if (s > 0 && catDepletion < expectedDepletionPct - 20) {
-        insights.push({ type: 'good', text: `Pacing Well: You are spending highly efficiently on ${cat.label} this cycle.` });
-      }
+  const pulseWeekendEl = document.getElementById('pulse-weekend-surge');
+  const pulseWeekendSubEl = document.getElementById('pulse-weekend-sub');
+  if (pulseWeekendEl) {
+    pulseWeekendEl.textContent = `${diag.weekendRatio.toFixed(1)}x`;
+    pulseWeekendEl.style.color = diag.weekendRatio >= 1.35 ? 'var(--amber)' : 'var(--text-main)';
+    pulseWeekendSubEl.textContent = `${fmt(diag.weekendDailyAvg)}/d vs ${fmt(diag.weekdayDailyAvg)}/d`;
+  }
+
+  const pulseMicroEl = document.getElementById('pulse-micro-leakage');
+  const pulseMicroSubEl = document.getElementById('pulse-micro-sub');
+  if (pulseMicroEl) {
+    pulseMicroEl.textContent = fmt(diag.microSum);
+    pulseMicroSubEl.textContent = `${diag.microCount} txns (≤ ₹250)`;
+  }
+
+  const pulseDriftEl = document.getElementById('pulse-cycle-drift');
+  const pulseDriftSubEl = document.getElementById('pulse-cycle-sub');
+  if (pulseDriftEl) {
+    pulseDriftEl.textContent = diag.cycleDriftState;
+    pulseDriftEl.style.color = diag.cycleDriftState.includes('Heavy') || diag.cycleDriftState.includes('Surge') 
+      ? 'var(--amber)' 
+      : diag.cycleDriftState.includes('Stress') 
+      ? 'var(--rose)' 
+      : 'var(--emerald)';
+    pulseDriftSubEl.textContent = diag.cycleDriftSub;
+  }
+
+  // 4. Cross-Month Longitudinal Banner
+  const crossMonthBanner = document.getElementById('analytics-cross-month-banner');
+  if (crossMonthBanner) {
+    if (diag.crossMonth) {
+      crossMonthBanner.style.display = 'block';
+      const isHigher = diag.crossMonth.deltaSpentPct > 0;
+      const tagClass = diag.crossMonth.deltaSpentPct > 15 ? 'tag-amber' : diag.crossMonth.deltaSpentPct < -10 ? 'tag-emerald' : 'tag-indigo';
+      crossMonthBanner.innerHTML = `
+        <div class="cross-month-banner">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:10.5px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:0.5px;">Longitudinal vs ${diag.crossMonth.prevName} ${diag.crossMonth.prevHijriYear}</span>
+            <span class="badge-tag ${tagClass}">
+              ${isHigher ? '+' : ''}${diag.crossMonth.deltaSpentPct}% Delta
+            </span>
+          </div>
+          <div style="font-size:11.5px;color:var(--text-main);margin-top:4px;line-height:1.4;">
+            ${isHigher 
+              ? `Spending velocity is tracking higher than in ${diag.crossMonth.prevName} (${fmt(diag.spent)} vs ${fmt(diag.crossMonth.prevSpent)}).`
+              : `Spending velocity is tracking ${Math.abs(diag.crossMonth.deltaSpentPct)}% leaner than in ${diag.crossMonth.prevName} (${fmt(diag.spent)} vs ${fmt(diag.crossMonth.prevSpent)}).`}
+            ${diag.crossMonth.topGrowingCat ? ` Main category growth: <b>${diag.crossMonth.topGrowingCat.cat.label}</b> (+${fmt(diag.crossMonth.topGrowingCat.growthAmt)}).` : ''}
+          </div>
+        </div>
+      `;
+    } else {
+      crossMonthBanner.style.display = 'none';
     }
-  });
-
-  const avoidS = me.filter(e => e.cat === 'avoidable').reduce((a, e) => a + e.amt, 0);
-  if (avoidS > 0) {
-    insights.push({ type: 'info', text: `Your ${fmt(avoidS)} spending on Avoidable categories has automatically routed ${fmt(avoidS * 0.1)} to your Habit Vault.` });
   }
 
-  insights.sort((a, b) => {
-    const rank = { 'warn': 1, 'info': 2, 'good': 3 };
-    return rank[a.type] - rank[b.type];
-  });
-  const topInsights = insights.slice(0, 3);
-
+  // 5. Behavioral Actionable Cards
   const insightsContainer = document.getElementById('analytics-insights-container');
-  if (topInsights.length === 0) {
-    insightsContainer.innerHTML = `<div style="font-size:11px;color:var(--text-muted);text-align:center;padding:10px;">Not enough data for insights yet. Keep logging!</div>`;
-  } else {
-    insightsContainer.innerHTML = topInsights.map(ins => {
-      let icon = '💡';
-      let bg = 'var(--surface-low)';
-      let color = 'var(--text-main)';
-      let border = 'var(--border)';
-      if (ins.type === 'warn') { icon = '🚨'; bg = 'var(--rose-bg)'; color = 'var(--rose)'; border = 'var(--rose-border)'; }
-      if (ins.type === 'good') { icon = '🏆'; bg = 'var(--emerald-bg)'; color = 'var(--emerald)'; border = 'var(--emerald-border)'; }
-      if (ins.type === 'info') { icon = '🎯'; bg = 'var(--amber-bg)'; color = 'var(--amber)'; border = 'var(--amber-border)'; }
-      return `<div style="display:flex;gap:10px;background:${bg};border:1px solid ${border};padding:10px 12px;border-radius:var(--radius-sm);font-size:11px;color:${color};align-items:flex-start;line-height:1.4;">
-                <div style="font-size:14px;">${icon}</div><div>${ins.text}</div>
-              </div>`;
-    }).join('');
+  if (insightsContainer) {
+    if (diag.cards.length === 0) {
+      insightsContainer.innerHTML = `<div style="font-size:11px;color:var(--text-muted);text-align:center;padding:12px;">Not enough transaction data for behavioral diagnostics yet. Keep logging!</div>`;
+    } else {
+      // Sort: danger first, then warn, smart_safe, purple, good
+      const rank = { 'danger': 1, 'warn': 2, 'smart_safe': 3, 'purple': 4, 'good': 5 };
+      diag.cards.sort((a, b) => (rank[a.type] || 6) - (rank[b.type] || 6));
+
+      insightsContainer.innerHTML = diag.cards.map(c => {
+        let cardClass = 'ai-coach-card';
+        if (c.type === 'danger') cardClass += ' danger';
+        else if (c.type === 'warn') cardClass += ' warn';
+        else if (c.type === 'good') cardClass += ' good';
+        else if (c.type === 'purple') cardClass += ' purple';
+
+        const btnHtml = c.filterType 
+          ? `<button type="button" class="ai-drilldown-btn" onclick="openAiDrilldown('${c.filterType}')">🔍 View ${c.filterType === 'micro' ? 'Micro-Spends' : 'Weekend Spends'}</button>`
+          : '';
+
+        return `
+          <div class="${cardClass}">
+            <div class="ai-coach-header">
+              <div class="ai-coach-title-wrap">
+                <span class="ai-coach-icon">${c.icon}</span>
+                <span class="ai-coach-title">${c.title}</span>
+              </div>
+              <span class="badge-tag ${c.badgeClass}">${c.badge}</span>
+            </div>
+            <div class="ai-coach-body">${c.summary}</div>
+            <div class="ai-coach-action-tip">
+              <span>💡</span>
+              <div><b>Action Tip:</b> ${c.action}</div>
+            </div>
+            ${btnHtml}
+          </div>
+        `;
+      }).join('');
+    }
   }
 
-  document.getElementById('analytics-effective-cap').textContent = fmt(effBud);
-  document.getElementById('analytics-depleted-metric').textContent = `${pv}% Depleted • ${fmt(rem)} Remaining`;
-  document.getElementById('analytics-total-inc').textContent = fmt(income);
-  document.getElementById('analytics-total-exp').textContent = fmt(spent);
+  // 6. Velocity Numbers
+  document.getElementById('analytics-effective-cap').textContent = fmt(diag.effBud);
+  document.getElementById('analytics-depleted-metric').textContent = `${diag.pv}% Depleted • ${fmt(diag.rem)} Remaining`;
+  document.getElementById('analytics-total-inc').textContent = fmt(diag.income);
+  document.getElementById('analytics-total-exp').textContent = fmt(diag.spent);
 
+  // 7. Category Progress Bars
   const container = document.getElementById('analytics-category-progress');
   container.innerHTML = catList.map(cat => {
     const s = me.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
@@ -3446,8 +4223,1031 @@ function renderAnalytics() {
   }).join('');
 }
 
+// ── AI TRANSACTION DRILLDOWN MODAL HANDLERS ──
+function openAiDrilldown(type) {
+  const m = curMo(), me = moEntries();
+  const expEntries = me.filter(e => catById(e.cat).type === 'exp');
+  let list = [];
+  let title = 'Transactions';
+  let badge = 'Filtered';
+  let sub = '';
+
+  if (type === 'micro') {
+    list = expEntries.filter(e => e.amt <= 250);
+    title = 'Micro-Expenses (≤ ₹250)';
+    badge = `${list.length} Transactions`;
+    const sum = list.reduce((s, e) => s + e.amt, 0);
+    sub = `Totaling ${fmt(sum)}. High-frequency small expenditures often create unnoticed capital leaks.`;
+  } else if (type === 'weekend') {
+    list = expEntries.filter(e => {
+      const d = parseYMD(e.date);
+      const dow = d.getDay();
+      return dow === 5 || dow === 6 || dow === 0;
+    });
+    title = 'Weekend & Jumoa Transactions';
+    badge = `${list.length} Transactions`;
+    const sum = list.reduce((s, e) => s + e.amt, 0);
+    sub = `Totaling ${fmt(sum)} spent on Fridays (Jumoa), Saturdays and Sundays.`;
+  }
+
+  document.getElementById('ai-drilldown-title').textContent = title;
+  document.getElementById('ai-drilldown-badge').textContent = badge;
+  document.getElementById('ai-drilldown-sub').textContent = sub;
+
+  const listEl = document.getElementById('ai-drilldown-list');
+  if (list.length === 0) {
+    listEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:24px;">No matching transactions found for this filter.</div>';
+  } else {
+    list.sort((a, b) => b.date.localeCompare(a.date));
+    listEl.innerHTML = list.map(e => {
+      const cat = catById(e.cat);
+      const d = parseYMD(e.date);
+      const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+      return `
+        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="font-size:18px;">${cat.icon}</div>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--text-main);">${e.desc || cat.label}</div>
+              <div style="font-size:10px;color:var(--text-muted);">${dayName}, ${e.date} • ${cat.label}</div>
+            </div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--rose);">${fmt(e.amt)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  const modal = document.getElementById('ai-drilldown-modal');
+  modal.classList.remove('hidden');
+}
+
+function closeAiDrilldownModal(e) {
+  if (e && e.target && e.target !== document.getElementById('ai-drilldown-modal')) {
+    if (!e.target.closest('button')) return;
+  }
+  document.getElementById('ai-drilldown-modal').classList.add('hidden');
+}
+
+
+// ── PHASE B: GEMINI API & ASK BUDGET ENGINE ──
+let geminiApiKey = ls('bt3_gemini_key', '');
+let geminiModel = ls('bt3_gemini_model', 'gemini-2.5-flash');
+
+function handleGeminiKeyInput(val) {
+  geminiApiKey = val.trim();
+  ss('bt3_gemini_key', geminiApiKey);
+  updateAiStatusBadge();
+}
+
+function toggleKeyVisibility() {
+  const inp = document.getElementById('gemini-api-key-input');
+  const btn = document.getElementById('btn-toggle-key-visibility');
+  if (!inp || !btn) return;
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.textContent = 'Hide';
+  } else {
+    inp.type = 'password';
+    btn.textContent = 'Show';
+  }
+}
+
+function handleModelChange(val) {
+  geminiModel = val;
+  ss('bt3_gemini_model', geminiModel);
+  updateAiStatusBadge();
+}
+
+function updateAiStatusBadge() {
+  const badge = document.getElementById('ai-conn-status-badge');
+  const askBadge = document.getElementById('ask-budget-badge');
+  if (!badge) return;
+  if (geminiApiKey) {
+    badge.textContent = `● Connected (${geminiModel.replace('gemini-', 'v')})`;
+    badge.className = 'badge-tag tag-emerald';
+    if (askBadge) askBadge.textContent = 'AI + On-Device';
+  } else {
+    badge.textContent = '○ Local Mode (100% Offline)';
+    badge.className = 'badge-tag tag-indigo';
+    if (askBadge) askBadge.textContent = 'Deterministic Local';
+  }
+}
+
+async function testGeminiConnection() {
+  const btn = document.getElementById('btn-test-gemini');
+  if (!geminiApiKey) {
+    showToast('Please enter an API key first');
+    return;
+  }
+  const origText = btn.textContent;
+  btn.textContent = 'Testing...';
+  btn.disabled = true;
+
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiApiKey}`;
+    const payload = {
+      contents: [{
+        parts: [{ text: "Hello! Reply with only the word 'Connected' if you receive this." }]
+      }]
+    };
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok && data.candidates && data.candidates.length > 0) {
+      showToast('✅ Gemini API connected successfully!');
+      updateAiStatusBadge();
+    } else {
+      const err = data.error?.message || 'Invalid API key or model response';
+      alert(`Connection failed: ${err}`);
+    }
+  } catch (e) {
+    alert(`Could not connect to Gemini API. Check your internet connection.
+
+Error: ${e.message}`);
+  } finally {
+    btn.textContent = origText;
+    btn.disabled = false;
+  }
+}
+
+// ── ASK BUDGET QUERY ENGINE ──
+function fillAndRunAsk(q) {
+  const inp = document.getElementById('ask-budget-input');
+  if (inp) inp.value = q;
+  runAskBudget(q);
+}
+
+function runAskBudget(customQ) {
+  const inp = document.getElementById('ask-budget-input');
+  const q = (customQ || (inp ? inp.value : '')).trim();
+  if (!q) {
+    showToast('Please type a question or choose a prompt chip');
+    return;
+  }
+
+  const resContainer = document.getElementById('ask-budget-results');
+  if (!resContainer) return;
+
+  resContainer.style.display = 'block';
+  resContainer.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:14px;"><span class="ai-loading-pulse">Analyzing expenses and pacing...</span></div>';
+
+  setTimeout(() => {
+    try {
+      const result = executeBudgetQuery(q);
+      renderAskBudgetResults(q, result);
+    } catch (e) {
+      resContainer.innerHTML = `<div style="font-size:12px;color:var(--rose);padding:10px;">Query error: ${e.message}</div>`;
+    }
+  }, 100);
+}
+
+function executeBudgetQuery(q) {
+  const qLower = q.toLowerCase();
+  const m = curMo(), me = moEntries();
+  const expEntries = me.filter(e => catById(e.cat).type === 'exp');
+  const totalSpent = expEntries.reduce((s, e) => s + e.amt, 0);
+
+  // Extracted criteria
+  let minAmt = null, maxAmt = null, topN = null;
+  let weekendOnly = false, weekdayOnly = false;
+  let targetCats = [];
+
+  // 1. Amount Filters
+  const mMin = qLower.match(/(?:above|over|more than|greater than|gt|>)\s*(?:rs\.?|₹)?\s*([0-9]+)/);
+  if (mMin) minAmt = parseInt(mMin[1], 10);
+
+  const mMax = qLower.match(/(?:below|under|less than|at most|lt|<)\s*(?:rs\.?|₹)?\s*([0-9]+)/);
+  if (mMax) maxAmt = parseInt(mMax[1], 10);
+
+  const mTop = qLower.match(/top\s*([0-9]+)/);
+  if (mTop) topN = parseInt(mTop[1], 10);
+
+  // 2. Weekend / Weekday
+  if (qLower.includes('weekend') || qLower.includes('jumoa') || qLower.includes('friday') || qLower.includes('saturday') || qLower.includes('sunday')) {
+    weekendOnly = true;
+  }
+  if (qLower.includes('weekday') || qLower.includes('workday') || qLower.includes('mon to thu')) {
+    weekdayOnly = true;
+  }
+
+  // 3. Category Aliases
+  const catAliases = {
+    'avoidable': ['avoidable', 'splurge', 'treat', 'junk', 'eating out', 'restaurant', 'dining', 'takeout', 'zomato', 'swiggy'],
+    'fv': ['fruit', 'fruits', 'veg', 'veggies', 'vegetables', 'fv'],
+    'staples': ['staples', 'grocery', 'groceries', 'grain', 'atta', 'rice', 'dal', 'oil', 'provisions'],
+    'milk': ['milk', 'dairy', 'dahi', 'paneer'],
+    'eggs': ['egg', 'eggs'],
+    'travel': ['travel', 'fuel', 'petrol', 'diesel', 'auto', 'uber', 'ola', 'taxi', 'cab'],
+    'medical': ['medical', 'medicine', 'doctor', 'pharmacy', 'health', 'clinic'],
+    'recurring': ['recurring', 'bill', 'bills', 'subscription', 'rent', 'wifi', 'electricity'],
+    'unexpected': ['unexpected', 'emergency', 'urgent', 'repair'],
+    'misc': ['misc', 'miscellaneous', 'other']
+  };
+
+  for (const [catId, aliases] of Object.entries(catAliases)) {
+    if (aliases.some(a => qLower.includes(a))) {
+      targetCats.push(catId);
+    }
+  }
+
+  // Special intents: "weekend vs weekday"
+  const isWeekendComparison = qLower.includes('weekend vs weekday') || qLower.includes('weekend breakdown');
+
+  // Filter expenses
+  let matched = expEntries.filter(e => {
+    if (minAmt !== null && e.amt <= minAmt) return false;
+    if (maxAmt !== null && e.amt >= maxAmt) return false;
+    
+    const d = parseYMD(e.date);
+    const dow = d.getDay();
+    const isWk = (dow === 5 || dow === 6 || dow === 0);
+    if (weekendOnly && !isWk) return false;
+    if (weekdayOnly && isWk) return false;
+
+    if (targetCats.length > 0 && !targetCats.includes(e.cat)) return false;
+
+    return true;
+  });
+
+  if (topN) {
+    matched.sort((a, b) => b.amt - a.amt);
+    matched = matched.slice(0, topN);
+  } else {
+    matched.sort((a, b) => b.date.localeCompare(a.date));
+  }
+
+  const matchedSum = matched.reduce((s, e) => s + e.amt, 0);
+  const matchedPct = totalSpent > 0 ? Math.round((matchedSum / totalSpent) * 100) : 0;
+
+  return {
+    q,
+    matched,
+    matchedSum,
+    matchedPct,
+    totalSpent,
+    isWeekendComparison,
+    minAmt,
+    maxAmt,
+    topN,
+    weekendOnly,
+    weekdayOnly,
+    targetCats
+  };
+}
+
+function renderAskBudgetResults(q, r) {
+  const container = document.getElementById('ask-budget-results');
+  if (!container) return;
+
+  const filtersExplained = [];
+  if (r.targetCats.length > 0) {
+    const names = r.targetCats.map(c => catById(c).label).join(', ');
+    filtersExplained.push(`Category: <b>${names}</b>`);
+  }
+  if (r.minAmt !== null) filtersExplained.push(`Amount &gt; ${fmt(r.minAmt)}`);
+  if (r.maxAmt !== null) filtersExplained.push(`Amount &le; ${fmt(r.maxAmt)}`);
+  if (r.weekendOnly) filtersExplained.push('Days: <b>Weekend & Jumoa (Fri–Sun)</b>');
+  if (r.weekdayOnly) filtersExplained.push('Days: <b>Weekdays (Mon–Thu)</b>');
+  if (r.topN !== null) filtersExplained.push(`Rank: <b>Top ${r.topN} Expenses</b>`);
+
+  let tableHtml = '';
+  if (r.matched.length === 0) {
+    tableHtml = `<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:16px;">No transactions matched this query in the current month. Try broader keywords.</div>`;
+  } else {
+    tableHtml = `
+      <div style="overflow-x:auto;margin-top:8px;">
+        <table class="ask-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th style="text-align:right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${r.matched.map(e => {
+              const cat = catById(e.cat);
+              const d = parseYMD(e.date);
+              const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+              return `
+                <tr>
+                  <td style="font-size:10.5px;color:var(--text-muted);white-space:nowrap;">${dayName}, ${e.date.slice(5)}</td>
+                  <td>${cat.icon} ${cat.label}</td>
+                  <td>${e.desc || '-'}</td>
+                  <td style="text-align:right;font-family:var(--font-mono);font-weight:700;color:var(--rose);">${fmt(e.amt)}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="ask-results-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text-main);">📊 Query Results</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">"${q}"</div>
+        </div>
+        <span class="badge-tag tag-indigo">${r.matched.length} Rows</span>
+      </div>
+
+      <div style="margin-top:8px;padding:8px 10px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:11.5px;font-weight:600;color:var(--text-main);">Total Matched Spend:</span>
+        <span style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--text-main);">${fmt(r.matchedSum)} <span style="font-size:11px;color:var(--text-muted);font-weight:normal;">(${r.matchedPct}% of month)</span></span>
+      </div>
+
+      <details style="margin-top:8px;font-size:11px;color:var(--text-muted);">
+        <summary style="cursor:pointer;font-weight:600;color:var(--indigo);">🔍 What the engine analyzed</summary>
+        <div style="margin-top:6px;padding:6px 8px;background:var(--surface);border-radius:6px;border:1px solid var(--border);line-height:1.4;">
+          ${filtersExplained.length > 0 ? filtersExplained.join(' · ') : 'Searched all expense records in current active Bohra month.'}
+        </div>
+      </details>
+
+      ${tableHtml}
+
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button type="button" class="quick-chip" style="flex:1;text-align:center;" onclick="copyAskResults()">📋 Copy Table Data</button>
+        <button type="button" class="quick-chip" style="text-align:center;" onclick="document.getElementById('ask-budget-results').style.display='none'">Dismiss</button>
+      </div>
+    </div>
+  `;
+}
+
+function copyAskResults() {
+  const table = document.querySelector('.ask-table');
+  if (!table) { showToast('No table to copy'); return; }
+  let text = '';
+  const rows = table.querySelectorAll('tr');
+  rows.forEach(r => {
+    const cols = r.querySelectorAll('th, td');
+    const rowText = Array.from(cols).map(c => c.textContent.trim()).join('	');
+    text += rowText + '\n';
+  });
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✅ Table data copied to clipboard!');
+  }).catch(() => {
+    showToast('Could not copy table');
+  });
+}
+
+// ── IN-DEPTH AI NARRATIVE COACHING REPORT (GEMINI / LOCAL HYBRID) ──
+async function generateAiNarrativeReport() {
+  const modal = document.getElementById('ai-narrative-modal');
+  const contentEl = document.getElementById('ai-narrative-content');
+  const badgeEl = document.getElementById('ai-narrative-model-badge');
+  if (!modal || !contentEl) return;
+
+  modal.classList.remove('hidden');
+  contentEl.innerHTML = `
+    <div style="text-align:center;padding:40px 10px;">
+      <div style="font-size:28px;margin-bottom:8px;">✨</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text-main);margin-bottom:4px;" class="ai-loading-pulse">Consulting AI Financial Advisor...</div>
+      <div style="font-size:11px;color:var(--text-muted);">Synthesizing longitudinal pacing, weekend variance & strategic recommendations.</div>
+    </div>
+  `;
+
+  const m = curMo(), me = moEntries();
+  const diag = computeBehavioralDiagnostics(m, me);
+
+  // If Gemini API Key is provided, call Google Gemini REST API
+  if (geminiApiKey) {
+    if (badgeEl) badgeEl.textContent = geminiModel.replace('gemini-', 'Gemini ');
+    try {
+      const summaryPayload = `
+You are an expert, culturally attuned personal financial advisor for a Dawoodi Bohra household following the Fatimid Hijri Calendar.
+Analyze this user's current monthly spending and behavioral financial health, and provide deep strategic advice.
+
+CONTEXT & DATA:
+- Active Month: ${m.name} ${m.hijriYear} (Total Days: ${m.totalDays}, Elapsed: ${diag.elapsed} days, Days Left: ${diag.daysLeft})
+- Total Effective Budget: Rs ${diag.effBud}
+- Total Spent: Rs ${diag.spent} (${diag.pv}% depleted)
+- Remaining Balance: Rs ${diag.rem}
+- Daily Burn Rate: Rs ${Math.round(diag.dailyBurn)}/day
+- Smart Safe-to-Spend Limit: Rs ${diag.smartDailySafe}/day (after reserving Rs ${diag.remainingRecurringReserve} for unpaid fixed bills)
+- Weekend & Jumoa Surge Ratio: ${diag.weekendRatio.toFixed(1)}x (Weekend Daily Avg: Rs ${diag.weekendDailyAvg}/d vs Weekday Daily Avg: Rs ${diag.weekdayDailyAvg}/d)
+- Micro-Leakage Spends (under Rs 250): ${diag.microCount} transactions totaling Rs ${diag.microSum}
+- Bohra 4-Week Cycle Pacing: Status is "${diag.cycleDriftState}" (${diag.cycleDriftSub})
+${diag.crossMonth ? `- Longitudinal vs Prior Month (${diag.crossMonth.prevName}): Spend Delta is ${diag.crossMonth.deltaSpentPct}% (Current: Rs ${diag.spent} vs Prev: Rs ${diag.crossMonth.prevSpent}). ${diag.crossMonth.topGrowingCat ? `Fastest growing category: ${diag.crossMonth.topGrowingCat.cat.label} (+Rs ${diag.crossMonth.topGrowingCat.growthAmt})` : ''}` : '- Longitudinal: First baseline cycle established.'}
+
+REQUIREMENTS:
+Return a concise, empowering, structured advisory report with exactly 4 sections formatted cleanly with bullet points:
+1. EXECUTIVE PULSE: Clear, honest diagnosis of their current capital runway.
+2. BEHAVIORAL PATTERNS: Psychological review of weekend acceleration, micro-spends, and Bohra weekly pacing.
+3. LONGITUDINAL COMPARISON: How they are tracking relative to baseline/prior months.
+4. STRATEGIC 3-STEP ROADMAP: 3 concrete, realistic behavioral actions to protect capital and maximize month-end surplus.
+Do not use raw markdown code blocks. Keep the tone warm, disciplined, and practical.
+      `.trim();
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiApiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: summaryPayload }] }] })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+        const rawText = data.candidates[0].content.parts[0].text;
+        contentEl.innerHTML = formatAiMarkdown(rawText);
+        return;
+      } else {
+        throw new Error(data.error?.message || 'Gemini returned empty response');
+      }
+    } catch (err) {
+      console.warn('Gemini call failed, falling back to local deterministic coach:', err);
+    }
+  }
+
+  // Local Deterministic Advisor Fallback (100% Offline / No Key)
+  if (badgeEl) badgeEl.textContent = 'Deterministic Advisor';
+  setTimeout(() => {
+    contentEl.innerHTML = buildLocalNarrativeReport(m, diag);
+  }, 400);
+}
+
+function formatAiMarkdown(txt) {
+  let h = txt
+    .replace(/^### (.*$)/gim, '<div class="ai-narrative-section-title" style="margin-top:14px;">$1</div>')
+    .replace(/^## (.*$)/gim, '<div class="ai-narrative-section-title" style="font-size:13px;margin-top:16px;">$1</div>')
+    .replace(/^# (.*$)/gim, '<div class="ai-narrative-section-title" style="font-size:14px;margin-top:18px;">$1</div>')
+    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+    .replace(/\*(.*?)\*/g, '<i>$1</i>')
+    .replace(/^\* (.*$)/gim, '<li style="margin-bottom:4px;">$1</li>')
+    .replace(/^- (.*$)/gim, '<li style="margin-bottom:4px;">$1</li>')
+    .replace(/\n\n/g, '<div style="height:8px;"></div>');
+
+  if (h.includes('<li')) {
+    h = h.replace(/((?:<li.*?>.*?<\/li>\s*)+)/gs, '<ul style="padding-left:18px;margin:6px 0;">$1</ul>');
+  }
+
+  return `
+    <div class="ai-narrative-card">
+      <div style="font-size:11px;color:var(--emerald);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+        <span>●</span> Verified by Google Gemini Generative AI
+      </div>
+      <div class="ai-narrative-section-body">${h}</div>
+    </div>
+  `;
+}
+
+function buildLocalNarrativeReport(m, diag) {
+  return `
+    <div class="ai-narrative-card">
+      <div class="ai-narrative-section-title">📊 1. Executive Health Pulse</div>
+      <div class="ai-narrative-section-body">
+        You are in day <b>${diag.elapsed} of ${m.totalDays}</b> in ${m.name} ${m.hijriYear}. 
+        You have depleted <b>${diag.pv}% (${fmt(diag.spent)})</b> of your ${fmt(diag.effBud)} effective capital, leaving <b>${fmt(diag.rem)}</b>. 
+        ${diag.rem > 0 
+          ? `Your true daily safe limit is <b>${fmt(diag.smartDailySafe)}/day</b> after accounting for ${fmt(diag.remainingRecurringReserve)} in upcoming bills.`
+          : 'Your monthly capital has been fully depleted. Discretionary spending must be frozen immediately.'}
+      </div>
+    </div>
+
+    <div class="ai-narrative-card">
+      <div class="ai-narrative-section-title">🧠 2. Behavioral Patterns & Vulnerabilities</div>
+      <div class="ai-narrative-section-body">
+        <ul style="padding-left:18px;margin:6px 0;">
+          <li><b>Weekend & Jumoa Acceleration:</b> Your weekend spending is running at <b>${diag.weekendRatio.toFixed(1)}x</b> of your weekday cadence (${fmt(diag.weekendDailyAvg)}/d vs ${fmt(diag.weekdayDailyAvg)}/d). ${diag.weekendRatio > 1.35 ? 'Weekend impulse splurges represent a primary budget leak.' : 'Your day-to-day spending rhythm shows balanced discipline.'}</li>
+          <li><b>Micro-Leakage (${diag.microCount} transactions):</b> Small transactions under ₹250 have accumulated to <b>${fmt(diag.microSum)}</b> (${diag.spent > 0 ? Math.round((diag.microSum/diag.spent)*100) : 0}% of all spend).</li>
+          <li><b>Bohra Weekly Pacing:</b> Current cycle trajectory is categorized as <b>${diag.cycleDriftState}</b> (${diag.cycleDriftSub}).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ai-narrative-card">
+      <div class="ai-narrative-section-title">📈 3. Longitudinal & Cross-Month Context</div>
+      <div class="ai-narrative-section-body">
+        ${diag.crossMonth 
+          ? `Compared to ${diag.crossMonth.prevName} ${diag.crossMonth.prevHijriYear}, your spending is tracking <b>${diag.crossMonth.deltaSpentPct >= 0 ? '+' : ''}${diag.crossMonth.deltaSpentPct}%</b> (${fmt(diag.spent)} vs ${fmt(diag.crossMonth.prevSpent)}). ${diag.crossMonth.topGrowingCat ? `Primary expansion occurred in <b>${diag.crossMonth.topGrowingCat.cat.label}</b> (+${fmt(diag.crossMonth.topGrowingCat.growthAmt)}).` : ''}`
+          : 'This cycle represents your foundational baseline. As subsequent Bohra months are recorded, multi-cycle longitudinal trend tracking will automatically activate.'}
+      </div>
+    </div>
+
+    <div class="ai-narrative-card" style="border-left:4px solid var(--emerald);">
+      <div class="ai-narrative-section-title" style="color:var(--emerald);">🎯 4. Strategic 3-Step Action Roadmap</div>
+      <div class="ai-narrative-section-body">
+        <ol style="padding-left:18px;margin:6px 0;">
+          <li><b>Calibrate Daily Spend:</b> Cap daily discretionary expenses to <b>${fmt(diag.smartDailySafe)}</b> for the remaining ${diag.daysLeft} days to guarantee a positive month-end reserve.</li>
+          <li><b>Institute a Weekend Cap:</b> Cap Friday dinner & weekend outings to ${fmt(Math.round(diag.weekdayDailyAvg * 1.25))} to prevent mid-month pacing derailment.</li>
+          <li><b>Trim Micro-Purchases:</b> Pause non-essential convenience and snack purchases under ₹250 to recover roughly ${fmt(Math.round(diag.microSum * 0.33))} back into your savings buffer.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div style="font-size:11px;color:var(--text-muted);text-align:center;padding:8px 0;">
+      💡 Tip: Add your free Google Gemini API key in <b>Settings > AI Advisor</b> for customized conversational coaching!
+    </div>
+  `;
+}
+
+function closeAiNarrativeModal(e) {
+  if (e && e.target && e.target !== document.getElementById('ai-narrative-modal')) {
+    if (!e.target.closest('button')) return;
+  }
+  document.getElementById('ai-narrative-modal').classList.add('hidden');
+}
+
+function copyAiNarrative() {
+  const content = document.getElementById('ai-narrative-content');
+  if (!content) return;
+  navigator.clipboard.writeText(content.innerText).then(() => {
+    showToast('✅ Full AI report copied to clipboard!');
+  }).catch(() => {
+    showToast('Could not copy report');
+  });
+}
+
+
+
+// ── PHASE C: AUDIT TRAIL, EXCEL EXPORT & OMNI-SEARCH ──
+let auditLog = ls('bt3_audit_log', []);
+
+function logAudit(action, entry, desc, prevEntry = null) {
+  const record = {
+    id: uid(),
+    timestamp: new Date().toISOString(),
+    timeLabel: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+    dateLabel: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+    action, // 'add' | 'edit' | 'delete'
+    entry: entry ? JSON.parse(JSON.stringify(entry)) : null,
+    prevEntry: prevEntry ? JSON.parse(JSON.stringify(prevEntry)) : null,
+    desc
+  };
+  auditLog.unshift(record);
+  if (auditLog.length > 50) auditLog.pop();
+  ss('bt3_audit_log', auditLog);
+  renderAuditTrail();
+}
+
+function showUndoToast(msg, onUndo) {
+  const existing = document.getElementById('undo-toast');
+  if (existing) existing.remove();
+
+  const wrap = document.createElement('div');
+  wrap.id = 'undo-toast';
+  wrap.className = 'undo-toast-wrap';
+  wrap.innerHTML = `
+    <span>${msg}</span>
+    <button type="button" class="undo-toast-btn" id="btn-toast-undo">Undo</button>
+  `;
+  document.body.appendChild(wrap);
+
+  document.getElementById('btn-toast-undo').onclick = () => {
+    wrap.remove();
+    if (onUndo) onUndo();
+  };
+
+  setTimeout(() => {
+    if (wrap.parentNode) wrap.remove();
+  }, 6000);
+}
+
+function undoLastAction() {
+  if (auditLog.length === 0) {
+    showToast('No recent actions to undo');
+    return;
+  }
+  const last = auditLog[0];
+  if (last.action === 'delete' && last.entry) {
+    entries.unshift(last.entry);
+    saveAllData();
+    renderDash();
+    renderLog();
+    auditLog.shift();
+    ss('bt3_audit_log', auditLog);
+    renderAuditTrail();
+    showToast(`✅ Restored ${fmt(last.entry.amt)}`);
+  } else if (last.action === 'add' && last.entry) {
+    entries = entries.filter(e => e.id !== last.entry.id);
+    saveAllData();
+    renderDash();
+    renderLog();
+    auditLog.shift();
+    ss('bt3_audit_log', auditLog);
+    renderAuditTrail();
+    showToast('Removed added entry');
+  } else {
+    showToast('Cannot automatically undo this action');
+  }
+}
+
+function restoreAuditEntry(recordId) {
+  const record = auditLog.find(r => r.id === recordId);
+  if (!record || !record.entry) return;
+  entries.unshift(record.entry);
+  saveAllData();
+  renderDash();
+  renderLog();
+  auditLog = auditLog.filter(r => r.id !== recordId);
+  ss('bt3_audit_log', auditLog);
+  renderAuditTrail();
+  showToast(`✅ Restored ${record.entry.desc || catById(record.entry.cat).label}`);
+}
+
+function clearAuditTrail() {
+  if (!confirm('Clear recent activity history?')) return;
+  auditLog = [];
+  ss('bt3_audit_log', auditLog);
+  renderAuditTrail();
+  showToast('Activity log cleared');
+}
+
+function renderAuditTrail() {
+  const listEl = document.getElementById('audit-trail-list');
+  const countBadge = document.getElementById('audit-count-badge');
+  if (!listEl) return;
+  if (countBadge) countBadge.textContent = `${auditLog.length} Changes`;
+
+  if (auditLog.length === 0) {
+    listEl.innerHTML = '<div style="font-size:11px;color:var(--text-muted);text-align:center;padding:12px;">No recorded changes yet.</div>';
+    return;
+  }
+
+  listEl.innerHTML = auditLog.slice(0, 25).map(r => {
+    let actionBadge = '<span class="badge-tag tag-indigo">Edit</span>';
+    let restoreBtn = '';
+    if (r.action === 'delete') {
+      actionBadge = '<span class="badge-tag tag-rose">Deleted</span>';
+      restoreBtn = `<button type="button" class="quick-chip" style="font-size:10px;padding:2px 8px;" onclick="restoreAuditEntry('${r.id}')">Restore</button>`;
+    } else if (r.action === 'add') {
+      actionBadge = '<span class="badge-tag tag-emerald">Added</span>';
+    }
+
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:11px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          ${actionBadge}
+          <span style="font-weight:600;color:var(--text-main);">${r.desc}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;color:var(--text-muted);">${r.dateLabel} ${r.timeLabel}</span>
+          ${restoreBtn}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── REAL EXCEL WORKBOOK (.XLS / SPREADSHEETML) GENERATOR ──
+function exportStyledExcel(pool, scope) {
+  const m = curMo();
+  const title = `Budget Statement - ${scope === 'current' ? m.name + ' ' + m.hijriYear : 'All Records'}`;
+
+  // Build Category Summary data
+  const catSummary = categories.filter(c => c.type === 'exp').map(cat => {
+    const s = pool.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
+    const b = catBud[cat.id] || 0;
+    const r = Math.max(0, b - s);
+    const p = b > 0 ? (s / b) : 0;
+    return { label: `${cat.icon} ${cat.label}`, budget: b, spent: s, remaining: r, pct: p };
+  });
+
+  const rowCount = pool.length;
+
+  let xml = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Title>${title}</Title>
+  <Author>Personal Budget Tracker</Author>
+ </DocumentProperties>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Center"/>
+   <Font ss:FontName="Segoe UI" ss:Size="10" ss:Color="#0F172A"/>
+  </Style>
+  <Style ss:ID="HeaderStyle">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CBD5E1"/>
+   </Borders>
+   <Font ss:FontName="Segoe UI" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
+   <Interior ss:Color="#0B2149" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="SubHeaderStyle">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Font ss:FontName="Segoe UI" ss:Size="10" ss:Color="#FFFFFF" ss:Bold="1"/>
+   <Interior ss:Color="#059669" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="CurrencyStyle">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Center"/>
+   <NumberFormat ss:Format="₹#,##0"/>
+  </Style>
+  <Style ss:ID="PercentStyle">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Center"/>
+   <NumberFormat ss:Format="0.0%"/>
+  </Style>
+  <Style ss:ID="DateStyle">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <NumberFormat ss:Format="yyyy-mm-dd"/>
+  </Style>
+  <Style ss:ID="TotalRow">
+   <Alignment ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0F172A"/>
+    <Border ss:Position="Bottom" ss:LineStyle="Double" ss:Weight="2" ss:Color="#0F172A"/>
+   </Borders>
+   <Font ss:FontName="Segoe UI" ss:Size="11" ss:Bold="1"/>
+   <Interior ss:Color="#F1F5F9" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+
+ <!-- SHEET 1: TRANSACTIONS -->
+ <Worksheet ss:Name="Transactions">
+  <Table ss:DefaultRowHeight="20">
+   <Column ss:Width="85"/>
+   <Column ss:Width="85"/>
+   <Column ss:Width="110"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="95"/>
+   <Column ss:Width="160"/>
+   <Column ss:Width="100"/>
+   <Row ss:Height="24">
+    <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">Hijri Date</Data></Cell>
+    <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">Gregorian Date</Data></Cell>
+    <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">Category</Data></Cell>
+    <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">Type</Data></Cell>
+    <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">Amount</Data></Cell>
+    <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">Description</Data></Cell>
+    <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">Payment Mode</Data></Cell>
+   </Row>`;
+
+  pool.forEach(e => {
+    const cat = catById(e.cat);
+    xml += `
+   <Row>
+    <Cell><Data ss:Type="String">${e.hijri || ''}</Data></Cell>
+    <Cell ss:StyleID="DateStyle"><Data ss:Type="String">${e.date}</Data></Cell>
+    <Cell><Data ss:Type="String">${cat.label}</Data></Cell>
+    <Cell><Data ss:Type="String">${cat.type}</Data></Cell>
+    <Cell ss:StyleID="CurrencyStyle"><Data ss:Type="Number">${e.amt}</Data></Cell>
+    <Cell><Data ss:Type="String">${(e.desc || e.what || '').replace(/[<>&]/g, '')}</Data></Cell>
+    <Cell><Data ss:Type="String">${e.paymentCat || 'Cash'}</Data></Cell>
+   </Row>`;
+  });
+
+  if (rowCount > 0) {
+    xml += `
+   <Row ss:Height="22">
+    <Cell ss:StyleID="TotalRow"><Data ss:Type="String">Total</Data></Cell>
+    <Cell ss:StyleID="TotalRow"/>
+    <Cell ss:StyleID="TotalRow"/>
+    <Cell ss:StyleID="TotalRow"/>
+    <Cell ss:StyleID="TotalRow" ss:Formula="=SUM(R2C5:R${rowCount + 1}C5)"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="TotalRow"/>
+    <Cell ss:StyleID="TotalRow"/>
+   </Row>`;
+  }
+
+  xml += `
+  </Table>
+ </Worksheet>
+
+ <!-- SHEET 2: CATEGORY BREAKDOWN -->
+ <Worksheet ss:Name="Category Summary">
+  <Table ss:DefaultRowHeight="20">
+   <Column ss:Width="140"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="90"/>
+   <Row ss:Height="24">
+    <Cell ss:StyleID="SubHeaderStyle"><Data ss:Type="String">Category</Data></Cell>
+    <Cell ss:StyleID="SubHeaderStyle"><Data ss:Type="String">Budget</Data></Cell>
+    <Cell ss:StyleID="SubHeaderStyle"><Data ss:Type="String">Spent</Data></Cell>
+    <Cell ss:StyleID="SubHeaderStyle"><Data ss:Type="String">Remaining</Data></Cell>
+    <Cell ss:StyleID="SubHeaderStyle"><Data ss:Type="String">% Depleted</Data></Cell>
+   </Row>`;
+
+  catSummary.forEach(c => {
+    xml += `
+   <Row>
+    <Cell><Data ss:Type="String">${c.label}</Data></Cell>
+    <Cell ss:StyleID="CurrencyStyle"><Data ss:Type="Number">${c.budget}</Data></Cell>
+    <Cell ss:StyleID="CurrencyStyle"><Data ss:Type="Number">${c.spent}</Data></Cell>
+    <Cell ss:StyleID="CurrencyStyle"><Data ss:Type="Number">${c.remaining}</Data></Cell>
+    <Cell ss:StyleID="PercentStyle"><Data ss:Type="Number">${c.pct}</Data></Cell>
+   </Row>`;
+  });
+
+  xml += `
+  </Table>
+ </Worksheet>
+</Workbook>`;
+
+  const blob = new Blob([xml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `35k-budget-${scope}-${ymd(new Date())}.xls`;
+  a.click();
+  document.getElementById('exp-modal').classList.add('hidden');
+  showToast('📊 Formatted Excel workbook downloaded!');
+}
+
+// ── GLOBAL OMNI-SEARCH (Ctrl+K) ──
+function openOmniSearch() {
+  const modal = document.getElementById('omni-search-modal');
+  const inp = document.getElementById('omni-search-input');
+  if (!modal || !inp) return;
+  modal.classList.remove('hidden');
+  inp.value = '';
+  inp.focus();
+  renderOmniSearchResults('');
+}
+
+function closeOmniSearchModal(e) {
+  if (e && e.target && e.target !== document.getElementById('omni-search-modal')) {
+    if (!e.target.closest('button')) return;
+  }
+  document.getElementById('omni-search-modal').classList.add('hidden');
+}
+
+function clearOmniSearch() {
+  const inp = document.getElementById('omni-search-input');
+  if (inp) {
+    inp.value = '';
+    inp.focus();
+    renderOmniSearchResults('');
+  }
+}
+
+function handleOmniSearchInput(val) {
+  renderOmniSearchResults(val.trim());
+}
+
+function handleOmniSearchKeydown(e) {
+  if (e.key === 'Escape') {
+    closeOmniSearchModal();
+  }
+}
+
+// Global shortcut listener for Ctrl+K / Cmd+K
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    const modal = document.getElementById('omni-search-modal');
+    if (modal && !modal.classList.contains('hidden')) {
+      closeOmniSearchModal();
+    } else {
+      openOmniSearch();
+    }
+  }
+});
+
+function renderOmniSearchResults(term) {
+  const container = document.getElementById('omni-search-results');
+  if (!container) return;
+
+  if (!term) {
+    // Show Quick Navigation & Shortcuts
+    container.innerHTML = `
+      <div class="omni-section-title">🚀 Quick Navigation</div>
+      <div class="omni-item" onclick="closeOmniSearchModal(); showPage('add');">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:16px;">➕</span>
+          <span style="font-weight:600;font-size:12.5px;">Add New Expense</span>
+        </div>
+        <span class="badge-tag tag-indigo">Action</span>
+      </div>
+      <div class="omni-item" onclick="closeOmniSearchModal(); showPage('analytics');">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:16px;">📊</span>
+          <span style="font-weight:600;font-size:12.5px;">Analytics & AI Behavioral Pacing</span>
+        </div>
+        <span class="badge-tag tag-indigo">View</span>
+      </div>
+      <div class="omni-item" onclick="closeOmniSearchModal(); showPage('log');">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:16px;">📅</span>
+          <span style="font-weight:600;font-size:12.5px;">Bohra Calendar & Daily Log</span>
+        </div>
+        <span class="badge-tag tag-indigo">View</span>
+      </div>
+      <div class="omni-item" onclick="closeOmniSearchModal(); openExpModal();">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:16px;">📥</span>
+          <span style="font-weight:600;font-size:12.5px;">Export to Excel (.xls) or CSV</span>
+        </div>
+        <span class="badge-tag tag-emerald">Export</span>
+      </div>
+      <div class="omni-item" onclick="closeOmniSearchModal(); showPage('settings');">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:16px;">⚙️</span>
+          <span style="font-weight:600;font-size:12.5px;">App Settings & Gemini AI Setup</span>
+        </div>
+        <span class="badge-tag tag-indigo">Config</span>
+      </div>
+    `;
+    return;
+  }
+
+  const tLower = term.toLowerCase();
+  const htmlParts = [];
+
+  // 1. Matched Categories
+  const matchedCats = categories.filter(c => c.label.toLowerCase().includes(tLower) || c.id.toLowerCase().includes(tLower));
+  if (matchedCats.length > 0) {
+    htmlParts.push('<div class="omni-section-title">🏷️ Categories</div>');
+    matchedCats.forEach(c => {
+      const b = catBud[c.id] || 0;
+      const s = entries.filter(e => e.cat === c.id).reduce((sum, e) => sum + e.amt, 0);
+      htmlParts.push(`
+        <div class="omni-item" onclick="closeOmniSearchModal(); showPage('add'); quickAddForCat('${c.id}');">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:18px;">${c.icon}</span>
+            <div>
+              <div style="font-weight:700;font-size:12.5px;">${c.label}</div>
+              <div style="font-size:10.5px;color:var(--text-muted);">${fmt(s)} spent / ${fmt(b)} budget</div>
+            </div>
+          </div>
+          <span class="badge-tag tag-indigo">Tap to Log</span>
+        </div>
+      `);
+    });
+  }
+
+  // 2. Matched Transactions
+  const matchedTx = entries.filter(e => {
+    const desc = (e.desc || e.what || '').toLowerCase();
+    const notes = (e.notes || '').toLowerCase();
+    const where = (e.where || '').toLowerCase();
+    const cat = catById(e.cat).label.toLowerCase();
+    const amtStr = String(e.amt);
+    return desc.includes(tLower) || notes.includes(tLower) || where.includes(tLower) || cat.includes(tLower) || amtStr.includes(tLower) || e.date.includes(tLower);
+  }).slice(0, 15);
+
+  if (matchedTx.length > 0) {
+    htmlParts.push(`<div class="omni-section-title">💸 Transactions (${matchedTx.length} found)</div>`);
+    matchedTx.forEach(e => {
+      const cat = catById(e.cat);
+      htmlParts.push(`
+        <div class="omni-item" onclick="closeOmniSearchModal(); openDetail('${e.id}');">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:16px;">${cat.icon}</span>
+            <div>
+              <div style="font-weight:600;font-size:12px;color:var(--text-main);">${e.desc || e.what || cat.label}</div>
+              <div style="font-size:10px;color:var(--text-muted);">${e.date} • ${cat.label}</div>
+            </div>
+          </div>
+          <span style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--rose);">${fmt(e.amt)}</span>
+        </div>
+      `);
+    });
+  }
+
+  // 3. Matched Day Notes
+  const matchedNotes = [];
+  for (const [dateKey, noteText] of Object.entries(dayNotes)) {
+    if (noteText && noteText.toLowerCase().includes(tLower)) {
+      matchedNotes.push({ date: dateKey, text: noteText });
+    }
+  }
+
+  if (matchedNotes.length > 0) {
+    htmlParts.push('<div class="omni-section-title">📝 Calendar Day Notes</div>');
+    matchedNotes.forEach(n => {
+      htmlParts.push(`
+        <div class="omni-item" onclick="closeOmniSearchModal(); showPage('log');">
+          <div>
+            <div style="font-weight:600;font-size:12px;">${n.text}</div>
+            <div style="font-size:10px;color:var(--text-muted);">Calendar note for ${n.date}</div>
+          </div>
+          <span class="badge-tag tag-indigo">Note</span>
+        </div>
+      `);
+    });
+  }
+
+  if (htmlParts.length === 0) {
+    container.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:24px;">No matches found for "${term}". Try another word or amount.</div>`;
+  } else {
+    container.innerHTML = htmlParts.join('');
+  }
+}
+
+
 // ── SETTINGS ──
 function renderSettings() {
+  renderAuditTrail();
+  // Populate AI Advisor settings
+  const gemKeyInp = document.getElementById('gemini-api-key-input');
+  if (gemKeyInp) gemKeyInp.value = geminiApiKey || '';
+  const gemModelSel = document.getElementById('gemini-model-select');
+  if (gemModelSel) gemModelSel.value = geminiModel || 'gemini-2.5-flash';
+  updateAiStatusBadge();
+
   const gasEl = document.getElementById('gas-url-input');
   if (gasEl) gasEl.value = BACKEND_URL;
   updateOffsetPreview();
@@ -3802,23 +5602,32 @@ function openExpModal() { document.getElementById('exp-modal').classList.remove(
 
 function delEntry(id) {
   if (!confirm('Delete this entry?')) return;
+  const toDel = entries.find(e => e.id === id);
+  if (!toDel) return;
   entries = entries.filter(e => e.id !== id);
+  logAudit('delete', toDel, `Deleted ${toDel.desc || toDel.what || catById(toDel.cat).label} (${fmt(toDel.amt)})`);
   saveAllData();
   document.getElementById('modal').classList.add('hidden');
   renderDash();
   renderLog();
-  showToast('Entry deleted');
+  showUndoToast(`Deleted ${fmt(toDel.amt)}`, () => undoLastAction());
 }
 
 // ── EXPORT & RESTORE ENGINE ──
 function doExport() {
   const scope = document.getElementById('exp-scope-sel').value;
+  const fmtType = document.getElementById('exp-fmt-sel').value;
   let pool = entries;
   if (scope === 'current') {
     const m = curMo();
     pool = entries.filter(e => e.date >= m.gregStart && e.date <= m.gregEnd);
   }
   if (!pool.length) { showToast('No entries to export'); return; }
+
+  if (fmtType === 'excel') {
+    exportStyledExcel(pool, scope);
+    return;
+  }
 
   const hdr = ['Hijri Date', 'Gregorian Date', 'Category', 'Type', 'Amount (INR)', 'Where', 'What', 'Notes'];
   const rows = pool.map(e => {
@@ -4331,6 +6140,66 @@ window.addEventListener('load', () => {
     </div>
     
     <div id="pin-error-msg" style="color:var(--rose);font-size:11px;font-weight:700;margin-top:14px;min-height:16px;"></div>
+  </div>
+</div>
+
+
+<!-- ========================================== -->
+<!-- AI DRILLDOWN MODAL                         -->
+<!-- ========================================== -->
+<div class="modal-overlay hidden" id="ai-drilldown-modal" onclick="closeAiDrilldownModal(event)">
+  <div class="modal-bottom-sheet">
+    <div class="sheet-drag-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <div style="font-family:var(--font-serif);font-size:18px;font-weight:700" id="ai-drilldown-title">Transactions</div>
+      <span class="badge-tag tag-indigo" id="ai-drilldown-badge">Filter</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:12px;" id="ai-drilldown-sub">Examining transactions flagged by Behavioral Intelligence.</div>
+    <div id="ai-drilldown-list" style="max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;"></div>
+    <button style="width:100%;margin-top:16px;padding:12px;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-main);font-weight:600;font-size:13px;cursor:pointer" onclick="closeAiDrilldownModal()">
+      Done
+    </button>
+  </div>
+</div>
+
+
+<!-- ========================================== -->
+<!-- AI NARRATIVE COACH REPORT MODAL            -->
+<!-- ========================================== -->
+<div class="modal-overlay hidden" id="ai-narrative-modal" onclick="closeAiNarrativeModal(event)">
+  <div class="modal-bottom-sheet" style="max-height:85vh;display:flex;flex-direction:column;">
+    <div class="sheet-drag-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <div style="font-family:var(--font-serif);font-size:18px;font-weight:700">✨ AI Financial Advisor Report</div>
+      <span class="badge-tag tag-indigo" id="ai-narrative-model-badge">Gemini</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:12px;">Comprehensive cross-month behavioral synthesis & strategic roadmap.</div>
+    <div id="ai-narrative-content" style="overflow-y:auto;flex:1;font-size:12px;line-height:1.6;color:var(--text-main);padding:4px 0;">
+      <!-- Content injected here -->
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button type="button" class="quick-chip" style="flex:1;text-align:center;" onclick="copyAiNarrative()">📋 Copy Report</button>
+      <button type="button" class="btn-primary-save" style="flex:1;margin:0;padding:10px;" onclick="closeAiNarrativeModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========================================== -->
+<!-- GLOBAL OMNI-SEARCH MODAL (Ctrl+K)          -->
+<!-- ========================================== -->
+<div class="modal-overlay hidden" id="omni-search-modal" onclick="closeOmniSearchModal(event)">
+  <div class="modal-bottom-sheet" style="max-height:85vh;display:flex;flex-direction:column;padding:16px 16px 20px;">
+    <div class="sheet-drag-handle"></div>
+    <div style="position:relative;margin-bottom:12px;">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:none;">🔍</span>
+      <input type="text" id="omni-search-input" class="styled-field" style="margin:0;padding-left:36px;padding-right:32px;font-size:13px;border-radius:12px;" placeholder="Search expenses, notes, categories, pages... (ESC to close)" oninput="handleOmniSearchInput(this.value)" onkeydown="handleOmniSearchKeydown(event)" />
+      <button type="button" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:14px;color:var(--text-muted);cursor:pointer;" onclick="clearOmniSearch()">✕</button>
+    </div>
+    
+    <div id="omni-search-results" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:6px;">
+      <!-- Categorized live results injected here -->
+    </div>
   </div>
 </div>
 
