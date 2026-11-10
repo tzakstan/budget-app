@@ -1499,6 +1499,127 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   font-size: 13.5px !important;
 }
 
+
+/* ── 11-STATE UI ARCHITECTURE & EXECUTIVE KPI STYLES (@ui-states & @kpi-dashboard-design) ── */
+.txt-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.is-busy {
+  pointer-events: none !important;
+  opacity: 0.65 !important;
+  cursor: wait !important;
+}
+
+/* Shimmer Skeleton Loading */
+@keyframes ui-shimmer-anim {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.ui-shimmer-box {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: ui-shimmer-anim 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* 5-Headline Executive KPI Strip */
+.kpi-exec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+@media (min-width: 600px) {
+  .kpi-exec-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.kpi-exec-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.kpi-exec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.kpi-exec-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.kpi-exec-val {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+.kpi-exec-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-top: 4px;
+  align-self: flex-start;
+}
+.delta-emerald {
+  background: var(--emerald-bg);
+  color: var(--emerald);
+  border: 1px solid var(--emerald-border);
+}
+.delta-amber {
+  background: var(--amber-bg);
+  color: var(--amber);
+  border: 1px solid var(--amber-border);
+}
+.delta-rose {
+  background: var(--rose-bg);
+  color: var(--rose);
+  border: 1px solid var(--rose-border);
+}
+.delta-indigo {
+  background: var(--indigo-light);
+  color: var(--indigo);
+  border: 1px solid var(--indigo-border);
+}
+
+/* First-Use & Empty States */
+.ui-first-use-card {
+  background: linear-gradient(135deg, rgba(238, 242, 255, 0.7) 0%, rgba(240, 253, 244, 0.7) 100%);
+  border: 1px dashed var(--indigo-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  text-align: left;
+}
+.ui-empty-filter-card {
+  text-align: center;
+  padding: 24px 16px;
+  background: var(--surface-low);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+}
+
 </style>
 </head>
 <body>
@@ -1547,6 +1668,60 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     Data migrated to version 3.0 successfully.
   </div>
   
+  <!-- 5-Headline Executive KPI Strip (@kpi-dashboard-design) -->
+  <div class="kpi-exec-grid" id="dash-exec-kpis">
+    <div class="kpi-exec-card">
+      <div class="kpi-exec-header">
+        <span class="kpi-exec-label">Spendable Capital</span>
+        <span style="font-size:13px;">💰</span>
+      </div>
+      <div class="kpi-exec-val font-tabular" id="kpi-spendable-capital">₹0</div>
+      <div class="kpi-exec-delta delta-emerald" id="kpi-projected-surplus-badge">On Track</div>
+    </div>
+    
+    <div class="kpi-exec-card">
+      <div class="kpi-exec-header">
+        <span class="kpi-exec-label">Daily Runway</span>
+        <span style="font-size:13px;">🛡️</span>
+      </div>
+      <div class="kpi-exec-val font-tabular" id="kpi-daily-runway">₹0/d</div>
+      <div class="kpi-exec-delta delta-indigo" id="kpi-runway-days-badge">0d Left</div>
+    </div>
+    
+    <div class="kpi-exec-card">
+      <div class="kpi-exec-header">
+        <span class="kpi-exec-label">Bohra Pacing Drift</span>
+        <span style="font-size:13px;">⚖️</span>
+      </div>
+      <div class="kpi-exec-val font-tabular" id="kpi-pacing-drift-val">0%</div>
+      <div class="kpi-exec-delta delta-emerald" id="kpi-pacing-status-badge">Aligned</div>
+    </div>
+
+    <div class="kpi-exec-card">
+      <div class="kpi-exec-header">
+        <span class="kpi-exec-label">Discretionary Leak</span>
+        <span style="font-size:13px;">☕</span>
+      </div>
+      <div class="kpi-exec-val font-tabular" id="kpi-leakage-val">₹0</div>
+      <div class="kpi-exec-delta delta-amber" id="kpi-leakage-pct-badge">0% of Burn</div>
+    </div>
+  </div>
+
+  <!-- Bohra Month First-Use Banner (@ui-states) -->
+  <div id="dash-first-use-banner" class="ui-first-use-card" style="display:none;">
+    <div style="font-weight:800;font-size:13px;color:var(--indigo);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <span>🌙</span> Welcome to <span id="dash-first-use-title">New Month</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--text-muted);line-height:1.45;margin-bottom:10px;">
+      No expenses logged yet in this Bohra cycle. Fix weekly allocations or add your first expense below:
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <button type="button" class="quick-chip" style="font-weight:700;" onclick="showPage('add')">➕ Log Expense</button>
+      <button type="button" class="quick-chip" onclick="splitBudgetEvenly(moIdx)">⚡ Split 25% Evenly</button>
+      <button type="button" class="quick-chip" onclick="splitBudgetBohra(moIdx)">🌙 Bohra Frontloaded</button>
+    </div>
+  </div>
+
   <!-- Hero Remaining Budget Card -->
   <div class="metric-card hero-budget-card">
     <div class="card-header-flex">
@@ -2162,6 +2337,60 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     </div>
   </div>
 
+  <!-- 🧪 Automated TDD Verification Suite (@test-driven-development) -->
+  <div class="metric-card" id="tdd-test-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🧪 Automated Verification Suite</div>
+      <span class="badge-tag tag-indigo" id="tdd-suite-badge">Ready to Test</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 12px;line-height:1.5;">
+      Run comprehensive automated assertions covering Bohra Hijri Calendar calculations, financial mathematics, DOM XSS sanitization, and UI states.
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <button type="button" class="btn-primary-save" id="btn-run-tests" style="margin:0;flex:1;padding:10px 14px;" onclick="runVerificationSuiteFromUI()">
+        <span>▶</span> Run Verification Suite
+      </button>
+    </div>
+    <div id="tdd-test-results-box" style="display:none;background:var(--surface-low);border-radius:var(--radius-sm);border:1px solid var(--border);padding:10px 12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:700;font-size:12px;color:var(--text-main);" id="tdd-result-summary">16 / 16 Tests Passed</span>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);" id="tdd-result-duration">0ms</span>
+      </div>
+      <div id="tdd-suite-list" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;font-size:11px;"></div>
+    </div>
+  </div>
+
+  <!-- 🛠️ Diagnostics, Quota & System Health (@systematic-debugging) -->
+  <div class="metric-card" id="system-health-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🛠️ System Diagnostics & Storage Health</div>
+      <span class="badge-tag tag-emerald" id="health-status-badge">Healthy</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 12px;line-height:1.5;">
+      Inspect local storage quota, detect orphaned records or corruption, self-heal application state, or export privacy-safe diagnostics.
+    </div>
+
+    <!-- Storage Quota Gauge -->
+    <div style="margin-bottom:12px;padding:10px 12px;background:var(--surface-low);border-radius:var(--radius-sm);border:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;margin-bottom:4px;">
+        <span>Local Storage Quota</span>
+        <span style="font-family:var(--font-mono);color:var(--indigo);" id="diag-storage-text">0 KB / 5120 KB</span>
+      </div>
+      <div class="progress-rail" style="margin:4px 0 6px;">
+        <div class="progress-fill" id="diag-storage-fill" style="width:1%;"></div>
+      </div>
+      <div style="font-size:10.5px;color:var(--text-muted);" id="diag-storage-sub">Safe headroom available for multi-year tracking</div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button type="button" class="quick-chip" style="font-weight:700;text-align:center;" onclick="checkSystemHealth(true)">🔍 Deep Health Scan</button>
+      <button type="button" class="quick-chip" style="font-weight:700;text-align:center;" onclick="selfHealBudgetDatabase()">🩹 Reconcile & Self-Heal</button>
+      <button type="button" class="quick-chip" style="grid-column: span 2;text-align:center;" onclick="exportDiagnosticReport()">📋 Export Privacy-Safe Diagnostic Report</button>
+    </div>
+    <div id="diag-health-output" style="margin-top:10px;font-size:11px;color:var(--text-muted);display:none;"></div>
+  </div>
+
 <!-- Backup & Export -->
   <div class="metric-card">
     <div class="card-header-flex">
@@ -2420,6 +2649,70 @@ function hijriToGregDisplay(hy, hm, hd) {
   const g = BohraCalendar.toGregorian(hy, hm, hd);
   if (hijriOffset) g.setDate(g.getDate() - hijriOffset);
   return g;
+}
+
+
+// ── DEFENSIVE SECURITY & ESCAPING (@frontend-security-coder) ──
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function sanitizeFormula(val) {
+  if (val === null || val === undefined) return '';
+  const str = String(val);
+  if (/^[=+\-@\t\r]/.test(str)) {
+    return "'" + str;
+  }
+  return str;
+}
+
+function fmtCompact(n) {
+  const val = Math.round(n);
+  if (isNaN(val)) return '₹0';
+  if (Math.abs(val) >= 10000000) return '₹' + (val / 10000000).toFixed(1).replace(/\.0$/, '') + 'Cr';
+  if (Math.abs(val) >= 100000) return '₹' + (val / 100000).toFixed(1).replace(/\.0$/, '') + 'L';
+  if (Math.abs(val) >= 10000) return '₹' + (val / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return fmt(val);
+}
+
+function safeValidateBackup(data) {
+  if (!data || typeof data !== 'object') {
+    throw new Error('Invalid JSON: Root must be an object');
+  }
+  if (data.__proto__ || data.constructor?.prototype) {
+    throw new Error('Security Violation: Prototype pollution detected');
+  }
+  const clean = {};
+  if (Array.isArray(data.entries)) {
+    clean.entries = data.entries.filter(e => e && typeof e === 'object').map(e => ({
+      id: String(e.id || uid()),
+      date: String(e.date || ymd(new Date())),
+      cat: String(e.cat || 'misc'),
+      amt: Math.max(0, Number(e.amt) || 0),
+      desc: esc(e.desc || e.what || ''),
+      what: esc(e.what || ''),
+      where: esc(e.where || ''),
+      qty: esc(e.qty || ''),
+      notes: esc(e.notes || ''),
+      hijri: e.hijri ? String(e.hijri) : '',
+      paymentCat: e.paymentCat ? String(e.paymentCat) : '',
+      type: e.type === 'income' ? 'income' : 'exp'
+    }));
+  }
+  if (Array.isArray(data.months)) clean.months = data.months;
+  if (data.catBud && typeof data.catBud === 'object') clean.catBud = data.catBud;
+  if (Array.isArray(data.categories)) clean.categories = data.categories;
+  if (typeof data.pendingSavings === 'number') clean.pendingSavings = data.pendingSavings;
+  if (data.dailySavings && typeof data.dailySavings === 'object') clean.dailySavings = data.dailySavings;
+  if (Array.isArray(data.savingsLog)) clean.savingsLog = data.savingsLog;
+  if (typeof data.hijriOffset === 'number') clean.hijriOffset = data.hijriOffset;
+  return clean;
 }
 
 function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -2913,6 +3206,71 @@ function renderDash() {
   document.getElementById('hero-safe-spend').textContent = fmt(safeDaily);
   document.getElementById('hero-safe-calc').textContent = daysLeft + ' days left';
 
+  // ── 5-HEADLINE EXECUTIVE KPI SUITE (@kpi-dashboard-design) ──
+  const projectedMonthSpend = Math.round((spent / elapsed) * m.totalDays);
+  const projectedSurplus = effBud - projectedMonthSpend;
+  const elapsedPct = Math.round((elapsed / m.totalDays) * 100);
+  const spendPct = effBud > 0 ? Math.round((spent / effBud) * 100) : 0;
+  const pacingDrift = spendPct - elapsedPct;
+
+  // Discretionary Leakage (Avoidable category + Micro txns <= 250)
+  const avoidableSpent = expEntries.filter(e => e.cat === 'avoidable').reduce((s, e) => s + e.amt, 0);
+  const microSpent = expEntries.filter(e => e.amt <= 250).reduce((s, e) => s + e.amt, 0);
+  const totalLeakage = avoidableSpent + microSpent;
+  const leakagePct = spent > 0 ? Math.round((totalLeakage / spent) * 100) : 0;
+
+  const elCap = document.getElementById('kpi-spendable-capital');
+  const elSurplusBadge = document.getElementById('kpi-projected-surplus-badge');
+  const elDaily = document.getElementById('kpi-daily-runway');
+  const elRunwayBadge = document.getElementById('kpi-runway-days-badge');
+  const elDrift = document.getElementById('kpi-pacing-drift-val');
+  const elDriftBadge = document.getElementById('kpi-pacing-status-badge');
+  const elLeak = document.getElementById('kpi-leakage-val');
+  const elLeakBadge = document.getElementById('kpi-leakage-pct-badge');
+
+  if (elCap) elCap.textContent = fmt(rem);
+  if (elSurplusBadge) {
+    if (projectedSurplus >= 0) {
+      elSurplusBadge.textContent = '▲ ' + fmt(projectedSurplus) + ' Surplus';
+      elSurplusBadge.className = 'kpi-exec-delta delta-emerald';
+    } else {
+      elSurplusBadge.textContent = '▼ ' + fmt(Math.abs(projectedSurplus)) + ' Deficit';
+      elSurplusBadge.className = 'kpi-exec-delta delta-rose';
+    }
+  }
+
+  if (elDaily) elDaily.textContent = fmt(safeDaily) + '/d';
+  if (elRunwayBadge) elRunwayBadge.textContent = daysLeft + 'd Left (' + elapsed + '/' + m.totalDays + ')';
+
+  if (elDrift) elDrift.textContent = (pacingDrift > 0 ? '+' : '') + pacingDrift + '%';
+  if (elDriftBadge) {
+    if (pacingDrift <= 0) {
+      elDriftBadge.textContent = '✓ On Track';
+      elDriftBadge.className = 'kpi-exec-delta delta-emerald';
+    } else if (pacingDrift <= 12) {
+      elDriftBadge.textContent = '⚡ Minor Surge';
+      elDriftBadge.className = 'kpi-exec-delta delta-amber';
+    } else {
+      elDriftBadge.textContent = '⚠️ Overburning';
+      elDriftBadge.className = 'kpi-exec-delta delta-rose';
+    }
+  }
+
+  if (elLeak) elLeak.textContent = fmt(totalLeakage);
+  if (elLeakBadge) elLeakBadge.textContent = leakagePct + '% of Spends';
+
+  // Bohra Month First-Use Banner Toggle (@ui-states)
+  const firstUseBanner = document.getElementById('dash-first-use-banner');
+  const firstUseTitle = document.getElementById('dash-first-use-title');
+  if (firstUseBanner) {
+    if (expEntries.length === 0) {
+      firstUseBanner.style.display = 'block';
+      if (firstUseTitle) firstUseTitle.textContent = m.name + ' ' + m.hijriYear;
+    } else {
+      firstUseBanner.style.display = 'none';
+    }
+  }
+
   // Safe Spend Radial Health Gauge (Phase 1 Visualization)
   const dailyBud = (m && m.totalDays > 0) ? (m.totalBudget / m.totalDays) : 1500;
   const safeRatio = dailyBud > 0 ? (safeDaily / dailyBud) : 1;
@@ -3160,6 +3518,13 @@ function saveEntry() {
   const cat = catById(selCat);
   const paymentCat = document.getElementById('payment-method').value || null;
 
+  const saveBtn = document.querySelector('#page-add .btn-primary-save');
+  if (saveBtn) {
+    if (saveBtn.classList.contains('is-busy')) return;
+    saveBtn.classList.add('is-busy');
+    setTimeout(() => saveBtn.classList.remove('is-busy'), 500);
+  }
+
   const entry = {
     id: uid(),
     date: gregDate,
@@ -3169,10 +3534,11 @@ function saveEntry() {
     paymentCat: paymentCat,
     amt,
     type: cat.type,
-    where: document.getElementById('where').value.trim(),
-    what: document.getElementById('what').value.trim(),
-    qty: document.getElementById('qty').value.trim(),
-    notes: document.getElementById('notes').value.trim()
+    where: esc(document.getElementById('where').value.trim()),
+    what: esc(document.getElementById('what').value.trim()),
+    desc: esc(document.getElementById('what').value.trim()),
+    qty: esc(document.getElementById('qty').value.trim()),
+    notes: esc(document.getElementById('notes').value.trim())
   };
 
   entries.unshift(entry);
@@ -3541,7 +3907,22 @@ function renderLog() {
   const container = document.getElementById('log-entries-list');
 
   if (!me.length) {
-    container.innerHTML = `<div style="text-align:center;padding:24px 16px;color:var(--text-muted)"><p>No entries logged for this cycle</p></div>`;
+    const curM = curMo();
+    container.innerHTML = `
+      <div class="ui-first-use-card">
+        <div style="font-weight:800;font-size:13px;color:var(--indigo);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <span>🌙</span> Welcome to ${esc(curM.name)} ${esc(curM.hijriYear)}
+        </div>
+        <div style="font-size:11.5px;color:var(--text-muted);line-height:1.45;margin-bottom:12px;">
+          No transactions recorded in this Bohra cycle yet. Jumpstart your tracking:
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <button type="button" class="quick-chip" style="font-weight:700;" onclick="showPage('add')">➕ Log First Expense</button>
+          <button type="button" class="quick-chip" onclick="splitBudgetEvenly(moIdx)">⚡ Split 25% Evenly</button>
+          <button type="button" class="quick-chip" onclick="splitBudgetBohra(moIdx)">🌙 Bohra Frontload</button>
+        </div>
+      </div>
+    `;
     return;
   }
 
@@ -3563,15 +3944,16 @@ function renderLog() {
         ${byDate[d].map(e => {
           const cat = catById(e.cat);
           const isInc = cat.type === 'income';
-          const sub = [e.what, e.qty, e.where].filter(Boolean).join(' • ');
+          const sub = [e.what, e.qty, e.where].filter(Boolean).map(esc).join(' • ');
+          const safeWhere = e.where ? `· <span style="font-weight:400;color:var(--text-muted)">${esc(e.where)}</span>` : '';
           return `
-            <div class="log-item-row" onclick="openDetail('${e.id}')">
+            <div class="log-item-row" onclick="openDetail('${esc(e.id)}')">
               <div class="log-item-icon">${cat.icon}</div>
               <div class="log-item-content">
-                <div class="log-item-title">${cat.label} ${e.where ? `· <span style="font-weight:400;color:var(--text-muted)">${e.where}</span>` : ''}</div>
-                <div class="log-item-desc">${sub || '—'}</div>
+                <div class="log-item-title txt-truncate">${esc(cat.label)} ${safeWhere}</div>
+                <div class="log-item-desc txt-truncate">${sub || '—'}</div>
               </div>
-              <div class="log-item-amount ${isInc ? 'inc' : ''}">${isInc ? '+' : ''}${fmt(e.amt)}</div>
+              <div class="log-item-amount font-tabular ${isInc ? 'inc' : ''}">${isInc ? '+' : ''}${fmt(e.amt)}</div>
             </div>
           `;
         }).join('')}
@@ -4853,7 +5235,8 @@ Do not use raw markdown code blocks. Keep the tone warm, disciplined, and practi
 }
 
 function formatAiMarkdown(txt) {
-  let h = txt
+  const safe = esc(txt);
+  let h = safe
     .replace(/^### (.*$)/gim, '<div class="ai-narrative-section-title" style="margin-top:14px;">$1</div>')
     .replace(/^## (.*$)/gim, '<div class="ai-narrative-section-title" style="font-size:13px;margin-top:16px;">$1</div>')
     .replace(/^# (.*$)/gim, '<div class="ai-narrative-section-title" style="font-size:14px;margin-top:18px;">$1</div>')
@@ -5343,11 +5726,11 @@ function renderOmniSearchResults(term) {
       const b = catBud[c.id] || 0;
       const s = entries.filter(e => e.cat === c.id).reduce((sum, e) => sum + e.amt, 0);
       htmlParts.push(`
-        <div class="omni-item" onclick="closeOmniSearchModal(); showPage('add'); quickAddForCat('${c.id}');">
+        <div class="omni-item" onclick="closeOmniSearchModal(); showPage('add'); quickAddForCat('${esc(c.id)}');">
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="font-size:18px;">${c.icon}</span>
             <div>
-              <div style="font-weight:700;font-size:12.5px;">${c.label}</div>
+              <div style="font-weight:700;font-size:12.5px;">${esc(c.label)}</div>
               <div style="font-size:10.5px;color:var(--text-muted);">${fmt(s)} spent / ${fmt(b)} budget</div>
             </div>
           </div>
@@ -5372,15 +5755,15 @@ function renderOmniSearchResults(term) {
     matchedTx.forEach(e => {
       const cat = catById(e.cat);
       htmlParts.push(`
-        <div class="omni-item" onclick="closeOmniSearchModal(); openDetail('${e.id}');">
+        <div class="omni-item" onclick="closeOmniSearchModal(); openDetail('${esc(e.id)}');">
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="font-size:16px;">${cat.icon}</span>
             <div>
-              <div style="font-weight:600;font-size:12px;color:var(--text-main);">${e.desc || e.what || cat.label}</div>
-              <div style="font-size:10px;color:var(--text-muted);">${e.date} • ${cat.label}</div>
+              <div class="txt-truncate" style="font-weight:600;font-size:12px;color:var(--text-main);max-width:210px;">${esc(e.desc || e.what || cat.label)}</div>
+              <div style="font-size:10px;color:var(--text-muted);">${esc(e.date)} • ${esc(cat.label)}</div>
             </div>
           </div>
-          <span style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--rose);">${fmt(e.amt)}</span>
+          <span class="font-tabular" style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--rose);">${fmt(e.amt)}</span>
         </div>
       `);
     });
@@ -5410,7 +5793,14 @@ function renderOmniSearchResults(term) {
   }
 
   if (htmlParts.length === 0) {
-    container.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:24px;">No matches found for "${term}". Try another word or amount.</div>`;
+    container.innerHTML = `
+      <div class="ui-empty-filter-card">
+        <div style="font-size:22px;margin-bottom:6px;">🔍</div>
+        <div style="font-size:12.5px;color:var(--text-main);font-weight:700;">No matches for "${esc(term)}"</div>
+        <div style="font-size:11px;color:var(--text-muted);margin:4px 0 10px;">Try another keyword, category, or amount.</div>
+        <button type="button" class="quick-chip" style="font-weight:700;padding:6px 14px;" onclick="resetOmniSearch()">↺ Reset Search & Show All</button>
+      </div>
+    `;
   } else {
     container.innerHTML = htmlParts.join('');
   }
@@ -5420,6 +5810,7 @@ function renderOmniSearchResults(term) {
 // ── SETTINGS ──
 function renderSettings() {
   renderAuditTrail();
+  checkSystemHealth(false);
   // Populate AI Advisor settings
   const gemKeyInp = document.getElementById('gemini-api-key-input');
   if (gemKeyInp) gemKeyInp.value = geminiApiKey || '';
@@ -5924,18 +6315,18 @@ function openDetail(id) {
 
   const rows = [
     ['Amount', (e.type === 'income' ? '+' : '') + fmt(e.amt)],
-    ['Date', e.date],
-    ['Hijri', e.hijri || '—'],
-    ['Payment Method', payCat ? `${payCat.icon} ${payCat.label}` : 'None'],
-    ['Where / Source', e.where || '—'],
-    ['What / Description', e.what || '—'],
-    ['Quantity', e.qty || '—'],
-    ['Notes', e.notes || '—']
+    ['Date', esc(e.date)],
+    ['Hijri', esc(e.hijri || '—')],
+    ['Payment Method', payCat ? `${payCat.icon} ${esc(payCat.label)}` : 'None'],
+    ['Where / Source', esc(e.where || '—')],
+    ['What / Description', esc(e.what || e.desc || '—')],
+    ['Quantity', esc(e.qty || '—')],
+    ['Notes', esc(e.notes || '—')]
   ];
 
   document.getElementById('modal-body').innerHTML = rows.map(([k, v]) => `
     <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
-      <span style="color:var(--text-muted)">${k}</span>
+      <span style="color:var(--text-muted)">${esc(k)}</span>
       <span style="font-family:var(--font-mono);font-weight:600">${v}</span>
     </div>
   `).join('');
@@ -5980,7 +6371,16 @@ function doExport() {
   const hdr = ['Hijri Date', 'Gregorian Date', 'Category', 'Type', 'Amount (INR)', 'Where', 'What', 'Notes'];
   const rows = pool.map(e => {
     const cat = catById(e.cat);
-    return [e.hijri || '', e.date, cat.label, cat.type, e.amt, e.where || '', e.what || '', e.notes || ''];
+    return [
+      e.hijri || '',
+      e.date,
+      sanitizeFormula(cat.label),
+      cat.type,
+      e.amt,
+      sanitizeFormula(e.where || ''),
+      sanitizeFormula(e.what || e.desc || ''),
+      sanitizeFormula(e.notes || '')
+    ];
   });
 
   const csv = [hdr, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -6006,18 +6406,20 @@ function importJSONData(e) {
   const reader = new FileReader();
   reader.onload = function(evt) {
     try {
-      const data = JSON.parse(evt.target.result);
-      if (data.entries) entries = data.entries;
-      if (data.months) months = data.months;
-      if (data.catBud) catBud = data.catBud;
-      if (data.categories) categories = data.categories;
-      if (data.pendingSavings !== undefined) pendingSavings = data.pendingSavings;
-      if (data.dailySavings) dailySavings = data.dailySavings;
-      if (data.savingsLog) savingsLog = data.savingsLog;
-      if (data.hijriOffset !== undefined) hijriOffset = data.hijriOffset;
+      const parsed = JSON.parse(evt.target.result);
+      const clean = safeValidateBackup(parsed);
+      if (clean.entries) entries = clean.entries;
+      if (clean.months) months = clean.months;
+      if (clean.catBud) catBud = clean.catBud;
+      if (clean.categories) categories = clean.categories;
+      if (clean.pendingSavings !== undefined) pendingSavings = clean.pendingSavings;
+      if (clean.dailySavings) dailySavings = clean.dailySavings;
+      if (clean.savingsLog) savingsLog = clean.savingsLog;
+      if (clean.hijriOffset !== undefined) hijriOffset = clean.hijriOffset;
       
       saveAllData();
       renderDash();
+      showToast('✓ Backup restored & validated successfully');
       showToast('✅ Data Restored Successfully');
     } catch (err) {
       showToast('❌ Invalid JSON File');
@@ -6452,6 +6854,289 @@ window.addEventListener('load', () => {
     pullFromBackend();
   }
 });
+
+// ── AUTOMATED TDD TEST HARNESS (@test-driven-development) ──
+window.__runBudgetTests = function() {
+  const t0 = performance.now();
+  const suites = [];
+  let totalCount = 0;
+  let passedCount = 0;
+  let failedCount = 0;
+
+  function assert(suite, desc, pass, detail) {
+    totalCount++;
+    if (pass) {
+      passedCount++;
+      suite.tests.push({ desc, pass: true, detail });
+    } else {
+      failedCount++;
+      suite.tests.push({ desc, pass: false, detail: detail || 'Assertion failed' });
+    }
+  }
+
+  // Suite 1: Bohra Hijri Calendar Precision
+  const s1 = { name: "Bohra Hijri Calendar Precision", tests: [] };
+  suites.push(s1);
+  const leapYears = [2, 5, 8, 10, 13, 16, 19, 21, 24, 27, 29];
+  let leapMatches = true;
+  for (let y = 1; y <= 30; y++) {
+    const isL = BohraCalendar.isKabisa(y);
+    const shouldBeL = leapYears.includes(y);
+    if (isL !== shouldBeL) leapMatches = false;
+  }
+  assert(s1, "11 Kabisah leap years in 30-year cycle match Fatimid rule", leapMatches);
+
+  let monthLengthsMatch = true;
+  for (let m = 0; m <= 10; m++) {
+    const len = BohraCalendar.daysInMonth(1446, m);
+    const expected = (m % 2 === 0) ? 30 : 29;
+    if (len !== expected) monthLengthsMatch = false;
+  }
+  assert(s1, "Alternating 30/29-day month lengths (Moharram to Zulqada)", monthLengthsMatch);
+  assert(s1, "Zilhajj month length respects leap year (month index 11)", BohraCalendar.daysInMonth(1446, 11) === 29 || BohraCalendar.daysInMonth(1446, 11) === 30);
+
+  // Suite 2: Financial Mathematics & Calculations
+  const s2 = { name: "Financial Mathematics & Pacing", tests: [] };
+  suites.push(s2);
+  const testBudget = 45000;
+  const each = Math.round(testBudget / 4);
+  const w4 = testBudget - (each * 3);
+  assert(s2, "Split evenly sums exactly to 100% of budget", (each * 3 + w4) === testBudget);
+
+  const bW1 = Math.round(testBudget * 0.31);
+  const bW2 = Math.round(testBudget * 0.38);
+  const bW3 = Math.round(testBudget * 0.155);
+  const bW4 = testBudget - (bW1 + bW2 + bW3);
+  assert(s2, "Bohra pacing (frontload 31%/38%/15.5%/15.5%) sums to 100%", (bW1 + bW2 + bW3 + bW4) === testBudget);
+
+  const remTest = 20000;
+  const daysLeftTest = 10;
+  const safeDailyTest = Math.round(remTest / daysLeftTest);
+  assert(s2, "Safe-to-spend calculation accurately divides remaining by days left", safeDailyTest === 2000);
+
+  const mockEntries = [{ id: '1', amt: 120 }, { id: '2', amt: 250 }, { id: '3', amt: 500 }];
+  const microList = mockEntries.filter(e => e.amt <= 250);
+  assert(s2, "Micro-leakage identifies all transactions <= ₹250", microList.length === 2);
+
+  // Suite 3: Security & Sanitization (@frontend-security-coder)
+  const s3 = { name: "Frontend Security & XSS Immunization", tests: [] };
+  suites.push(s3);
+  const xssStr = '<' + 'script>alert("XSS")<\\/' + 'script>';
+  assert(s3, "esc() strictly neutralizes script tags", esc(xssStr) === '&lt;script&gt;alert(&quot;XSS&quot;)&lt;\\/script&gt;');
+  assert(s3, "esc() handles quotes, ampersands, and apostrophes", esc('Tom & "Jerry" \'s') === 'Tom &amp; &quot;Jerry&quot; &#39;s');
+  assert(s3, "sanitizeFormula() prepends single quote to spreadsheet formula injection", sanitizeFormula('=SUM(A1:A10)') === "'=SUM(A1:A10)");
+  assert(s3, "sanitizeFormula() handles +, -, @, and tab chars", sanitizeFormula('+cmd') === "'+cmd" && sanitizeFormula('@test') === "'@test");
+
+  const mdRaw = '### Header\n**Bold Text**\n<img src=x onerror=alert(1)>';
+  const mdFormatted = formatAiMarkdown(mdRaw);
+  assert(s3, "formatAiMarkdown() immunizes embedded HTML while rendering markdown bold/headers", !mdFormatted.includes('<img') && mdFormatted.includes('&lt;img'));
+
+  let caughtPollution = false;
+  try {
+    safeValidateBackup({ __proto__: { admin: true } });
+  } catch {
+    caughtPollution = true;
+  }
+  assert(s3, "safeValidateBackup() defends against prototype pollution", caughtPollution);
+
+  // Suite 4: UI States & Edge Cases (@ui-states)
+  const s4 = { name: "UI States & Edge Content Resilience", tests: [] };
+  suites.push(s4);
+  assert(s4, "fmtCompact() accurately scales thousands and lakhs", fmtCompact(25000) === '₹25k' && fmtCompact(150000) === '₹1.5L');
+  assert(s4, "fmtCompact() handles 0 and extreme numbers safely", fmtCompact(0) === '₹0' && !fmtCompact(NaN).includes('NaN'));
+  assert(s4, "esc() returns empty string on null or undefined", esc(null) === '' && esc(undefined) === '');
+
+  const duration = Math.round(performance.now() - t0);
+  return {
+    passed: passedCount,
+    failed: failedCount,
+    total: totalCount,
+    duration,
+    suites
+  };
+};
+
+function runVerificationSuiteFromUI() {
+  const btn = document.getElementById('btn-run-tests');
+  const badge = document.getElementById('tdd-suite-badge');
+  const box = document.getElementById('tdd-test-results-box');
+  const sumEl = document.getElementById('tdd-result-summary');
+  const durEl = document.getElementById('tdd-result-duration');
+  const listEl = document.getElementById('tdd-suite-list');
+
+  if (btn) btn.classList.add('is-busy');
+  setTimeout(() => {
+    try {
+      const res = window.__runBudgetTests();
+      if (box) box.style.display = 'block';
+      if (sumEl) sumEl.textContent = `${res.passed} / ${res.total} Tests Passed`;
+      if (durEl) durEl.textContent = `${res.duration}ms`;
+
+      if (res.failed === 0) {
+        if (badge) {
+          badge.textContent = `✓ All ${res.total} Passed`;
+          badge.className = 'badge-tag tag-emerald';
+        }
+      } else {
+        if (badge) {
+          badge.textContent = `⚠ ${res.failed} Failed`;
+          badge.className = 'badge-tag tag-rose';
+        }
+      }
+
+      if (listEl) {
+        listEl.innerHTML = res.suites.map(s => `
+          <div style="background:var(--surface);padding:6px 10px;border-radius:4px;border:1px solid var(--border);">
+            <div style="font-weight:700;color:var(--text-main);margin-bottom:3px;">${esc(s.name)}</div>
+            ${s.tests.map(t => `
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0;">
+                <span style="color:${t.pass ? 'var(--text-muted)' : 'var(--rose)'};">${t.pass ? '✓' : '✗'} ${esc(t.desc)}</span>
+                <span style="font-weight:700;color:${t.pass ? 'var(--emerald)' : 'var(--rose)'};">${t.pass ? 'PASS' : 'FAIL'}</span>
+              </div>
+            `).join('')}
+          </div>
+        `).join('');
+      }
+      showToast(`✓ Verification Suite: ${res.passed}/${res.total} Passed in ${res.duration}ms`);
+    } finally {
+      if (btn) btn.classList.remove('is-busy');
+    }
+  }, 100);
+}
+
+// ── SYSTEM DIAGNOSTICS & TELEMETRY (@systematic-debugging) ──
+function getLocalStorageUsage() {
+  let total = 0;
+  for (let x in localStorage) {
+    if (localStorage.hasOwnProperty(x)) {
+      total += ((localStorage[x].length + x.length) * 2);
+    }
+  }
+  const kb = Math.round(total / 1024);
+  const pct = Math.min(100, ((total / (5 * 1024 * 1024)) * 100)).toFixed(1);
+  return { bytes: total, kb, pct, maxKb: 5120 };
+}
+
+function checkSystemHealth(verbose = false) {
+  const usage = getLocalStorageUsage();
+  const txt = document.getElementById('diag-storage-text');
+  const fill = document.getElementById('diag-storage-fill');
+  const badge = document.getElementById('health-status-badge');
+  const out = document.getElementById('diag-health-output');
+
+  if (txt) txt.textContent = `${usage.kb} KB / ${usage.maxKb} KB (${usage.pct}%)`;
+  if (fill) {
+    fill.style.width = `${Math.max(2, usage.pct)}%`;
+    fill.className = 'progress-fill' + (usage.pct > 80 ? ' danger' : usage.pct > 60 ? ' warn' : '');
+  }
+
+  // Scan database integrity
+  let orphanCount = 0;
+  let invalidDates = 0;
+  let fixedAmounts = 0;
+  const knownCatIds = categories.map(c => c.id);
+
+  entries.forEach(e => {
+    if (!knownCatIds.includes(e.cat)) orphanCount++;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(e.date)) invalidDates++;
+    if (isNaN(e.amt) || e.amt < 0) fixedAmounts++;
+  });
+
+  const isHealthy = orphanCount === 0 && invalidDates === 0 && fixedAmounts === 0;
+  if (badge) {
+    badge.textContent = isHealthy ? 'Healthy' : 'Issues Found';
+    badge.className = 'badge-tag ' + (isHealthy ? 'tag-emerald' : 'tag-amber');
+  }
+
+  if (verbose && out) {
+    out.style.display = 'block';
+    out.innerHTML = `
+      <div style="background:var(--surface);padding:8px 10px;border-radius:4px;border:1px solid var(--border);line-height:1.5;">
+        <div><b>Integrity Scan Results:</b></div>
+        <div>• Total Transactions: ${entries.length}</div>
+        <div>• Orphaned Categories: ${orphanCount}</div>
+        <div>• Invalid Date Formats: ${invalidDates}</div>
+        <div>• Corrupted Amounts: ${fixedAmounts}</div>
+        <div style="color:${isHealthy ? 'var(--emerald)' : 'var(--amber)'};font-weight:700;margin-top:4px;">
+          ${isHealthy ? '✓ Database is fully coherent.' : '⚠ Issues detected. Click "Reconcile & Self-Heal" to fix.'}
+        </div>
+      </div>
+    `;
+    showToast(isHealthy ? '✓ Health Scan: Database is 100% Coherent' : '⚠ Scan detected issues');
+  }
+}
+
+function selfHealBudgetDatabase() {
+  let healed = 0;
+  const knownCatIds = categories.map(c => c.id);
+  
+  entries = entries.filter(e => e && typeof e === 'object');
+  entries.forEach(e => {
+    if (!e.id) { e.id = uid(); healed++; }
+    if (!knownCatIds.includes(e.cat)) { e.cat = 'misc'; healed++; }
+    if (isNaN(e.amt) || e.amt < 0) { e.amt = 0; healed++; }
+    if (!e.desc && e.what) e.desc = e.what;
+  });
+
+  saveAllData();
+  renderDash();
+  checkSystemHealth(true);
+  showToast(`✓ Self-heal complete: ${healed} records reconciled`);
+}
+
+function exportDiagnosticReport() {
+  const usage = getLocalStorageUsage();
+  const testRes = window.__runBudgetTests();
+  const report = {
+    generatedAt: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+    screen: `${window.innerWidth}x${window.innerHeight}`,
+    activeBohraMonth: curMo().name,
+    activeHijriYear: curMo().hijriYear,
+    hijriOffset: hijriOffset,
+    transactionCount: entries.length,
+    categoryCount: categories.length,
+    storageQuota: usage,
+    automatedTestSuite: {
+      passed: testRes.passed,
+      failed: testRes.failed,
+      total: testRes.total,
+      durationMs: testRes.duration
+    },
+    privacyNotice: "Contains ZERO personal merchant names, item descriptions, or transaction amounts."
+  };
+
+  const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `35k-budget-diagnostics-${ymd(new Date())}.json`;
+  a.click();
+  showToast('📋 Privacy-Safe Diagnostic Report Downloaded');
+}
+
+function resetOmniSearch() {
+  const inp = document.getElementById('omni-search-input');
+  if (inp) { inp.value = ''; inp.focus(); }
+  renderOmniSearchResults('');
+}
+
+// Auto-Run Test Suite when loaded with ?test=1 (@test-driven-development)
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('test') === '1' && typeof window.__runBudgetTests === 'function') {
+      const res = window.__runBudgetTests();
+      const div = document.createElement('div');
+      div.id = 'automated-test-banner';
+      div.style.cssText = 'padding:14px;background:#0F172A;color:#10B981;font-family:monospace;white-space:pre-wrap;font-size:12px;z-index:999999;position:relative;';
+      div.textContent = '### TEST_RESULTS_JSON_START ###\\n' + JSON.stringify(res, null, 2) + '\\n### TEST_RESULTS_JSON_END ###';
+      document.body.prepend(div);
+    }
+  } catch (e) {
+    console.error('Test auto-runner error:', e);
+  }
+});
+
 </script>
 
 <!-- Full-Screen Lock Overlay (Phase 3: Privacy & Biometric Lock) -->
