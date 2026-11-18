@@ -1393,6 +1393,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 /* ── ASK BUDGET ENHANCED INPUT & CONTRAST FIX ── */
 .ask-search-wrap {
   display: flex !important;
+  flex-direction: row !important;
   gap: 8px !important;
   align-items: stretch !important;
   width: 100% !important;
@@ -1400,8 +1401,9 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   box-sizing: border-box !important;
 }
 .ask-input-box {
-  flex: 1 1 auto !important;
+  flex: 1 1 0% !important;
   min-width: 0 !important;
+  width: 100% !important;
   position: relative !important;
   display: flex !important;
   align-items: center !important;
@@ -1618,6 +1620,146 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   border-radius: var(--radius-sm);
   border: 1px dashed var(--border);
   color: var(--text-muted);
+}
+
+
+/* ── 1. HIERARCHICAL SUBCATEGORIES & MULTI-TAGGING STYLES ── */
+.subcat-chip {
+  padding: 4px 10px;
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.subcat-chip:hover {
+  border-color: var(--indigo);
+  background: var(--indigo-light);
+}
+.subcat-chip.selected {
+  background: var(--indigo);
+  color: #fff;
+  border-color: var(--indigo);
+}
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+.tag-chip-toggle {
+  padding: 3px 8px;
+  background: var(--surface-low);
+  border: 1px dashed var(--border);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--indigo);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.tag-chip-toggle.active {
+  background: var(--indigo);
+  color: #fff;
+  border-color: var(--indigo);
+  border-style: solid;
+}
+
+/* ── 2. QUICK BOOKMARKS STRIP ── */
+.bookmark-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  transition: all 0.2s ease;
+}
+.bookmark-chip:hover {
+  border-color: var(--indigo);
+  background: var(--indigo-light);
+}
+
+/* ── 3. DUAL-PILL CALENDAR HEATMAP ── */
+.cal-pill-inc {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: #065f46;
+  background: #d1fae5;
+  border-radius: 3px;
+  padding: 0 3px;
+  line-height: 1.2;
+}
+.cal-pill-exp {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: #9f1239;
+  background: #ffe4e6;
+  border-radius: 3px;
+  padding: 0 3px;
+  line-height: 1.2;
+}
+.cal-pills-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 2px;
+  align-items: center;
+}
+
+/* ── 4. VISUAL WATERFALL & ASSET CHARTS ── */
+.waterfall-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+.waterfall-step.income { border-left: 4px solid var(--emerald); }
+.waterfall-step.fixed { border-left: 4px solid var(--purple); }
+.waterfall-step.essential { border-left: 4px solid var(--amber); }
+.waterfall-step.discretionary { border-left: 4px solid var(--rose); }
+.waterfall-step.surplus {
+  border-left: 4px solid var(--indigo);
+  font-weight: 700;
+  background: var(--indigo-light);
+}
+
+/* ── 5. PREDICTIVE BREACH & INFLATION CARDS ── */
+.predictive-alert-card {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--amber-border);
+  background: var(--amber-bg);
+  color: #78350f;
+  margin-bottom: 8px;
+}
+.predictive-alert-card.danger {
+  border-color: var(--rose-border);
+  background: var(--rose-bg);
+  color: #881337;
 }
 
 </style>
@@ -1858,6 +2000,17 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 2. ADD ENTRY PAGE                          -->
 <!-- ========================================== -->
 <div class="view-page" id="page-add">
+  <!-- 1-Tap Quick Bookmarks Strip (Sequence 2) -->
+  <div id="add-bookmarks-container" style="margin-bottom:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <span style="font-size:11px;text-transform:uppercase;font-weight:700;color:var(--text-muted);">⭐ Quick Bookmarks (1-Tap Fill)</span>
+      <button type="button" class="quick-chip" style="font-size:10px;padding:2px 8px;" onclick="promptNewBookmark()">+ Add</button>
+    </div>
+    <div id="quick-bookmarks-strip" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;">
+      <!-- Bookmarks dynamically rendered here -->
+    </div>
+  </div>
+
   <!-- Fast WhatsApp / UPI Text Ingest (Category 5: WhatsApp Ingest) -->
   <div style="margin-bottom:12px;background:var(--emerald-bg);border:1px dashed var(--emerald-border);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
     <div style="font-size:11px;color:var(--emerald);font-weight:700;display:flex;align-items:center;gap:6px;">
@@ -1883,8 +2036,9 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   <div class="input-card-box">
     <div class="currency-input-wrap">
       <span class="currency-symbol">₹</span>
-      <input type="number" id="amt" class="amount-text-field" placeholder="0" inputmode="decimal" min="0"/>
+      <input type="text" id="amt" class="amount-text-field" placeholder="0 or 250+120" inputmode="text" oninput="handleAmountExpression(this.value)" onblur="evaluateAmountInput()"/>
     </div>
+    <div id="amt-calc-preview" style="display:none;font-size:11px;color:var(--emerald);font-weight:700;margin-top:4px;text-align:right;">= ₹0</div>
     <div class="quick-chips-row">
       <button class="quick-chip" onclick="incrementAmount(1)">+₹1</button>
       <button class="quick-chip" onclick="incrementAmount(10)">+₹10</button>
@@ -1899,6 +2053,14 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   <div class="form-section-title">Ergonomic Classification</div>
   <div class="input-card-box">
     <div class="form-categories-grid" id="form-categories-container"></div>
+    <!-- 2-Tier Subcategory Chips (Sequence 1) -->
+    <div id="form-subcategories-section" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:10.5px;text-transform:uppercase;font-weight:700;color:var(--text-muted);" id="subcat-title-label">Sub-Category</span>
+        <button type="button" class="quick-chip" style="font-size:10px;padding:2px 8px;" onclick="promptNewSubcategory()">+ New Sub-cat</button>
+      </div>
+      <div id="form-subcategories-container" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    </div>
   </div>
 
   <div class="form-section-title">Payment Method (Optional)</div>
@@ -1932,6 +2094,35 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
         <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Quantity / Units</label>
         <input type="text" id="qty" class="styled-field" placeholder="e.g. 2 kg, 1 crate, monthly pack"/>
       </div>
+      <!-- Multi-Tagging (Sequence 1) -->
+      <div style="margin-bottom:8px;">
+        <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">🏷️ Tags (Click to toggle or type #tags)</label>
+        <div id="quick-tags-strip" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">
+          <button type="button" class="tag-chip-toggle" onclick="toggleTagChip('#Ziyarat')">#Ziyarat</button>
+          <button type="button" class="tag-chip-toggle" onclick="toggleTagChip('#JumoaSpecial')">#JumoaSpecial</button>
+          <button type="button" class="tag-chip-toggle" onclick="toggleTagChip('#EidShopping')">#EidShopping</button>
+          <button type="button" class="tag-chip-toggle" onclick="toggleTagChip('#HomeRepair')">#HomeRepair</button>
+          <button type="button" class="tag-chip-toggle" onclick="toggleTagChip('#MandiTrip')">#MandiTrip</button>
+          <button type="button" class="tag-chip-toggle" onclick="toggleTagChip('#MedicalCheckup')">#MedicalCheckup</button>
+        </div>
+        <input type="text" id="entry-tags" class="styled-field" placeholder="#Ziyarat #Jumoa #WeekendSpecial" />
+      </div>
+
+      <!-- Receipt Photo Attachment (Sequence 2) -->
+      <div style="margin-bottom:8px;">
+        <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">📷 Receipt / Bill Attachment (Optional)</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button type="button" class="quick-chip" style="padding:6px 12px;font-weight:700;" onclick="document.getElementById('entry-photo-input').click()">
+            📎 Attach Receipt Photo
+          </button>
+          <input type="file" id="entry-photo-input" accept="image/*" capture="environment" style="display:none;" onchange="handleReceiptPhotoSelect(event)" />
+          <div id="entry-photo-preview-wrap" style="display:none;align-items:center;gap:6px;">
+            <img id="entry-photo-thumb" style="width:36px;height:36px;border-radius:4px;object-fit:cover;border:1px solid var(--border);" />
+            <button type="button" class="quick-chip" style="padding:2px 6px;color:var(--rose);" onclick="removeReceiptPhoto()">✕ Remove</button>
+          </div>
+        </div>
+      </div>
+
       <div>
         <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Notes (Optional)</label>
         <textarea id="notes" class="styled-field" style="height:54px;resize:none" placeholder="Any extra reminder or reason..."></textarea>
@@ -2042,6 +2233,30 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     </div>
     <div id="analytics-trend-legend" style="display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:10.5px;font-weight:700;"></div>
     <div id="analytics-trend-cycle-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;"></div>
+  </div>
+
+  <!-- Income vs Expense Waterfall & Asset Trajectory (Sequence 3) -->
+  <div class="metric-card" id="analytics-waterfall-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🌊 Income & Expense Waterfall</div>
+      <span class="badge-tag tag-emerald" id="waterfall-surplus-badge">+₹0 Net Surplus</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
+      Step-by-step capital cascade from effective income down to final month-end surplus.
+    </div>
+    <div id="analytics-waterfall-container"></div>
+  </div>
+
+  <!-- Predictive Budget Breach Warning by Day X (Sequence 4) -->
+  <div class="metric-card" id="analytics-predictive-breach-card">
+    <div class="card-header-flex">
+      <div class="card-heading">⚠️ Predictive Breach & Inflation Early Warning</div>
+      <span class="badge-tag tag-amber" id="predictive-breach-badge">Pacing Alert</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
+      Forward-looking mathematical projections based on your active elapsed days.
+    </div>
+    <div id="analytics-predictive-alerts-container"></div>
   </div>
 
   <!-- 3. AI Behavioral Engine & Cross-Month Intelligence Card -->
@@ -3443,6 +3658,9 @@ function buildCatBtns() {
       <span class="name">${c.label}</span>
     </button>
   `).join('');
+  if (typeof renderBookmarksStrip === 'function') {
+    renderBookmarksStrip();
+  }
 }
 
 function selectCategory(id, btn) {
@@ -3451,6 +3669,9 @@ function selectCategory(id, btn) {
   selCat = id;
   const c = catById(id);
   document.getElementById('income-tag-note').style.display = c.type === 'income' ? 'block' : 'none';
+  if (typeof renderSubcategoriesForCategory === 'function') {
+    renderSubcategoriesForCategory(id);
+  }
 }
 
 function populatePaymentMethods() {
@@ -3497,7 +3718,18 @@ function toggleDetailsAccordion() {
 }
 
 function clearForm() {
-  ['amt', 'where', 'what', 'qty', 'notes'].forEach(id => document.getElementById(id).value = '');
+  ['amt', 'where', 'what', 'qty', 'notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const tagsEl = document.getElementById('entry-tags');
+  if (tagsEl) tagsEl.value = '';
+  const amtPreview = document.getElementById('amt-calc-preview');
+  if (amtPreview) amtPreview.textContent = '';
+  selSubCat = null;
+  const subSection = document.getElementById('form-subcategories-section');
+  if (subSection) subSection.style.display = 'none';
+  if (typeof removeReceiptPhoto === 'function') removeReceiptPhoto();
   document.getElementById('entry-date').value = ymd(new Date());
   document.getElementById('payment-method').value = '';
   document.getElementById('payment-method-note').style.display = 'none';
@@ -3509,8 +3741,9 @@ function clearForm() {
 
 function saveEntry() {
   if (!selCat) { showToast('Please select a category'); return; }
-  const amt = parseFloat(document.getElementById('amt').value);
-  if (!amt || amt <= 0) { showToast('Please enter a valid amount'); return; }
+  const rawAmtVal = document.getElementById('amt').value;
+  const amt = (typeof evalSafeMath === 'function') ? evalSafeMath(rawAmtVal) : parseFloat(rawAmtVal);
+  if (!amt || amt <= 0 || isNaN(amt)) { showToast('Please enter a valid amount'); return; }
 
   const gregDate = document.getElementById('entry-date').value || ymd(new Date());
   const hd = gregToHijriDisplay(parseYMD(gregDate));
@@ -3525,12 +3758,20 @@ function saveEntry() {
     setTimeout(() => saveBtn.classList.remove('is-busy'), 500);
   }
 
+  const rawNotes = document.getElementById('notes').value.trim();
+  const rawTags = (document.getElementById('entry-tags') ? document.getElementById('entry-tags').value.trim() : '');
+  const combinedTagStr = rawNotes + ' ' + rawTags;
+  const parsedTags = (typeof extractTags === 'function') ? extractTags(combinedTagStr) : [];
+
   const entry = {
     id: uid(),
     date: gregDate,
     hijri: hijriLabel,
     hijriDay: hd.d, hijriMonth: hd.m, hijriYear: hd.y,
     cat: selCat,
+    subcat: selSubCat || null,
+    tags: parsedTags,
+    photo: (typeof currentReceiptPhoto !== 'undefined' && currentReceiptPhoto) ? currentReceiptPhoto : null,
     paymentCat: paymentCat,
     amt,
     type: cat.type,
@@ -3538,7 +3779,7 @@ function saveEntry() {
     what: esc(document.getElementById('what').value.trim()),
     desc: esc(document.getElementById('what').value.trim()),
     qty: esc(document.getElementById('qty').value.trim()),
-    notes: esc(document.getElementById('notes').value.trim())
+    notes: esc(rawNotes)
   };
 
   entries.unshift(entry);
@@ -3689,12 +3930,19 @@ function renderCalendarGrid() {
   const subEl = document.getElementById('cal-header-sub');
   if (!grid || !titleEl || !subEl) return;
 
-  // Map daily expense totals across all entries
+  // Map daily expense, income, and receipt photo indicators across all entries
   const dayExpMap = {};
+  const dayIncMap = {};
+  const dayPhotoMap = {};
   entries.forEach(e => {
     const c = catById(e.cat);
     if (c.type === 'exp') {
       dayExpMap[e.date] = (dayExpMap[e.date] || 0) + e.amt;
+    } else if (c.type === 'income') {
+      dayIncMap[e.date] = (dayIncMap[e.date] || 0) + e.amt;
+    }
+    if (e.photo) {
+      dayPhotoMap[e.date] = true;
     }
   });
 
@@ -3748,13 +3996,20 @@ function renderCalendarGrid() {
       const isToday = (dStr === todayStr);
       const hasNote = Boolean(dayNotes[dStr]);
 
+      const dayInc = dayIncMap[dStr] || 0;
+      const hasPhoto = Boolean(dayPhotoMap[dStr]);
+      let dualPillsHtml = '';
+      if (dayInc > 0) dualPillsHtml += `<div class="cal-pill-inc">+${fmtCompactAmt(dayInc)}</div>`;
+      if (spent > 0) dualPillsHtml += `<div class="cal-pill-exp">-${fmtCompactAmt(spent)}</div>`;
+
       cellsHtml += `
         <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${dStr}')">
           ${isToday ? '<span class="today-dot" title="Today"></span>' : ''}
-          ${hasNote ? '<span style="position:absolute;top:3px;left:4px;font-size:8px;">✏️</span>' : ''}
+          ${hasNote ? '<span style="position:absolute;top:2px;left:3px;font-size:8px;">✏️</span>' : ''}
+          ${hasPhoto ? '<span style="position:absolute;top:2px;right:3px;font-size:8px;">📷</span>' : ''}
           <div class="cal-day-pri">${d}</div>
-          <div class="cal-day-sec" style="font-family:var(--font-arabic);font-size:11.5px;">${toArabicNum(hd.d)}</div>
-          ${spent > 0 ? `<div class="cal-day-amt">${fmtCompactAmt(spent)}</div>` : ''}
+          <div class="cal-day-sec" style="font-family:var(--font-arabic);font-size:11px;">${toArabicNum(hd.d)}</div>
+          ${dualPillsHtml}
         </div>
       `;
     }
@@ -3799,13 +4054,20 @@ function renderCalendarGrid() {
       const hasNote = Boolean(dayNotes[item.dStr]);
       const gregShort = `${item.g.getDate()}${item.hd.d === 1 || item.g.getDate() === 1 ? ' ' + item.g.toLocaleDateString('en-US', { month: 'short' }) : ''}`;
 
+      const dayInc = dayIncMap[item.dStr] || 0;
+      const hasPhoto = Boolean(dayPhotoMap[item.dStr]);
+      let dualPillsHtml = '';
+      if (dayInc > 0) dualPillsHtml += `<div class="cal-pill-inc">+${fmtCompactAmt(dayInc)}</div>`;
+      if (spent > 0) dualPillsHtml += `<div class="cal-pill-exp">-${fmtCompactAmt(spent)}</div>`;
+
       cellsHtml += `
         <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${item.dStr}')">
           ${isToday ? '<span class="today-dot" title="Today"></span>' : ''}
-          ${hasNote ? '<span style="position:absolute;top:3px;left:4px;font-size:8px;">✏️</span>' : ''}
+          ${hasNote ? '<span style="position:absolute;top:2px;left:3px;font-size:8px;">✏️</span>' : ''}
+          ${hasPhoto ? '<span style="position:absolute;top:2px;right:3px;font-size:8px;">📷</span>' : ''}
           <div class="cal-day-pri" style="font-family:var(--font-arabic);font-size:16px;">${toArabicNum(item.hd.d)}</div>
           <div class="cal-day-sec">${gregShort}</div>
-          ${spent > 0 ? `<div class="cal-day-amt">${fmtCompactAmt(spent)}</div>` : ''}
+          ${dualPillsHtml}
         </div>
       `;
     });
@@ -3950,8 +4212,15 @@ function renderLog() {
             <div class="log-item-row" onclick="openDetail('${esc(e.id)}')">
               <div class="log-item-icon">${cat.icon}</div>
               <div class="log-item-content">
-                <div class="log-item-title txt-truncate">${esc(cat.label)} ${safeWhere}</div>
-                <div class="log-item-desc txt-truncate">${sub || '—'}</div>
+                <div class="log-item-title txt-truncate">
+                  ${esc(cat.label)} ${safeWhere}
+                  ${e.subcat ? `<span class="badge-tag tag-indigo" style="font-size:9px;padding:1px 5px;margin-left:4px;">${esc(e.subcat)}</span>` : ''}
+                  ${e.photo ? `<span title="Receipt Attached" style="font-size:10px;margin-left:4px;">📷</span>` : ''}
+                </div>
+                <div class="log-item-desc txt-truncate">
+                  ${sub || '—'}
+                  ${(e.tags && e.tags.length) ? ' ' + e.tags.map(t => `<span class="tag-chip" style="font-size:9px;padding:1px 4px;">${esc(t)}</span>`).join(' ') : ''}
+                </div>
               </div>
               <div class="log-item-amount font-tabular ${isInc ? 'inc' : ''}">${isInc ? '+' : ''}${fmt(e.amt)}</div>
             </div>
@@ -4765,6 +5034,13 @@ function renderAnalytics() {
       </div>
     `;
   }).join('');
+
+  if (typeof renderWaterfallChart === 'function') {
+    renderWaterfallChart(m, diag.effBud, me);
+  }
+  if (typeof renderPredictiveBreachAndInflation === 'function') {
+    renderPredictiveBreachAndInflation(m, diag.effBud, me);
+  }
 }
 
 // ── AI TRANSACTION DRILLDOWN MODAL HANDLERS ──
@@ -6318,18 +6594,39 @@ function openDetail(id) {
     ['Date', esc(e.date)],
     ['Hijri', esc(e.hijri || '—')],
     ['Payment Method', payCat ? `${payCat.icon} ${esc(payCat.label)}` : 'None'],
+    ['Sub-Category', e.subcat ? esc(e.subcat) : '—'],
+    ['Tags', (e.tags && e.tags.length) ? e.tags.map(t => '<span class="tag-chip">' + esc(t) + '</span>').join(' ') : '—'],
     ['Where / Source', esc(e.where || '—')],
     ['What / Description', esc(e.what || e.desc || '—')],
     ['Quantity', esc(e.qty || '—')],
     ['Notes', esc(e.notes || '—')]
   ];
 
-  document.getElementById('modal-body').innerHTML = rows.map(([k, v]) => `
-    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
+  let bodyHtml = rows.map(([k, v]) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
       <span style="color:var(--text-muted)">${esc(k)}</span>
       <span style="font-family:var(--font-mono);font-weight:600">${v}</span>
     </div>
   `).join('');
+
+  if (e.photo) {
+    bodyHtml += `
+      <div style="margin-top:10px;text-align:center;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">Receipt Attachment</div>
+        <img src="${esc(e.photo)}" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--border);cursor:pointer;" onclick="viewReceiptModal('${esc(e.photo)}')" title="Click to view full receipt" />
+      </div>
+    `;
+  }
+
+  bodyHtml += `
+    <div style="margin-top:12px;display:flex;gap:8px;">
+      <button type="button" class="quick-chip" style="flex:1;text-align:center;font-size:11.5px;padding:7px;" onclick="saveEntryAsBookmark('${esc(e.id)}')">
+        ⭐ Save as 1-Tap Bookmark
+      </button>
+    </div>
+  `;
+
+  document.getElementById('modal-body').innerHTML = bodyHtml;
 
   document.getElementById('modal-del').onclick = () => delEntry(id);
   document.getElementById('modal').classList.remove('hidden');
@@ -6946,6 +7243,15 @@ window.__runBudgetTests = function() {
   assert(s4, "fmtCompact() handles 0 and extreme numbers safely", fmtCompact(0) === '₹0' && !fmtCompact(NaN).includes('NaN'));
   assert(s4, "esc() returns empty string on null or undefined", esc(null) === '' && esc(undefined) === '');
 
+  // Suite 5: Extended Features & Fast Ingest Suite
+  const s5 = { name: "Extended Features & Fast Ingest Suite", tests: [] };
+  suites.push(s5);
+  assert(s5, "evalSafeMath() correctly parses multi-term arithmetic expressions", typeof evalSafeMath === 'function' && evalSafeMath('250 + 120 + 80') === 450);
+  assert(s5, "evalSafeMath() correctly prioritizes operator precedence (100 + 50 * 2)", typeof evalSafeMath === 'function' && evalSafeMath('100 + 50 * 2') === 200);
+  assert(s5, "extractTags() isolates hashtag tokens from descriptions and notes", typeof extractTags === 'function' && JSON.stringify(extractTags('Dinner #Ziyarat #Family')) === JSON.stringify(['#Ziyarat', '#Family']));
+  assert(s5, "DEFAULT_SUBCATS provides hierarchical subcategories for core categories", typeof DEFAULT_SUBCATS === 'object' && Array.isArray(DEFAULT_SUBCATS['avoidable']) && DEFAULT_SUBCATS['avoidable'].includes('Dining Out'));
+  assert(s5, "BohraCalendar.daysInMonth accurately computes Kabisa 30-day Zilhajj leap", typeof BohraCalendar === 'object' && BohraCalendar.daysInMonth(1445, 11) === 30 && BohraCalendar.daysInMonth(1446, 11) === 29);
+
   const duration = Math.round(performance.now() - t0);
   return {
     passed: passedCount,
@@ -7136,6 +7442,530 @@ window.addEventListener('DOMContentLoaded', () => {
     console.error('Test auto-runner error:', e);
   }
 });
+
+
+// ── 1. HIERARCHICAL 2-TIER SUBCATEGORIES (Sequence 1) ──
+const DEFAULT_SUBCATS = {
+  'avoidable': ['Dining Out', 'Swiggy / Zomato', 'Café & Coffee', 'Treats & Junk', 'Impulse Online'],
+  'fv': ['Daily Subzi', 'Weekly Mandi', 'Fruits', 'Dry Fruits', 'Herbs & Greens'],
+  'staples': ['Atta & Grains', 'Rice & Dal', 'Cooking Oil', 'Spices & Masala', 'Monthly Ration'],
+  'milk': ['Daily Dairy Milk', 'Paneer & Dahi', 'Butter & Ghee', 'Milk Packets'],
+  'eggs': ['Farm Eggs', 'Chicken', 'Mutton / Meat', 'Fish'],
+  'travel': ['Petrol / Fuel', 'Auto & Cab (Uber/Ola)', 'Train & Metro', 'Fastag / Toll', 'Maintenance'],
+  'medical': ['Medicines & Pharmacy', 'Doctor Consultation', 'Lab Tests & Diagnostics', 'Dental / Eye'],
+  'recurring': ['Wifi & Broadband', 'Electricity Bill', 'Mobile Recharge', 'Rent / Society', 'Water / Gas'],
+  'unexpected': ['Emergency Repair', 'Plumber / Electrician', 'Urgent Replacement', 'Fine / Penalty'],
+  'misc': ['Household Cleaning', 'Personal Care', 'Gifts & Charity', 'Stationery', 'Other'],
+  'inc-freelance': ['Consulting', 'Project Milestone', 'Tutoring'],
+  'inc-gift': ['Eidi / Gift', 'Cashback / Reward', 'Family Support'],
+  'inc-other': ['Asset Sale', 'Refund', 'Interest']
+};
+
+let subcategories = ls('bt3_subcats', DEFAULT_SUBCATS);
+let selSubCat = null;
+
+function renderSubcategoriesForCategory(catId) {
+  const section = document.getElementById('form-subcategories-section');
+  const container = document.getElementById('form-subcategories-container');
+  const label = document.getElementById('subcat-title-label');
+  if (!section || !container) return;
+
+  const list = subcategories[catId] || [];
+  if (list.length === 0) {
+    section.style.display = 'none';
+    selSubCat = null;
+    return;
+  }
+
+  const cat = catById(catId);
+  if (label) label.textContent = `${cat.label} Sub-Categories`;
+  section.style.display = 'block';
+
+  let html = `<button type="button" class="subcat-chip ${!selSubCat ? 'selected' : ''}" onclick="selectSubCategory('')">All / General</button>`;
+  list.forEach(sub => {
+    const isSel = (selSubCat === sub);
+    html += `<button type="button" class="subcat-chip ${isSel ? 'selected' : ''}" onclick="selectSubCategory('${esc(sub)}')">${esc(sub)}</button>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function selectSubCategory(subName) {
+  selSubCat = subName || null;
+  const container = document.getElementById('form-subcategories-container');
+  if (container) {
+    container.querySelectorAll('.subcat-chip').forEach(b => {
+      const txt = b.textContent.trim();
+      if (!subName && txt === 'All / General') b.classList.add('selected');
+      else if (subName && txt === subName) b.classList.add('selected');
+      else b.classList.remove('selected');
+    });
+  }
+}
+
+function promptNewSubcategory() {
+  if (!selCat) { showToast('Select a category first'); return; }
+  const name = prompt(`Add new subcategory for ${catById(selCat).label}:`);
+  if (!name || !name.trim()) return;
+  const clean = name.trim();
+  subcategories[selCat] = subcategories[selCat] || [];
+  if (!subcategories[selCat].includes(clean)) {
+    subcategories[selCat].push(clean);
+    ss('bt3_subcats', subcategories);
+  }
+  selSubCat = clean;
+  renderSubcategoriesForCategory(selCat);
+  showToast(`✓ Subcategory added: ${clean}`);
+}
+
+// ── MULTI-TAGGING (Sequence 1) ──
+function toggleTagChip(tag) {
+  const inp = document.getElementById('entry-tags');
+  if (!inp) return;
+  let current = inp.value.trim().split(/\s+/).filter(Boolean);
+  if (current.includes(tag)) {
+    current = current.filter(t => t !== tag);
+  } else {
+    current.push(tag);
+  }
+  inp.value = current.join(' ');
+  updateTagChipsActiveState();
+}
+
+function updateTagChipsActiveState() {
+  const inp = document.getElementById('entry-tags');
+  if (!inp) return;
+  const current = inp.value.trim().split(/\s+/).filter(Boolean);
+  document.querySelectorAll('.tag-chip-toggle').forEach(b => {
+    const t = b.textContent.trim();
+    if (current.includes(t)) b.classList.add('active');
+    else b.classList.remove('active');
+  });
+}
+
+function extractTags(text1, text2) {
+  const text = (text1 || '') + ' ' + (text2 || '');
+  const matches = text.match(/#[a-zA-Z0-9_\u0600-\u06FF]+/g);
+  if (!matches) return [];
+  const seen = new Set();
+  const tags = [];
+  matches.forEach(t => {
+    const norm = t.trim();
+    if (!seen.has(norm.toLowerCase())) {
+      seen.add(norm.toLowerCase());
+      tags.push(norm);
+    }
+  });
+  return tags;
+}
+
+// ── 2. QUICK BOOKMARKS & FAST ENTRY (Sequence 2) ──
+const DEFAULT_BOOKMARKS = [
+  { id: 'bm_milk', label: '🥛 Daily Milk', cat: 'milk', subcat: 'Daily Dairy Milk', amt: 65, where: 'Milkman' },
+  { id: 'bm_eggs', label: '🥚 Eggs', cat: 'eggs', subcat: 'Farm Eggs', amt: 90, where: 'Local Store' },
+  { id: 'bm_chai', label: '☕ Chai / Snack', cat: 'avoidable', subcat: 'Café & Coffee', amt: 80, where: 'Tea Stall' },
+  { id: 'bm_fuel', label: '🚗 Petrol / Fuel', cat: 'travel', subcat: 'Petrol / Fuel', amt: 500, where: 'Petrol Pump' },
+  { id: 'bm_subzi', label: '🥦 Daily Subzi', cat: 'fv', subcat: 'Daily Subzi', amt: 150, where: 'Vendor' },
+  { id: 'bm_bread', label: '🥖 Bread & Bakery', cat: 'staples', subcat: 'Daily Staples', amt: 40, where: 'Bakery' }
+];
+
+let bookmarks = ls('bt3_bookmarks', DEFAULT_BOOKMARKS);
+
+function renderBookmarksStrip() {
+  const container = document.getElementById('quick-bookmarks-strip');
+  if (!container) return;
+  if (!bookmarks || bookmarks.length === 0) {
+    container.innerHTML = '<span style="font-size:11px;color:var(--text-muted);">No bookmarks saved. Click + Add to save frequent expenses.</span>';
+    return;
+  }
+  container.innerHTML = bookmarks.map(b => {
+    const c = catById(b.cat);
+    return `
+      <button type="button" class="bookmark-chip" onclick="applyBookmark('${esc(b.id)}')">
+        <span>${c ? c.icon : '⭐'}</span>
+        <span>${esc(b.label || b.what)}</span>
+        <span style="font-family:var(--font-mono);color:var(--indigo);font-size:11px;">₹${b.amt}</span>
+      </button>
+    `;
+  }).join('');
+}
+
+function applyBookmark(bmId) {
+  const bm = bookmarks.find(b => b.id === bmId);
+  if (!bm) return;
+  document.getElementById('amt').value = bm.amt;
+  const catBtn = document.querySelector(`.form-cat-btn[onclick*="'${bm.cat}'"]`);
+  selectCategory(bm.cat, catBtn);
+  if (bm.subcat) {
+    selectSubCategory(bm.subcat);
+  }
+  if (bm.where) document.getElementById('where').value = bm.where;
+  if (bm.label || bm.what) document.getElementById('what').value = (bm.label || bm.what).replace(/^[^a-zA-Z0-9]+/, '');
+  showToast(`⚡ Loaded bookmark: ${bm.label || bm.what} (₹${bm.amt})`);
+}
+
+function promptNewBookmark() {
+  const amtVal = document.getElementById('amt').value.trim();
+  const amt = evalSafeMath(amtVal);
+  if (!amt || amt <= 0 || !selCat) {
+    showToast('Select category & enter amount first to bookmark');
+    return;
+  }
+  const defaultTitle = document.getElementById('what').value.trim() || `${catById(selCat).label} ₹${amt}`;
+  const title = prompt('Bookmark Title / Label:', defaultTitle);
+  if (!title || !title.trim()) return;
+
+  const newBm = {
+    id: 'bm_' + Date.now().toString(36),
+    label: title.trim(),
+    cat: selCat,
+    subcat: selSubCat || '',
+    amt: amt,
+    where: document.getElementById('where').value.trim()
+  };
+  bookmarks.push(newBm);
+  ss('bt3_bookmarks', bookmarks);
+  renderBookmarksStrip();
+  showToast(`⭐ Saved bookmark: ${newBm.label}`);
+}
+
+function saveEntryAsBookmark(entryId) {
+  const e = entries.find(x => x.id === entryId);
+  if (!e) return;
+  const label = prompt('Save as Bookmark title:', `${catById(e.cat).label} ₹${e.amt}`);
+  if (!label || !label.trim()) return;
+  const newBm = {
+    id: 'bm_' + Date.now().toString(36),
+    label: label.trim(),
+    cat: e.cat,
+    subcat: e.subcat || '',
+    amt: e.amt,
+    where: e.where || ''
+  };
+  bookmarks.push(newBm);
+  ss('bt3_bookmarks', bookmarks);
+  renderBookmarksStrip();
+  showToast(`⭐ Bookmark saved: ${newBm.label}`);
+}
+
+// ── IN-LINE ARITHMETIC CALCULATOR (Sequence 2) ──
+function evalSafeMath(str) {
+  if (!str) return null;
+  const clean = String(str).replace(/[^\d.+\-*\/]/g, '').trim();
+  if (!clean || !/[+\-*\/]/.test(clean)) {
+    const n = parseFloat(clean);
+    return isNaN(n) ? null : n;
+  }
+  try {
+    const tokens = clean.match(/(\d+\.?\d*|[+\-*\/])/g);
+    if (!tokens || tokens.length === 0) return null;
+
+    // Multiplication and division pass
+    const pass1 = [];
+    let i = 0;
+    while (i < tokens.length) {
+      const tok = tokens[i];
+      if (tok === '*' || tok === '/') {
+        const prev = parseFloat(pass1.pop());
+        const next = parseFloat(tokens[i + 1]);
+        if (isNaN(prev) || isNaN(next)) return null;
+        const res = tok === '*' ? prev * next : (next !== 0 ? prev / next : 0);
+        pass1.push(res);
+        i += 2;
+      } else {
+        pass1.push(tok);
+        i++;
+      }
+    }
+
+    // Addition and subtraction pass
+    let result = parseFloat(pass1[0]);
+    if (isNaN(result)) return null;
+    let j = 1;
+    while (j < pass1.length) {
+      const op = pass1[j];
+      const val = parseFloat(pass1[j + 1]);
+      if (isNaN(val)) return null;
+      if (op === '+') result += val;
+      else if (op === '-') result -= val;
+      j += 2;
+    }
+    return Math.round(result * 100) / 100;
+  } catch {
+    return null;
+  }
+}
+
+function handleAmountExpression(val) {
+  const prevEl = document.getElementById('amt-calc-preview');
+  if (!prevEl) return;
+  if (/[+\-*\/]/.test(val)) {
+    const evaluated = evalSafeMath(val);
+    if (evaluated !== null) {
+      prevEl.style.display = 'block';
+      prevEl.textContent = `= ₹${evaluated.toLocaleString('en-IN')}`;
+    } else {
+      prevEl.style.display = 'none';
+    }
+  } else {
+    prevEl.style.display = 'none';
+  }
+}
+
+function evaluateAmountInput() {
+  const inp = document.getElementById('amt');
+  const prevEl = document.getElementById('amt-calc-preview');
+  if (!inp) return;
+  const evaluated = evalSafeMath(inp.value);
+  if (evaluated !== null && /[+\-*\/]/.test(inp.value)) {
+    inp.value = evaluated;
+    if (prevEl) prevEl.style.display = 'none';
+    showToast(`🧮 Evaluated: ₹${evaluated}`);
+  }
+}
+
+// ── RECEIPT PHOTO ATTACHMENT (Sequence 2) ──
+let currentReceiptPhoto = null;
+
+function handleReceiptPhotoSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const img = new Image();
+    img.onload = function() {
+      const maxDim = 480;
+      let w = img.width, h = img.height;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+        else { w = Math.round((w * maxDim) / h); h = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      currentReceiptPhoto = canvas.toDataURL('image/jpeg', 0.7);
+
+      const thumb = document.getElementById('entry-photo-thumb');
+      const wrap = document.getElementById('entry-photo-preview-wrap');
+      if (thumb && wrap) {
+        thumb.src = currentReceiptPhoto;
+        wrap.style.display = 'flex';
+      }
+      showToast('📷 Receipt photo attached');
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeReceiptPhoto() {
+  currentReceiptPhoto = null;
+  const wrap = document.getElementById('entry-photo-preview-wrap');
+  const inp = document.getElementById('entry-photo-input');
+  if (wrap) wrap.style.display = 'none';
+  if (inp) inp.value = '';
+}
+
+function viewReceiptModal(photoDataUrl) {
+  if (!photoDataUrl) return;
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.style.zIndex = '999999';
+  modal.onclick = () => modal.remove();
+  modal.innerHTML = `
+    <div style="background:#000;padding:12px;border-radius:12px;max-width:92vw;max-height:85vh;display:flex;flex-direction:column;align-items:center;">
+      <img src="${photoDataUrl}" style="max-width:100%;max-height:75vh;object-fit:contain;border-radius:8px;" />
+      <button class="quick-chip" style="margin-top:10px;background:#fff;color:#000;font-weight:700;">Close Viewer</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+// ── 3. VISUAL WATERFALL & ASSET TRAJECTORY (Sequence 3) ──
+function renderWaterfallChart(m, effBud, me) {
+  const container = document.getElementById('analytics-waterfall-container');
+  const badge = document.getElementById('waterfall-surplus-badge');
+  if (!container) return;
+
+  const expEntries = me.filter(e => catById(e.cat).type === 'exp');
+  const totalSpent = expEntries.reduce((s, e) => s + e.amt, 0);
+
+  // Group into waterfall tranches
+  const fixedDues = expEntries.filter(e => e.cat === 'recurring').reduce((s, e) => s + e.amt, 0);
+  const essentials = expEntries.filter(e => ['staples', 'milk', 'eggs', 'fv'].includes(e.cat)).reduce((s, e) => s + e.amt, 0);
+  const discretionary = expEntries.filter(e => e.cat === 'avoidable').reduce((s, e) => s + e.amt, 0);
+  const travelMisc = expEntries.filter(e => ['travel', 'medical', 'unexpected', 'misc'].includes(e.cat)).reduce((s, e) => s + e.amt, 0);
+
+  const netSurplus = effBud - totalSpent;
+
+  if (badge) {
+    if (netSurplus >= 0) {
+      badge.textContent = `+${fmt(netSurplus)} Net Surplus`;
+      badge.className = 'badge-tag tag-emerald';
+    } else {
+      badge.textContent = `-${fmt(Math.abs(netSurplus))} Deficit`;
+      badge.className = 'badge-tag tag-rose';
+    }
+  }
+
+  container.innerHTML = `
+    <div class="waterfall-bar-wrap">
+      <div class="waterfall-step income">
+        <div>
+          <span style="font-weight:700;color:var(--text-main);">1. Effective Monthly Budget</span>
+          <div style="font-size:10px;color:var(--text-muted);">Salary + Extra Income Inflows</div>
+        </div>
+        <span style="font-family:var(--font-mono);font-weight:700;color:var(--emerald);">${fmt(effBud)}</span>
+      </div>
+
+      <div class="waterfall-step fixed">
+        <div>
+          <span style="font-weight:600;color:var(--text-main);">2. Fixed Dues & Recurring</span>
+          <div style="font-size:10px;color:var(--text-muted);">${effBud > 0 ? Math.round((fixedDues / effBud) * 100) : 0}% of budget</div>
+        </div>
+        <span style="font-family:var(--font-mono);font-weight:700;color:var(--purple);">- ${fmt(fixedDues)}</span>
+      </div>
+
+      <div class="waterfall-step essential">
+        <div>
+          <span style="font-weight:600;color:var(--text-main);">3. Essential Food & Household</span>
+          <div style="font-size:10px;color:var(--text-muted);">${effBud > 0 ? Math.round((essentials / effBud) * 100) : 0}% (Milk, Staples, Subzi, Eggs)</div>
+        </div>
+        <span style="font-family:var(--font-mono);font-weight:700;color:var(--amber);">- ${fmt(essentials)}</span>
+      </div>
+
+      <div class="waterfall-step discretionary">
+        <div>
+          <span style="font-weight:600;color:var(--text-main);">4. Discretionary & Dining Out</span>
+          <div style="font-size:10px;color:var(--text-muted);">${effBud > 0 ? Math.round((discretionary / effBud) * 100) : 0}% Avoidable spending</div>
+        </div>
+        <span style="font-family:var(--font-mono);font-weight:700;color:var(--rose);">- ${fmt(discretionary)}</span>
+      </div>
+
+      <div class="waterfall-step discretionary">
+        <div>
+          <span style="font-weight:600;color:var(--text-main);">5. Travel, Health & Misc</span>
+          <div style="font-size:10px;color:var(--text-muted);">${effBud > 0 ? Math.round((travelMisc / effBud) * 100) : 0}% of budget</div>
+        </div>
+        <span style="font-family:var(--font-mono);font-weight:700;color:var(--rose);">- ${fmt(travelMisc)}</span>
+      </div>
+
+      <div class="waterfall-step surplus">
+        <div>
+          <span style="font-weight:800;color:var(--indigo);">6. True Month-End Surplus</span>
+          <div style="font-size:10px;color:var(--text-muted);">Retained capital for Habit Vault & Reserve</div>
+        </div>
+        <span style="font-family:var(--font-mono);font-weight:800;color:var(--indigo);font-size:13px;">${netSurplus >= 0 ? '+' : ''}${fmt(netSurplus)}</span>
+      </div>
+    </div>
+  `;
+}
+
+// ── 4. PREDICTIVE BREACH & INFLATION DIAGNOSTICS (Sequence 4) ──
+function renderPredictiveBreachAndInflation(m, effBud, me) {
+  const container = document.getElementById('analytics-predictive-alerts-container');
+  const badge = document.getElementById('predictive-breach-badge');
+  if (!container) return;
+
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const start = parseYMD(m.gregStart), end = parseYMD(m.gregEnd);
+  const elapsed = Math.max(1, Math.min(m.totalDays, Math.round((Math.min(today, end) - start) / 86400000) + 1));
+  const daysLeft = Math.max(1, m.totalDays - elapsed);
+
+  const expEntries = me.filter(e => catById(e.cat).type === 'exp');
+  const catList = categories.filter(c => c.type === 'exp');
+
+  const breachWarnings = [];
+  const inflationWarnings = [];
+
+  // 1. Predictive Breach by Day X
+  catList.forEach(cat => {
+    const s = expEntries.filter(e => e.cat === cat.id).reduce((sum, e) => sum + e.amt, 0);
+    const b = catBud[cat.id] || 0;
+    if (b > 0 && s > 0) {
+      const burnRate = s / elapsed;
+      const projected = burnRate * m.totalDays;
+      if (projected > b) {
+        const breachDay = Math.min(m.totalDays, Math.max(elapsed + 1, Math.floor((b / burnRate)) + 1));
+        const overrun = Math.round(projected - b);
+        const safeRate = Math.max(0, Math.round((b - s) / daysLeft));
+        breachWarnings.push({ cat, s, b, burnRate, breachDay, overrun, safeRate });
+      }
+    }
+  });
+
+  // 2. Structural Inflation / Creep vs Prior Months
+  if (months.length > 1 && curMoIdx > 0) {
+    const prevMo = months[curMoIdx - 1];
+    const prevEntries = entries.filter(e => e.date >= prevMo.gregStart && e.date <= prevMo.gregEnd && catById(e.cat).type === 'exp');
+    catList.forEach(cat => {
+      const curSpent = expEntries.filter(e => e.cat === cat.id).reduce((sum, e) => sum + e.amt, 0);
+      const prevSpent = prevEntries.filter(e => e.cat === cat.id).reduce((sum, e) => sum + e.amt, 0);
+      if (prevSpent >= 1000 && curSpent > prevSpent) {
+        const growthPct = Math.round(((curSpent - prevSpent) / prevSpent) * 100);
+        if (growthPct >= 15) {
+          inflationWarnings.push({ cat, curSpent, prevSpent, growthPct, prevMoName: prevMo.name });
+        }
+      }
+    });
+  }
+
+  if (breachWarnings.length === 0 && inflationWarnings.length === 0) {
+    container.innerHTML = `
+      <div style="background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">🛡️</span>
+        <div style="font-size:11.5px;color:var(--emerald);font-weight:700;">
+          All categories pacing safely within their budget ceilings. No breach risk detected.
+        </div>
+      </div>
+    `;
+    if (badge) {
+      badge.textContent = 'Stable';
+      badge.className = 'badge-tag tag-emerald';
+    }
+    return;
+  }
+
+  if (badge) {
+    badge.textContent = `${breachWarnings.length} Breach Risk(s)`;
+    badge.className = 'badge-tag tag-rose';
+  }
+
+  let html = '';
+  breachWarnings.forEach(w => {
+    html += `
+      <div class="predictive-alert-card danger">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:12px;margin-bottom:3px;">
+          <span>⚠️ Breach Alert: ${w.cat.icon} ${esc(w.cat.label)}</span>
+          <span>Day ${w.breachDay} of ${m.totalDays}</span>
+        </div>
+        <div style="font-size:11px;line-height:1.45;">
+          At your current burn rate of <b>${fmt(w.burnRate)}/day</b>, this category will exhaust its budget on <b>Day ${w.breachDay}</b> (Projected Overrun: <b>+${fmt(w.overrun)}</b>).
+        </div>
+        <div style="font-size:10.5px;margin-top:4px;color:#991b1b;font-weight:600;">
+          💡 Recommended cap: limit to <b>${fmt(w.safeRate)}/day</b> for the remaining ${daysLeft} days to stay on track.
+        </div>
+      </div>
+    `;
+  });
+
+  inflationWarnings.forEach(inf => {
+    html += `
+      <div class="predictive-alert-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:12px;margin-bottom:3px;">
+          <span>📈 Structural Inflation: ${inf.cat.icon} ${esc(inf.cat.label)}</span>
+          <span style="color:var(--rose);">+${inf.growthPct}%</span>
+        </div>
+        <div style="font-size:11px;line-height:1.45;">
+          Spending is up by <b>+${inf.growthPct}%</b> compared to ${esc(inf.prevMoName)} (${fmt(inf.curSpent)} vs ${fmt(inf.prevSpent)}).
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
 
 </script>
 
