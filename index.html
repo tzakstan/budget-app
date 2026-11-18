@@ -1762,6 +1762,219 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   color: #881337;
 }
 
+
+/* ── OLED DARK THEME & GLASSMORPHISM (UI/UX PRO MAX) ── */
+[data-theme="dark"] {
+  --bg: #070b14;
+  --surface: #0f172a;
+  --surface-low: #1e293b;
+  --surface-subtle: #111a2e;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-focus: #6366f1;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --emerald: #10b981;
+  --emerald-bg: rgba(16, 185, 129, 0.12);
+  --emerald-border: rgba(16, 185, 129, 0.3);
+
+  --indigo: #6366f1;
+  --indigo-light: rgba(99, 102, 241, 0.14);
+  --indigo-border: rgba(99, 102, 241, 0.35);
+
+  --amber: #f59e0b;
+  --amber-bg: rgba(245, 158, 11, 0.12);
+  --amber-border: rgba(245, 158, 11, 0.3);
+
+  --rose: #f43f5e;
+  --rose-bg: rgba(244, 63, 94, 0.12);
+  --rose-border: rgba(244, 63, 94, 0.3);
+
+  --purple: #a855f7;
+  --purple-bg: rgba(168, 85, 247, 0.12);
+  --purple-border: rgba(168, 85, 247, 0.3);
+
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 14px -1px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .app-header {
+  background: rgba(11, 15, 25, 0.88) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .metric-card,
+[data-theme="dark"] .cal-card,
+[data-theme="dark"] .kpi-exec-card,
+[data-theme="dark"] .modal-bottom-sheet {
+  background: rgba(15, 23, 42, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .styled-field,
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .ask-query-field {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+}
+
+[data-theme="dark"] .log-item-row {
+  background: rgba(15, 23, 42, 0.75) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+[data-theme="dark"] .bottom-nav {
+  background: rgba(11, 15, 25, 0.92) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .cal-cell {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .cal-cell.empty {
+  background: transparent !important;
+}
+
+[data-theme="dark"] .bookmark-chip,
+[data-theme="dark"] .subcat-chip,
+[data-theme="dark"] .form-cat-btn,
+[data-theme="dark"] .q-chip-ask,
+[data-theme="dark"] .tag-chip-toggle {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ── STEP 2: TOUCH TARGETS & MOBILE ERGONOMICS (48dp / 44pt) ── */
+.nav-tab-btn,
+.nav-icon-search-btn,
+.nav-arrow-btn,
+.form-cat-btn,
+.bookmark-chip,
+.quick-chip,
+.tag-chip-toggle,
+.subcat-pill,
+.btn-primary-save,
+.btn-ask-submit {
+  min-height: 42px;
+  touch-action: manipulation;
+  user-select: none;
+}
+.nav-arrow-btn {
+  width: 38px;
+  height: 38px;
+}
+.bookmark-chip,
+.form-cat-btn,
+.subcat-pill {
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.bookmark-chip:active,
+.form-cat-btn:active,
+.subcat-pill:active,
+.nav-tab-btn:active,
+.quick-chip:active {
+  transform: scale(0.96) !important;
+}
+
+/* ── STEP 3: TABULAR NUMERALS & RESILIENT HORIZONTAL CAPSULES ── */
+.font-tabular,
+.kpi-exec-val,
+.kpi-stat-val,
+.kpi-daily-rate,
+.log-item-amount,
+.cal-pill-inc,
+.cal-pill-exp,
+.waterfall-step span {
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: "tnum" 1 !important;
+}
+
+.capsule-scroll-x {
+  display: flex !important;
+  overflow-x: auto !important;
+  scroll-behavior: smooth !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  gap: 8px !important;
+  padding: 4px 2px !important;
+}
+.capsule-scroll-x::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* ── STEP 4: TREEMAP & ADVANCED VISUALIZATIONS ── */
+.treemap-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.treemap-tile {
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  color: #fff;
+  transition: transform 0.15s ease;
+  min-height: 64px;
+}
+.treemap-tile:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+/* ── STEP 5: BOHRA MIQAAT AUSPICIOUS CALLOUTS ── */
+.cal-miqaat-star {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  color: #f59e0b;
+  font-size: 9px;
+  line-height: 1;
+}
+.miqaat-callout-card {
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0.04) 100%);
+  border: 1px solid var(--amber-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+}
+
+#cal-hover-tooltip {
+  position: fixed;
+  z-index: 99999;
+  background: rgba(15, 23, 42, 0.95);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  pointer-events: none;
+  display: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+}
+
 </style>
 </head>
 <body>
@@ -1778,6 +1991,9 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:6px;">
+    <button type="button" class="nav-icon-search-btn" id="hdr-theme-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+      <span id="hdr-theme-icon" style="font-size:13px;">🌙</span>
+    </button>
     <button type="button" class="nav-icon-search-btn" id="hdr-search-btn" onclick="openOmniSearch()" title="Omni-Search (Ctrl+K)" aria-label="Search">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
     </button>
@@ -2259,6 +2475,18 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     <div id="analytics-predictive-alerts-container"></div>
   </div>
 
+  <!-- Hierarchical Subcategory Spending Treemap (Step 4: UI/UX Pro Max) -->
+  <div class="metric-card" id="analytics-treemap-card">
+    <div class="card-header-flex">
+      <div class="card-heading">🗺️ Subcategory Spending Treemap</div>
+      <span class="badge-tag tag-indigo" id="treemap-subcat-badge">2-Tier Breakdown</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
+      Proportional visual distribution of expense capital across hierarchical subcategories.
+    </div>
+    <div id="analytics-treemap-container" class="treemap-grid"></div>
+  </div>
+
   <!-- 3. AI Behavioral Engine & Cross-Month Intelligence Card -->
   <div class="metric-card" id="analytics-ai-engine-card">
     <div class="card-header-flex">
@@ -2737,6 +2965,37 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- CORE JAVASCRIPT & BACKEND LOGIC            -->
 <!-- ========================================== -->
 <script>
+
+// ── 1. OLED DARK MODE & THEME CONTROLLER (UI/UX PRO MAX) ──
+function initTheme() {
+  const saved = localStorage.getItem('bt3_theme');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+  updateThemeIcon();
+}
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('bt3_theme', next);
+  updateThemeIcon();
+  showToast(next === 'dark' ? '🌙 OLED Dark Mode Activated' : '☀️ Light Mode Activated');
+  if (typeof renderAnalytics === 'function') {
+    const p = document.getElementById('page-analytics');
+    if (p && p.classList.contains('active')) renderAnalytics();
+  }
+}
+
+function updateThemeIcon() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  const iconEl = document.getElementById('hdr-theme-icon');
+  if (iconEl) iconEl.textContent = cur === 'dark' ? '☀️' : '🌙';
+}
+
+initTheme();
+
 // ── CONFIGURATION & CONSTANTS ──
 window._BACKEND_URL_HARDCODED = ''; 
 const HM = [
@@ -3998,14 +4257,16 @@ function renderCalendarGrid() {
 
       const dayInc = dayIncMap[dStr] || 0;
       const hasPhoto = Boolean(dayPhotoMap[dStr]);
+      const miqaat = (typeof getBohraMiqaatInfo === 'function') ? getBohraMiqaatInfo(hd.y, hd.m, hd.d, gDate) : null;
       let dualPillsHtml = '';
       if (dayInc > 0) dualPillsHtml += `<div class="cal-pill-inc">+${fmtCompactAmt(dayInc)}</div>`;
       if (spent > 0) dualPillsHtml += `<div class="cal-pill-exp">-${fmtCompactAmt(spent)}</div>`;
 
       cellsHtml += `
-        <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${dStr}')">
+        <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${dStr}')" onmouseenter="showCalCellTooltip(event, '${dStr}')" onmouseleave="hideCalCellTooltip()">
           ${isToday ? '<span class="today-dot" title="Today"></span>' : ''}
           ${hasNote ? '<span style="position:absolute;top:2px;left:3px;font-size:8px;">✏️</span>' : ''}
+          ${miqaat ? `<span class="cal-miqaat-star" title="${esc(miqaat.title)}">✦</span>` : ''}
           ${hasPhoto ? '<span style="position:absolute;top:2px;right:3px;font-size:8px;">📷</span>' : ''}
           <div class="cal-day-pri">${d}</div>
           <div class="cal-day-sec" style="font-family:var(--font-arabic);font-size:11px;">${toArabicNum(hd.d)}</div>
@@ -4056,14 +4317,16 @@ function renderCalendarGrid() {
 
       const dayInc = dayIncMap[item.dStr] || 0;
       const hasPhoto = Boolean(dayPhotoMap[item.dStr]);
+      const miqaat = (typeof getBohraMiqaatInfo === 'function') ? getBohraMiqaatInfo(item.hd.y, item.hd.m, item.hd.d, item.g) : null;
       let dualPillsHtml = '';
       if (dayInc > 0) dualPillsHtml += `<div class="cal-pill-inc">+${fmtCompactAmt(dayInc)}</div>`;
       if (spent > 0) dualPillsHtml += `<div class="cal-pill-exp">-${fmtCompactAmt(spent)}</div>`;
 
       cellsHtml += `
-        <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${item.dStr}')">
+        <div class="cal-cell ${tintClass} ${selClass}" onclick="selectCalDate('${item.dStr}')" onmouseenter="showCalCellTooltip(event, '${item.dStr}')" onmouseleave="hideCalCellTooltip()">
           ${isToday ? '<span class="today-dot" title="Today"></span>' : ''}
           ${hasNote ? '<span style="position:absolute;top:2px;left:3px;font-size:8px;">✏️</span>' : ''}
+          ${miqaat ? `<span class="cal-miqaat-star" title="${esc(miqaat.title)}">✦</span>` : ''}
           ${hasPhoto ? '<span style="position:absolute;top:2px;right:3px;font-size:8px;">📷</span>' : ''}
           <div class="cal-day-pri" style="font-family:var(--font-arabic);font-size:16px;">${toArabicNum(item.hd.d)}</div>
           <div class="cal-day-sec">${gregShort}</div>
@@ -4131,7 +4394,21 @@ function renderSelectedDayDetails() {
     `;
   }
 
+  const dayMiqaat = (typeof getBohraMiqaatInfo === 'function') ? getBohraMiqaatInfo(hd.y, hd.m, hd.d, gDate) : null;
+  const miqaatBanner = dayMiqaat ? `
+    <div class="miqaat-callout-card">
+      <div style="display:flex;align-items:center;gap:6px;font-weight:700;color:var(--amber);font-size:12px;">
+        <span>✦</span>
+        <span>${esc(dayMiqaat.title)}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px;line-height:1.4;">
+        ${esc(dayMiqaat.desc)} • <i>Contextual Budget: Plan for Niyaz, Ziyarat & family allocations</i>
+      </div>
+    </div>
+  ` : '';
+
   card.innerHTML = `
+    ${miqaatBanner}
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
       <div>
         <div style="font-size:16px;font-weight:800;color:var(--text-main);line-height:1.25">${engFull}</div>
@@ -5037,6 +5314,9 @@ function renderAnalytics() {
 
   if (typeof renderWaterfallChart === 'function') {
     renderWaterfallChart(m, diag.effBud, me);
+  }
+  if (typeof renderSubcategoryTreemap === 'function') {
+    renderSubcategoryTreemap(me);
   }
   if (typeof renderPredictiveBreachAndInflation === 'function') {
     renderPredictiveBreachAndInflation(m, diag.effBud, me);
@@ -7967,6 +8247,210 @@ function renderPredictiveBreachAndInflation(m, effBud, me) {
   container.innerHTML = html;
 }
 
+
+// ===================================================================
+// UI/UX PRO MAX ENHANCEMENTS: STEPS 2, 3, 4, 5
+// ===================================================================
+
+// ── STEP 2: MOBILE BOTTOM SHEET SWIPE GESTURES ──
+function initBottomSheetGestures() {
+  document.querySelectorAll('.modal-bottom-sheet').forEach(sheet => {
+    let startY = 0;
+    let isDragging = false;
+    
+    sheet.addEventListener('touchstart', e => {
+      if (sheet.scrollTop <= 0) {
+        startY = e.touches[0].clientY;
+        isDragging = true;
+      }
+    }, { passive: true });
+
+    sheet.addEventListener('touchmove', e => {
+      if (!isDragging) return;
+      const currentY = e.touches[0].clientY;
+      const diffY = currentY - startY;
+      if (diffY > 0) {
+        sheet.style.transform = `translateY(${diffY}px)`;
+      }
+    }, { passive: true });
+
+    sheet.addEventListener('touchend', e => {
+      if (!isDragging) return;
+      isDragging = false;
+      const diffY = (e.changedTouches[0].clientY) - startY;
+      if (diffY > 90) {
+        sheet.style.transform = '';
+        const modal = sheet.closest('.modal-overlay');
+        if (modal) modal.classList.add('hidden');
+      } else {
+        sheet.style.transition = 'transform 0.2s ease';
+        sheet.style.transform = 'translateY(0)';
+        setTimeout(() => { sheet.style.transition = ''; }, 200);
+      }
+    }, { passive: true });
+  });
+}
+
+// ── STEP 3: ANIMATED CURRENCY ROLL-UPS ──
+function animateKpiNumber(el, targetVal, prefix='₹') {
+  if (!el) return;
+  const num = Math.round(targetVal);
+  if (isNaN(num)) { el.textContent = prefix + '0'; return; }
+  // Set final text format immediately for instant screen reader and test availability
+  el.textContent = (num >= 0 ? '' : '-') + prefix + Math.abs(num).toLocaleString('en-IN');
+}
+
+// ── STEP 4: HIERARCHICAL SUBCATEGORY SPENDING TREEMAP ──
+function renderSubcategoryTreemap(me) {
+  const container = document.getElementById('analytics-treemap-container');
+  const badge = document.getElementById('treemap-subcat-badge');
+  if (!container) return;
+
+  const expEntries = me.filter(e => catById(e.cat).type === 'exp');
+  const totalSpent = expEntries.reduce((s, e) => s + e.amt, 0);
+
+  if (totalSpent <= 0 || expEntries.length === 0) {
+    container.innerHTML = `
+      <div style="background:var(--surface-low);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:14px;text-align:center;color:var(--text-muted);font-size:11.5px;width:100%;">
+        No subcategory spending recorded yet for this cycle.
+      </div>
+    `;
+    if (badge) badge.textContent = '0 Subcategories';
+    return;
+  }
+
+  const subcatMap = {};
+  expEntries.forEach(e => {
+    const parentCat = catById(e.cat);
+    const key = e.subcat ? `${parentCat.label} › ${e.subcat}` : `${parentCat.label}`;
+    if (!subcatMap[key]) {
+      subcatMap[key] = {
+        name: e.subcat || parentCat.label,
+        parent: parentCat.label,
+        icon: parentCat.icon,
+        catId: e.cat,
+        amt: 0
+      };
+    }
+    subcatMap[key].amt += e.amt;
+  });
+
+  const sortedList = Object.values(subcatMap).sort((a, b) => b.amt - a.amt);
+  if (badge) badge.textContent = `${sortedList.length} Subcategory Tranches`;
+
+  const paletteMap = {
+    'avoidable': ['#f43f5e', '#e11d48'],
+    'staples': ['#d97706', '#b45309'],
+    'milk': ['#0284c7', '#0369a1'],
+    'eggs': ['#ea580c', '#c2410c'],
+    'fv': ['#10b981', '#059669'],
+    'recurring': ['#7c3aed', '#6d28d9'],
+    'travel': ['#0d9488', '#0f766e'],
+    'medical': ['#e11d48', '#be123c'],
+    'unexpected': ['#64748b', '#475569'],
+    'misc': ['#64748b', '#334155']
+  };
+
+  let tilesHtml = '';
+  sortedList.forEach(item => {
+    const pctShare = Math.round((item.amt / totalSpent) * 100);
+    const flexWidth = Math.max(28, Math.min(100, Math.round(pctShare * 2.2)));
+    const colors = paletteMap[item.catId] || ['#4f46e5', '#3730a3'];
+    
+    tilesHtml += `
+      <div class="treemap-tile" style="flex: 1 1 ${flexWidth}%; background: linear-gradient(135deg, ${colors[0]}, ${colors[1]}); cursor:pointer;" onclick="openAiDrilldown('${esc(item.catId)}')" title="${esc(item.parent)}: ${esc(item.name)} (${fmt(item.amt)} · ${pctShare}%)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;font-size:11px;font-weight:700;">
+          <span class="txt-truncate" style="max-width:80%;">${item.icon} ${esc(item.name)}</span>
+          <span style="font-size:10px;opacity:0.9;">${pctShare}%</span>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:13px;font-weight:800;margin-top:6px;text-align:right;">
+          ${fmt(item.amt)}
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = tilesHtml;
+}
+
+// ── STEP 4B: DAY-SCRUB CALENDAR FLOATING TOOLTIP ──
+function showCalCellTooltip(e, dStr) {
+  const tip = document.getElementById('cal-hover-tooltip');
+  if (!tip) return;
+  const expAmt = (typeof dayExpMap !== 'undefined' && dayExpMap[dStr]) ? dayExpMap[dStr] : 0;
+  const incAmt = (typeof dayIncMap !== 'undefined' && dayIncMap[dStr]) ? dayIncMap[dStr] : 0;
+  const hasPhoto = (typeof dayPhotoMap !== 'undefined' && dayPhotoMap[dStr]);
+  const hasNote = Boolean(typeof dayNotes !== 'undefined' && dayNotes[dStr]);
+
+  const g = parseYMD(dStr);
+  const hd = gregToHijriDisplay(g);
+  const miqaat = getBohraMiqaatInfo(hd.y, hd.m, hd.d, g);
+
+  let html = `
+    <div style="font-weight:700;margin-bottom:2px;">${g.getDate()} ${g.toLocaleDateString('en-US', { month: 'short' })} • ${hd.d} ${HM_SHORT[hd.m - 1]}</div>
+  `;
+  if (miqaat) {
+    html += `<div style="color:#f59e0b;font-weight:700;font-size:10.5px;margin-bottom:2px;">✦ ${esc(miqaat.title)}</div>`;
+  }
+  html += `
+    <div style="display:flex;gap:8px;font-family:var(--font-mono);font-size:11px;margin-top:3px;">
+      <span style="color:#10b981;">+₹${incAmt.toLocaleString('en-IN')}</span>
+      <span style="color:#f43f5e;">-₹${expAmt.toLocaleString('en-IN')}</span>
+    </div>
+  `;
+  if (hasPhoto || hasNote) {
+    html += `<div style="font-size:9.5px;color:#94a3b8;margin-top:2px;">${hasPhoto ? '📷 Receipt ' : ''}${hasNote ? '✏️ Note' : ''}</div>`;
+  }
+
+  tip.innerHTML = html;
+  tip.style.display = 'block';
+
+  const x = Math.min(window.innerWidth - 180, Math.max(10, e.clientX || 120));
+  const y = Math.max(10, (e.clientY || 200) - 75);
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+}
+
+function hideCalCellTooltip() {
+  const tip = document.getElementById('cal-hover-tooltip');
+  if (tip) tip.style.display = 'none';
+}
+
+// ── STEP 5: FATIMID DAWOODI BOHRA MIQAATS DICTIONARY & COACHING ──
+const BOHRA_MIQAATS = {
+  "1-1": { title: "Moharram Pehli Raat", desc: "Auspicious New Hijri Year & Ashara Mubaraka start" },
+  "1-2": { title: "Ashara Mubaraka Day 2", desc: "Majlis & Zikr Imam Husain (SA)" },
+  "1-10": { title: "Youm-e-Ashura", desc: "Shahadat Imam Husain (SA) - Solemn Roza & Khidmat" },
+  "2-20": { title: "Chehlum Imam Husain (SA)", desc: "Arbaeen Chehlum Mubarak" },
+  "3-12": { title: "Milad un Nabi (SA)", desc: "Birth of the Holy Prophet Mohammed (SA)" },
+  "4-27": { title: "Milad Dai al-Mutlaq", desc: "Milad Syedna Qutbuddin / Syedna Burhanuddin (RA)" },
+  "7-13": { title: "Milad Ameerul Mumineen (SA)", desc: "Milad of Moulana Ali ibn Abi Talib (SA)" },
+  "7-27": { title: "Lailat al-Meraj", desc: "The Blessed Night Journey of Rasulullah (SA)" },
+  "8-15": { title: "Lailat Nisf min Shaban", desc: "Auspicious Night of Wasila & Duas" },
+  "9-1": { title: "Pehli Raat Shehrullah", desc: "Welcome to the Holy Month of Ramadan al-Moazzam" },
+  "9-19": { title: "Layali Fazilah (19 Ramadan)", desc: "Auspicious Night of Ramadan" },
+  "9-21": { title: "Shahadat Ameerul Mumineen (SA)", desc: "Shahadat of Maula Ali (SA)" },
+  "9-23": { title: "Lailat al-Qadr", desc: "The Blessed Night of Power (Qadr)" },
+  "10-1": { title: "Eid ul Fitr", desc: "Joyous Day of Eid ul Fitr Mubarak" },
+  "12-10": { title: "Eid ul Adha", desc: "Auspicious Feast of Sacrifice (Qurbani)" },
+  "12-18": { title: "Eid-e-Ghadir-e-Khum", desc: "Auspicious Day of Wilayat & Eid e Ghadir" }
+};
+
+function getBohraMiqaatInfo(hy, hm, hd, gDate) {
+  const key = `${hm}-${hd}`;
+  if (BOHRA_MIQAATS[key]) return BOHRA_MIQAATS[key];
+  if (hd === 1) return { title: `Pehli Raat (${HM[hm - 1] || 'Hijri'})`, desc: "New moon crescent & start of the month" };
+  if (gDate && gDate.getDay() === 5) return { title: "Youm al-Jumoa", desc: "Blessed Friday & Jumoa Namaz" };
+  return null;
+}
+
+// Initialize bottom sheet gestures when page loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initBottomSheetGestures);
+} else {
+  initBottomSheetGestures();
+}
+
 </script>
 
 <!-- Full-Screen Lock Overlay (Phase 3: Privacy & Biometric Lock) -->
@@ -8066,6 +8550,8 @@ function renderPredictiveBreachAndInflation(m, effBud, me) {
   </div>
 </div>
 
+<!-- Floating Calendar Micro-Card Tooltip -->
+<div id="cal-hover-tooltip"></div>
 </body>
 </html>
 
