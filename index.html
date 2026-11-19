@@ -8919,14 +8919,10 @@ function renderSubcategoryTreemap(me) {
 
 // ── STEP 4B: DAY-SCRUB CALENDAR FLOATING TOOLTIP ──
 function showCalCellTooltip(e, dStr) {
-  // 1. NEVER show on touch / mobile devices or coarse pointers
-  if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
-  if (e && (e.pointerType === 'touch' || (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents))) return;
-
   const tip = document.getElementById('cal-hover-tooltip');
   if (!tip) return;
 
-  // 2. Accurately compute daily income and expense amounts directly from entries
+  // Accurately compute daily income and expense amounts directly from live entries
   let expAmt = 0, incAmt = 0, hasPhoto = false;
   if (Array.isArray(entries)) {
     entries.forEach(item => {
@@ -8942,18 +8938,18 @@ function showCalCellTooltip(e, dStr) {
 
   const g = parseYMD(dStr);
   const hd = gregToHijriDisplay(g);
-  const miqaat = getBohraMiqaatInfo(hd.y, hd.m, hd.d, g);
+  const miqaat = (typeof getBohraMiqaatInfo === 'function') ? getBohraMiqaatInfo(hd.y, hd.m, hd.d, g) : null;
 
   let html = `
-    <div style="font-weight:700;margin-bottom:2px;">${g.getDate()} ${g.toLocaleDateString('en-US', { month: 'short' })} • ${hd.d} ${HM_SHORT[hd.m - 1]}</div>
+    <div style="font-weight:700;margin-bottom:2px;font-size:12px;">${g.getDate()} ${g.toLocaleDateString('en-US', { month: 'short' })} • ${hd.d} ${HM_SHORT[hd.m - 1]}</div>
   `;
   if (miqaat) {
     html += `<div style="color:#f59e0b;font-weight:700;font-size:10.5px;margin-bottom:2px;">✦ ${esc(miqaat.title)}</div>`;
   }
   html += `
-    <div style="display:flex;gap:8px;font-family:var(--font-mono);font-size:11px;margin-top:3px;">
-      <span style="color:#10b981;">+₹${incAmt.toLocaleString('en-IN')}</span>
-      <span style="color:#f43f5e;">-₹${expAmt.toLocaleString('en-IN')}</span>
+    <div style="display:flex;gap:10px;font-family:var(--font-mono);font-size:11.5px;margin-top:3px;">
+      <span style="color:#10b981;font-weight:700;">+₹${incAmt.toLocaleString('en-IN')}</span>
+      <span style="color:#f43f5e;font-weight:700;">-₹${expAmt.toLocaleString('en-IN')}</span>
     </div>
   `;
   if (hasPhoto || hasNote) {
@@ -8963,13 +8959,31 @@ function showCalCellTooltip(e, dStr) {
   tip.innerHTML = html;
   tip.style.display = 'block';
 
-  const x = Math.min(window.innerWidth - 180, Math.max(10, e.clientX || 120));
-  const y = Math.max(10, (e.clientY || 200) - 75);
+  // Smart positioning: above cell or cursor
+  let x = 0, y = 0;
+  if (e && e.clientX && e.clientY) {
+    x = e.clientX - 60;
+    y = e.clientY - 75;
+  } else if (e && e.currentTarget) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    x = rect.left + rect.width / 2 - 75;
+    y = rect.top - 75;
+  } else {
+    x = window.innerWidth / 2 - 75;
+    y = 200;
+  }
+  x = Math.min(window.innerWidth - 180, Math.max(12, x));
+  y = Math.max(12, y);
   tip.style.left = x + 'px';
   tip.style.top = y + 'px';
+
+  // 3-second auto-dismissal safety timer so it NEVER gets stuck permanently
+  clearTimeout(window._calTooltipTimer);
+  window._calTooltipTimer = setTimeout(hideCalCellTooltip, 3000);
 }
 
 function hideCalCellTooltip() {
+  clearTimeout(window._calTooltipTimer);
   const tip = document.getElementById('cal-hover-tooltip');
   if (tip) tip.style.display = 'none';
 }
