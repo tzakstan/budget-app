@@ -904,7 +904,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   backdrop-filter: blur(4px);
   z-index: 100;
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   justify-content: center;
 }
 .modal-overlay.hidden { display: none; }
@@ -929,6 +929,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 }
 
 /* ── BOTTOM NAV TAB BAR ── */
+/* ── MTEPS-INSPIRED BOTTOM NAVIGATION BAR & POPPED OUT ADD SQUIRCLE ── */
 .bottom-tab-bar {
   position: fixed;
   bottom: 0;
@@ -936,33 +937,174 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
+  height: 64px;
   background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--border);
+  box-shadow: 0 -3px 16px rgba(0, 0, 0, 0.05);
   display: flex;
-  z-index: 90;
-  padding: 6px 0 max(8px, env(safe-area-inset-bottom));
+  align-items: stretch;
+  justify-content: space-around;
+  z-index: 100;
+  padding: 0 4px max(6px, env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
 }
+
+[data-theme="dark"] .bottom-tab-bar {
+  background: rgba(7, 11, 20, 0.96) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 -3px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Sliding active pill indicator along the top edge */
+.nav-indicator-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20%;
+  height: 3px;
+  transform: translateX(calc(var(--nav-idx, 0) * 100%));
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 101;
+}
+
+.nav-indicator-pill::before {
+  content: "";
+  display: block;
+  width: 32px;
+  height: 3px;
+  margin: 0 auto;
+  background: var(--indigo, #4f46e5);
+  border-radius: 0 0 999px 999px;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
+}
+
+[data-theme="dark"] .nav-indicator-pill::before {
+  background: #f59e0b;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+}
+
+.nav-indicator-pill.off {
+  opacity: 0;
+}
+
+/* Regular navigation tab item */
 .nav-tab-btn {
   flex: 1;
+  min-width: 0;
+  height: 56px;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   align-items: center;
   gap: 3px;
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 600;
   font-family: var(--font-sans);
   cursor: pointer;
-  padding: 6px 0;
-  transition: all 0.15s;
+  padding: 6px 0 6px;
+  transition: color 0.18s ease, transform 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.nav-tab-btn svg { width: 20px; height: 20px; stroke-width: 2; }
-.nav-tab-btn.active { color: var(--indigo); }
-.nav-tab-btn.active svg { transform: scale(1.1); stroke-width: 2.3; }
+
+.nav-tab-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), stroke-width 0.2s ease;
+}
+
+.nav-tab-btn.active {
+  color: var(--indigo, #4f46e5);
+  font-weight: 700;
+}
+
+[data-theme="dark"] .nav-tab-btn.active {
+  color: #f1f5f9;
+}
+
+.nav-tab-btn.active svg {
+  transform: translateY(-2px) scale(1.12);
+  stroke-width: 2.3;
+}
+
+.nav-tab-btn:active svg {
+  transform: scale(0.92);
+}
+
+/* ── CENTER POPPED-OUT SQUIRCLE "+ ADD" BUTTON (MTEPS STYLE) ── */
+.nav-tab-btn.nav-tab-main {
+  position: relative;
+  z-index: 105;
+  overflow: visible;
+  padding-bottom: 5px;
+}
+
+.nav-plus-squircle {
+  width: 52px;
+  height: 52px;
+  margin-top: -26px;
+  margin-bottom: 2px;
+  border-radius: 18px; /* Smooth squircle geometry */
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* 4px cradle cutout halo matching bar background + floating elevation shadow */
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.96), 0 8px 22px rgba(79, 70, 229, 0.38);
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .nav-plus-squircle {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(7, 11, 20, 0.96), 0 8px 24px rgba(99, 102, 241, 0.42);
+}
+
+.nav-plus-squircle svg {
+  width: 26px;
+  height: 26px;
+  stroke: #ffffff;
+  stroke-width: 2.6;
+}
+
+.nav-tab-main:hover .nav-plus-squircle {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.98), 0 12px 26px rgba(79, 70, 229, 0.48);
+}
+
+[data-theme="dark"] .nav-tab-main:hover .nav-plus-squircle {
+  box-shadow: 0 0 0 4px rgba(7, 11, 20, 0.98), 0 12px 28px rgba(99, 102, 241, 0.52);
+}
+
+.nav-tab-main:active .nav-plus-squircle {
+  transform: scale(0.93) translateY(1px);
+}
+
+.nav-tab-main.active .nav-plus-squircle {
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.98), 0 0 0 6px var(--indigo, #4f46e5), 0 10px 24px rgba(79, 70, 229, 0.45);
+}
+
+[data-theme="dark"] .nav-tab-main.active .nav-plus-squircle {
+  box-shadow: 0 0 0 4px rgba(7, 11, 20, 0.98), 0 0 0 6px #6366f1, 0 10px 26px rgba(99, 102, 241, 0.5);
+}
+
+.nav-tab-main span:last-child {
+  font-weight: 700;
+  color: var(--indigo, #4f46e5);
+}
+
+[data-theme="dark"] .nav-tab-main span:last-child {
+  color: #a5b4fc;
+}
 
 /* ── TOAST ── */
 .toast-notice {
@@ -2938,24 +3080,27 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- ========================================== -->
 <!-- BOTTOM NAVIGATION BAR                      -->
 <!-- ========================================== -->
-<nav class="bottom-tab-bar">
-  <button class="nav-tab-btn active" onclick="showPage('dash', this)">
+<nav class="bottom-tab-bar" aria-label="Main Navigation">
+  <span class="nav-indicator-pill" id="nav-indicator-pill" aria-hidden="true"></span>
+  <button class="nav-tab-btn active" data-page="dash" onclick="showPage('dash', this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
     <span>Dashboard</span>
   </button>
-  <button class="nav-tab-btn" onclick="showPage('add', this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    <span>+ Add</span>
+  <button class="nav-tab-btn" data-page="log" onclick="showPage('log', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span>Calendar</span>
   </button>
-  <button class="nav-tab-btn" onclick="showPage('log', this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    <span>Log</span>
+  <button class="nav-tab-btn nav-tab-main" data-page="add" onclick="showPage('add', this)" aria-label="Add Transaction">
+    <span class="nav-plus-squircle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </span>
+    <span>Add</span>
   </button>
-  <button class="nav-tab-btn" onclick="showPage('analytics', this)">
+  <button class="nav-tab-btn" data-page="analytics" onclick="showPage('analytics', this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
     <span>Analytics</span>
   </button>
-  <button class="nav-tab-btn" onclick="showPage('settings', this)">
+  <button class="nav-tab-btn" data-page="settings" onclick="showPage('settings', this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     <span>Settings</span>
   </button>
@@ -3549,7 +3694,7 @@ window.addEventListener('offline', () => {
 function triggerManualSync() {
   if (!BACKEND_URL) {
     showToast('Please set your Apps Script URL in Settings');
-    showPage('settings', document.querySelectorAll('.nav-tab-btn')[4]);
+    showPage('settings');
     return;
   }
   pullFromBackend(true); // Force pull, bypass throttle
@@ -3586,7 +3731,22 @@ function showPage(name, btn) {
   document.querySelectorAll('.nav-tab-btn').forEach(t => t.classList.remove('active'));
   const page = document.getElementById('page-' + name);
   if (page) page.classList.add('active');
-  if (btn) btn.classList.add('active');
+
+  const targetBtn = btn || document.querySelector(`.nav-tab-btn[data-page="${name}"]`);
+  if (targetBtn) targetBtn.classList.add('active');
+
+  // Update sliding top indicator pill position (MTEPS Style)
+  const pill = document.getElementById('nav-indicator-pill');
+  if (pill) {
+    const pageIndexMap = { 'dash': 0, 'log': 1, 'add': 2, 'analytics': 3, 'settings': 4 };
+    const idx = pageIndexMap[name];
+    if (idx !== undefined && idx !== 2) {
+      pill.classList.remove('off');
+      pill.style.setProperty('--nav-idx', idx);
+    } else {
+      pill.classList.add('off'); // Center "+ Add" button is popped out & self-highlighted
+    }
+  }
 
   if (name === 'dash') renderDash();
   if (name === 'log') renderLog();
@@ -4153,8 +4313,7 @@ function selectCalDate(dateStr) {
 }
 
 function addExpenseForDate(dateStr) {
-  const navBtns = document.querySelectorAll('.nav-tab-btn');
-  showPage('add', navBtns[1]);
+  showPage('add');
   const dateInput = document.getElementById('entry-date');
   if (dateInput) {
     dateInput.value = dateStr;
