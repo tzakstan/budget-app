@@ -1049,7 +1049,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 .nav-plus-squircle {
   width: 52px;
   height: 52px;
-  margin-top: -26px;
+  margin-top: -28px;
   margin-bottom: 2px;
   border-radius: 18px; /* Smooth squircle geometry */
   background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
@@ -2117,6 +2117,321 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   backdrop-filter: blur(8px);
 }
 
+
+/* ===================================================================
+   10 HIGH-IMPACT UI/UX ENHANCEMENTS (UI-UX-PRO-MAX & DESIGN SPELLS)
+   =================================================================== */
+
+/* 1. Pull to Refresh Indicator */
+.pull-refresh-indicator {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-70px);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+  opacity: 0;
+}
+.pull-refresh-indicator.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+.pull-refresh-indicator.refreshing svg {
+  animation: ptr-spin 0.75s linear infinite;
+}
+@keyframes ptr-spin { 100% { transform: rotate(360deg); } }
+
+/* 2. Concentric Double-Bezel (Doppelrand) Hardware Cards */
+.doppelrand-shell {
+  position: relative;
+  padding: 3px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  margin-bottom: 14px;
+}
+[data-theme="dark"] .doppelrand-shell {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.4);
+}
+.doppelrand-core {
+  border-radius: 17px;
+  background: var(--surface);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+
+/* 3. Dynamic Ambient Gradient Aura */
+.ambient-aura-layer {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 440px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.12) 0%, rgba(79, 70, 229, 0) 70%);
+  pointer-events: none;
+  filter: blur(28px);
+  z-index: 0;
+  transition: background 0.6s ease;
+}
+.ambient-aura-layer.aura-safe {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0) 70%);
+}
+.ambient-aura-layer.aura-warn {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, rgba(245, 158, 11, 0) 70%);
+}
+.ambient-aura-layer.aura-danger {
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.18) 0%, rgba(244, 63, 94, 0) 70%);
+}
+
+/* 4. Center + Add Speed-Dial Quick-Capture Shelf */
+.quick-capture-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 1050;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+.quick-capture-backdrop.active { opacity: 1; pointer-events: auto; }
+
+.quick-capture-shelf {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(105%);
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.25);
+  z-index: 1060;
+  padding: 12px 18px max(24px, env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.quick-capture-shelf.active {
+  transform: translateX(-50%) translateY(0);
+}
+.qc-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--text-muted);
+  opacity: 0.35;
+  margin: 0 auto 12px;
+}
+.qc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.qc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.qc-btn {
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.qc-btn:active {
+  transform: scale(0.92);
+  background: var(--border);
+}
+.qc-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+.qc-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-main);
+  text-align: center;
+}
+.qc-sub {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.1;
+}
+
+/* 5. Express Numpad Bottom Sheet Modal */
+#express-numpad-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+#express-numpad-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.numpad-sheet {
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.3);
+  padding: 14px 18px max(20px, env(safe-area-inset-bottom, 0px));
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+.numpad-display {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--indigo);
+  text-align: right;
+  padding: 10px 14px;
+  background: var(--surface-low);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.numpad-key {
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s ease, transform 0.1s ease;
+}
+.numpad-key:active {
+  background: var(--border);
+  transform: scale(0.94);
+}
+
+/* 6. Swipeable Transaction Rows */
+.swipe-row-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  touch-action: pan-y;
+}
+.swipe-action-left, .swipe-action-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  user-select: none;
+}
+.swipe-action-left {
+  left: 0;
+  background: var(--indigo);
+}
+.swipe-action-right {
+  right: 0;
+  background: var(--rose);
+}
+.swipe-row-content {
+  position: relative;
+  background: var(--surface);
+  transition: transform 0.18s ease;
+  z-index: 2;
+}
+
+/* 7. Category Velocity Inline Sparklines */
+.cat-sparkline-svg {
+  width: 58px;
+  height: 18px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.sparkline-line {
+  fill: none;
+  stroke: var(--indigo);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sparkline-area {
+  fill: rgba(79, 70, 229, 0.12);
+}
+
+
+/* Double-Bezel Concentric Hardware Styling */
+.kpi-exec-card {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45), 0 3px 8px rgba(0, 0, 0, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
+  border-radius: 16px !important;
+  transition: transform 0.16s ease, box-shadow 0.16s ease !important;
+}
+.kpi-exec-card:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 0 0 1.5px var(--indigo), 0 6px 14px rgba(79, 70, 229, 0.12) !important;
+}
+[data-theme="dark"] .kpi-exec-card {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+}
+
+.hero-budget-card {
+  border-radius: 20px !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5), 0 6px 20px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.7) !important;
+}
+[data-theme="dark"] .hero-budget-card {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 26px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+}
+
 </style>
 </head>
 <body>
@@ -2163,6 +2478,9 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 1. DASHBOARD PAGE                          -->
 <!-- ========================================== -->
 <div class="view-page active" id="page-dash">
+  <!-- Dynamic Ambient Gradient Aura (@high-end-visual-design) -->
+  <div id="dash-ambient-aura" class="ambient-aura-layer aura-safe" aria-hidden="true"></div>
+
 
   <div id="migration-banner" style="display:none; background:var(--indigo-light); color:var(--indigo); padding:10px; margin: 0 16px 14px; border-radius: var(--radius-sm); text-align:center; font-size:12px; font-weight:600; border: 1px solid var(--indigo-border);">
     Data migrated to version 3.0 successfully.
@@ -2751,6 +3069,41 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 5. SETTINGS PAGE                           -->
 <!-- ========================================== -->
 <div class="view-page" id="page-settings">
+
+  <!-- Sound, Haptics & Micro-UX Card (design-spells & ui-ux-pro-max) -->
+  <div class="metric-card" id="haptics-sound-card">
+    <div class="card-header-flex">
+      <div class="card-heading">✨ Sound, Haptics & Micro-UX</div>
+      <span class="badge-tag tag-indigo">Active</span>
+    </div>
+    
+    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 12px;line-height:1.5;">
+      Fine-tune physical sensations, offline synthetic audio clicks, and gesture controls.
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--text-main);">Tactile Haptic Feedback</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Physical vibration pulses on taps, saves & gestures</div>
+      </div>
+      <label class="switch" style="position:relative;display:inline-block;width:44px;height:24px;">
+        <input type="checkbox" id="toggle-haptics" checked onchange="toggleHapticsSetting(this.checked)">
+        <span class="slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#10b981;transition:.3s;border-radius:24px;"></span>
+      </label>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--text-main);">Synthetic Audio Effects</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">100% offline mechanical click and milestone chime</div>
+      </div>
+      <label class="switch" style="position:relative;display:inline-block;width:44px;height:24px;">
+        <input type="checkbox" id="toggle-sound-fx" checked onchange="toggleSoundFxSetting(this.checked)">
+        <span class="slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#10b981;transition:.3s;border-radius:24px;"></span>
+      </label>
+    </div>
+  </div>
+
   <!-- PWA Installation & Device Status Card (progressive-web-app) -->
   <div class="metric-card" id="pwa-install-card">
     <div class="card-header-flex">
@@ -4499,6 +4852,7 @@ function renderCalendarGrid() {
 }
 
 function renderSelectedDayDetails() {
+  setTimeout(initSwipeableRows, 50);
   const card = document.getElementById('log-day-detail-card');
   if (!card) return;
 
@@ -4536,13 +4890,17 @@ function renderSelectedDayDetails() {
           const payCat = e.paymentCat ? catById(e.paymentCat) : null;
           const sub = [e.what, e.qty, e.where, payCat ? `${payCat.icon} ${payCat.label}` : ''].filter(Boolean).join(' • ');
           return `
-            <div class="log-item-row" onclick="openDetail('${e.id}')">
-              <div class="log-item-icon">${cat.icon}</div>
-              <div class="log-item-content">
-                <div class="log-item-title">${cat.label} ${e.where ? `· <span style="font-weight:400;color:var(--text-muted)">${e.where}</span>` : ''}</div>
-                <div class="log-item-desc">${sub || 'Tap for details'}</div>
+            <div class="swipe-row-wrap">
+              <div class="swipe-action-left">✨ Repeat</div>
+              <div class="swipe-action-right">🗑️ Delete</div>
+              <div class="log-item-row swipe-row-content" onclick="openDetail('${e.id}')">
+                <div class="log-item-icon">${cat.icon}</div>
+                <div class="log-item-content">
+                  <div class="log-item-title">${cat.label} ${e.where ? `· <span style="font-weight:400;color:var(--text-muted)">${e.where}</span>` : ''}</div>
+                  <div class="log-item-desc">${sub || 'Tap for details'}</div>
+                </div>
+                <div class="log-item-amount ${isInc ? 'inc' : ''}">${isInc ? '+' : ''}${fmt(e.amt)}</div>
               </div>
-              <div class="log-item-amount ${isInc ? 'inc' : ''}">${isInc ? '+' : ''}${fmt(e.amt)}</div>
             </div>
           `;
         }).join('')}
@@ -5458,10 +5816,27 @@ function renderAnalytics() {
     const s = me.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
     const b = catBud[cat.id] || 0;
     const p = pct(s, b);
+    
+    // 7-day velocity points for category
+    const last7Days = [];
+    const nowDt = new Date();
+    for (let d = 6; d >= 0; d--) {
+      const dt = new Date(nowDt.getFullYear(), nowDt.getMonth(), nowDt.getDate() - d);
+      const dStr = dt.toISOString().split('T')[0];
+      const dTot = me.filter(e => e.cat === cat.id && e.date === dStr).reduce((sum, e) => sum + e.amt, 0);
+      last7Days.push(dTot);
+    }
+    const sparkSvg = (typeof generateSparklineSvg === 'function') 
+      ? generateSparklineSvg(last7Days, p >= 100 ? '#f43f5e' : '#4f46e5') 
+      : '';
+
     return `
       <div style="margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
-          <span>${cat.icon} ${cat.label}</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:3px">
+          <span style="display:inline-flex;align-items:center;gap:6px;">
+            <span>${cat.icon} ${cat.label}</span>
+            ${sparkSvg}
+          </span>
           <span style="font-family:var(--font-mono);font-weight:600">${fmt(s)} / ${fmt(b)}</span>
         </div>
         <div class="progress-rail" style="margin:0">
@@ -8610,6 +8985,532 @@ if (document.readyState === 'loading') {
   initBottomSheetGestures();
 }
 
+
+// ===================================================================
+// 10 HIGH-IMPACT UI/UX ENHANCEMENTS LOGIC (DESIGN SPELLS & UI-UX PRO MAX)
+// ===================================================================
+
+// ── 1 & 2. HAPTICS & SYNTHETIC WEB AUDIO ENGINE ──
+function playHaptic(pattern = 10) {
+  if (localStorage.getItem('bt3_haptics') === 'off') return;
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try { navigator.vibrate(pattern); } catch (_) {}
+  }
+}
+
+let _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) _audioCtx = new AudioCtx();
+  }
+  if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+
+function playSynthAudio(type = 'click') {
+  if (localStorage.getItem('bt3_sound_fx') === 'off') return;
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    if (type === 'click') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(650, now);
+      osc.frequency.exponentialRampToValueAtTime(180, now + 0.03);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.035);
+    } else if (type === 'chime') {
+      [1046.5, 1318.5].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + i * 0.04);
+        gain.gain.setValueAtTime(0.07, now + i * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.04);
+        osc.stop(now + i * 0.04 + 0.28);
+      });
+    }
+  } catch (_) {}
+}
+
+function toggleHapticsSetting(enabled) {
+  localStorage.setItem('bt3_haptics', enabled ? 'on' : 'off');
+  if (enabled) playHaptic(15);
+  showToast(enabled ? '📳 Haptic Feedback Enabled' : 'Haptic Feedback Disabled');
+}
+
+function toggleSoundFxSetting(enabled) {
+  localStorage.setItem('bt3_sound_fx', enabled ? 'on' : 'off');
+  if (enabled) playSynthAudio('chime');
+  showToast(enabled ? '🔊 Synthetic Audio Enabled' : 'Synthetic Audio Disabled');
+}
+
+// ── 3. GOLDEN STAR PARTICLE BURST ANIMATION (✦) ──
+function triggerGoldenBurst(originX, originY) {
+  const canvas = document.getElementById('burst-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+
+  const ox = originX || window.innerWidth / 2;
+  const oy = originY || window.innerHeight / 2;
+
+  const particles = [];
+  const colors = ['#f59e0b', '#fbbf24', '#fef08a', '#10b981', '#6366f1'];
+  for (let i = 0; i < 28; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 2 + Math.random() * 6;
+    particles.push({
+      x: ox,
+      y: oy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 1.5,
+      size: 10 + Math.random() * 8,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: 1,
+      rotation: Math.random() * Math.PI,
+      spin: (Math.random() - 0.5) * 0.2
+    });
+  }
+
+  let startTime = performance.now();
+  function renderFrame(now) {
+    const elapsed = now - startTime;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let alive = false;
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.15; // gravity
+      p.rotation += p.spin;
+      p.alpha = Math.max(0, 1 - (elapsed / 750));
+
+      if (p.alpha > 0) {
+        alive = true;
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.fillStyle = p.color;
+        ctx.font = `${p.size}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('✦', 0, 0);
+        ctx.restore();
+      }
+    });
+
+    if (alive && elapsed < 800) {
+      requestAnimationFrame(renderFrame);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'none';
+    }
+  }
+
+  requestAnimationFrame(renderFrame);
+}
+
+// ── 4. PULL TO REFRESH WITH SPRING ELASTICITY ──
+function initPullToRefresh() {
+  let startY = 0;
+  let isPulling = false;
+  const ptr = document.getElementById('pull-refresh-indicator');
+  if (!ptr) return;
+
+  window.addEventListener('touchstart', (e) => {
+    if (window.scrollY <= 0) {
+      startY = e.touches[0].clientY;
+      isPulling = true;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!isPulling) return;
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - startY;
+    if (diff > 0 && window.scrollY <= 0) {
+      const offset = Math.min(65, diff * 0.45);
+      ptr.classList.add('visible');
+      ptr.style.transform = `translateX(-50%) translateY(${offset}px)`;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', (e) => {
+    if (!isPulling) return;
+    isPulling = false;
+    const diff = (e.changedTouches[0].clientY) - startY;
+    if (diff > 90 && window.scrollY <= 0) {
+      ptr.classList.add('refreshing');
+      ptr.style.transform = `translateX(-50%) translateY(50px)`;
+      playHaptic(15);
+      playSynthAudio('click');
+
+      setTimeout(() => {
+        if (typeof renderDash === 'function') renderDash();
+        if (typeof renderLog === 'function') renderLog();
+        if (typeof pullFromBackend === 'function') pullFromBackend(true);
+        ptr.classList.remove('refreshing');
+        ptr.classList.remove('visible');
+        ptr.style.transform = '';
+        showToast('🔄 Budget Data Refreshed');
+      }, 650);
+    } else {
+      ptr.classList.remove('visible');
+      ptr.style.transform = '';
+    }
+  }, { passive: true });
+}
+
+// ── 5. CALENDAR HORIZONTAL MONTH-SWIPE GESTURE ──
+function initCalendarSwipe() {
+  const calArea = document.getElementById('page-log');
+  if (!calArea) return;
+
+  let startX = 0, startY = 0;
+  let tracking = false;
+
+  calArea.addEventListener('touchstart', (e) => {
+    const grid = document.getElementById('cal-grid');
+    if (grid && grid.contains(e.target)) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
+    }
+  }, { passive: true });
+
+  calArea.addEventListener('touchend', (e) => {
+    if (!tracking) return;
+    tracking = false;
+    const diffX = e.changedTouches[0].clientX - startX;
+    const diffY = e.changedTouches[0].clientY - startY;
+
+    if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      const grid = document.getElementById('cal-grid');
+      if (diffX < 0) {
+        // Swipe Left -> Next Month
+        if (grid) {
+          grid.style.transition = 'transform 0.15s ease, opacity 0.15s ease';
+          grid.style.transform = 'translateX(-20px)';
+          grid.style.opacity = '0.5';
+        }
+        playHaptic(10);
+        setTimeout(() => {
+          changeMonth(1);
+          if (grid) {
+            grid.style.transform = 'translateX(20px)';
+            setTimeout(() => {
+              grid.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+              grid.style.transform = 'translateX(0)';
+              grid.style.opacity = '1';
+            }, 20);
+          }
+        }, 150);
+      } else {
+        // Swipe Right -> Previous Month
+        if (grid) {
+          grid.style.transition = 'transform 0.15s ease, opacity 0.15s ease';
+          grid.style.transform = 'translateX(20px)';
+          grid.style.opacity = '0.5';
+        }
+        playHaptic(10);
+        setTimeout(() => {
+          changeMonth(-1);
+          if (grid) {
+            grid.style.transform = 'translateX(-20px)';
+            setTimeout(() => {
+              grid.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+              grid.style.transform = 'translateX(0)';
+              grid.style.opacity = '1';
+            }, 20);
+          }
+        }, 150);
+      }
+    }
+  }, { passive: true });
+}
+
+// ── 6. QUICK CAPTURE SHELF & LONG-PRESS ON CENTER ADD ──
+function openQuickCapture() {
+  const shelf = document.getElementById('quick-capture-shelf');
+  const backdrop = document.getElementById('quick-capture-backdrop');
+  if (shelf) shelf.classList.add('active');
+  if (backdrop) backdrop.classList.add('active');
+  playHaptic(12);
+}
+
+function closeQuickCapture() {
+  const shelf = document.getElementById('quick-capture-shelf');
+  const backdrop = document.getElementById('quick-capture-backdrop');
+  if (shelf) shelf.classList.remove('active');
+  if (backdrop) backdrop.classList.remove('active');
+}
+
+function initNavMainLongPress() {
+  const btn = document.querySelector('.nav-tab-main');
+  if (!btn) return;
+
+  let timer = null;
+  let startTs = 0;
+
+  btn.addEventListener('touchstart', () => {
+    startTs = Date.now();
+    timer = setTimeout(() => {
+      openQuickCapture();
+      playSynthAudio('click');
+    }, 380);
+  }, { passive: true });
+
+  btn.addEventListener('touchend', (e) => {
+    clearTimeout(timer);
+    const dur = Date.now() - startTs;
+    if (dur < 380) {
+      showPage('add');
+      playHaptic(10);
+      playSynthAudio('click');
+    }
+  });
+
+  btn.addEventListener('mousedown', () => {
+    startTs = Date.now();
+    timer = setTimeout(() => {
+      openQuickCapture();
+      playSynthAudio('click');
+    }, 400);
+  });
+
+  btn.addEventListener('mouseup', () => {
+    clearTimeout(timer);
+    const dur = Date.now() - startTs;
+    if (dur < 400) {
+      showPage('add');
+      playSynthAudio('click');
+    }
+  });
+}
+
+// ── 7. EXPRESS 2-TAP NUMPAD MODAL ──
+let _expressAmtStr = '0';
+let _expressCatId = 'staples';
+
+function openExpressNumpad() {
+  _expressAmtStr = '0';
+  updateExpressDisplay();
+  renderExpressCatPills();
+  const modal = document.getElementById('express-numpad-modal');
+  if (modal) modal.classList.remove('hidden');
+  playHaptic(12);
+  playSynthAudio('click');
+}
+
+function closeExpressNumpad() {
+  const modal = document.getElementById('express-numpad-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function updateExpressDisplay() {
+  const disp = document.getElementById('express-amt-display');
+  if (disp) {
+    const num = parseInt(_expressAmtStr, 10) || 0;
+    disp.textContent = '₹' + num.toLocaleString('en-IN');
+  }
+}
+
+function pressNumpad(k) {
+  playHaptic(8);
+  playSynthAudio('click');
+  if (k === 'C') {
+    _expressAmtStr = '0';
+  } else if (k === '⌫') {
+    _expressAmtStr = _expressAmtStr.slice(0, -1) || '0';
+  } else {
+    if (_expressAmtStr === '0') _expressAmtStr = k;
+    else if (_expressAmtStr.length < 8) _expressAmtStr += k;
+  }
+  updateExpressDisplay();
+}
+
+function renderExpressCatPills() {
+  const container = document.getElementById('express-cat-pills');
+  if (!container) return;
+  const coreCats = categories.filter(c => c.type === 'exp');
+  container.innerHTML = coreCats.map(c => `
+    <button type="button" class="subcat-pill ${c.id === _expressCatId ? 'active' : ''}" onclick="selectExpressCat('${c.id}', this)" style="padding:6px 12px;font-size:11.5px;">
+      ${c.icon} ${c.label}
+    </button>
+  `).join('');
+}
+
+function selectExpressCat(catId, btn) {
+  _expressCatId = catId;
+  document.querySelectorAll('#express-cat-pills .subcat-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  playHaptic(8);
+  playSynthAudio('click');
+}
+
+function submitExpressEntry() {
+  const amt = parseInt(_expressAmtStr, 10);
+  if (!amt || amt <= 0) {
+    showToast('Please enter an amount');
+    return;
+  }
+  const entry = {
+    id: uid(),
+    amt: amt,
+    cat: _expressCatId,
+    what: '',
+    where: '',
+    qty: '',
+    date: todayStr(),
+    tags: [],
+    subcat: null,
+    notes: 'Logged via Express Numpad ⚡',
+    ts: Date.now()
+  };
+  entries.unshift(entry);
+  saveAllData();
+  closeExpressNumpad();
+
+  triggerGoldenBurst(window.innerWidth / 2, window.innerHeight * 0.7);
+  playHaptic([15, 30, 20]);
+  playSynthAudio('chime');
+  showToast(`⚡ ₹${amt.toLocaleString('en-IN')} logged to ${catById(_expressCatId).label}`);
+  if (typeof renderDash === 'function') renderDash();
+  if (typeof renderLog === 'function') renderLog();
+}
+
+// ── 8. INLINE 7-DAY CATEGORY VELOCITY SPARKLINES ──
+function generateSparklineSvg(dataPoints, strokeColor = '#4f46e5') {
+  if (!dataPoints || dataPoints.length === 0) return '';
+  const max = Math.max(...dataPoints, 1);
+  const w = 56, h = 16, pad = 2;
+  const step = (w - pad * 2) / Math.max(1, dataPoints.length - 1);
+
+  const pts = dataPoints.map((val, i) => {
+    const x = pad + i * step;
+    const y = h - pad - ((val / max) * (h - pad * 2));
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+
+  const areaPts = `${pad},${h} ${pts} ${pad + (dataPoints.length - 1) * step},${h}`;
+
+  return `
+    <svg class="cat-sparkline-svg" viewBox="0 0 ${w} ${h}">
+      <polygon points="${areaPts}" fill="${strokeColor}" opacity="0.12"/>
+      <polyline points="${pts}" fill="none" stroke="${strokeColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `;
+}
+
+// ── 9. DYNAMIC AMBIENT AURA UPDATER ──
+function updateDashboardAmbientAura(driftPct) {
+  const aura = document.getElementById('dash-ambient-aura');
+  if (!aura) return;
+  aura.classList.remove('aura-safe', 'aura-warn', 'aura-danger');
+  if (driftPct <= 5) aura.classList.add('aura-safe');
+  else if (driftPct <= 18) aura.classList.add('aura-warn');
+  else aura.classList.add('aura-danger');
+}
+
+// ── 10. SWIPE-TO-ACTION ON TRANSACTION ROWS ──
+function initSwipeableRows() {
+  document.querySelectorAll('.log-item-row').forEach(row => {
+    let startX = 0;
+    let isSwiping = false;
+
+    row.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      isSwiping = true;
+    }, { passive: true });
+
+    row.addEventListener('touchmove', e => {
+      if (!isSwiping) return;
+      const diffX = e.touches[0].clientX - startX;
+      if (Math.abs(diffX) > 10 && Math.abs(diffX) < 100) {
+        row.style.transform = `translateX(${diffX * 0.65}px)`;
+      }
+    }, { passive: true });
+
+    row.addEventListener('touchend', e => {
+      if (!isSwiping) return;
+      isSwiping = false;
+      const diffX = e.changedTouches[0].clientX - startX;
+      row.style.transition = 'transform 0.2s ease';
+      row.style.transform = 'translateX(0)';
+      setTimeout(() => { row.style.transition = ''; }, 200);
+
+      if (diffX < -70) {
+        // Swipe Left: Delete trigger
+        playHaptic(15);
+        playSynthAudio('click');
+        const entryId = row.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+        if (entryId) {
+          if (confirm('Delete this transaction?')) {
+            deleteEntry(entryId);
+            showToast('🗑️ Transaction Deleted');
+          }
+        }
+      } else if (diffX > 70) {
+        // Swipe Right: Quick Repeat / Duplicate
+        playHaptic(15);
+        playSynthAudio('chime');
+        const entryId = row.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+        if (entryId) {
+          const orig = entries.find(e => e.id === entryId);
+          if (orig) {
+            const dup = { ...orig, id: uid(), date: todayStr(), ts: Date.now() };
+            entries.unshift(dup);
+            saveAllData();
+            triggerGoldenBurst(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+            showToast(`✨ Repeated ${catById(orig.cat).label}: ₹${orig.amt}`);
+            if (typeof renderLog === 'function') renderLog();
+          }
+        }
+      }
+    }, { passive: true });
+  });
+}
+
+// Trigger burst and chime on standard entry save
+const _origSaveEntry = typeof saveEntry === 'function' ? saveEntry : null;
+if (_origSaveEntry) {
+  window.saveEntry = function() {
+    _origSaveEntry.apply(this, arguments);
+    triggerGoldenBurst(window.innerWidth / 2, window.innerHeight * 0.4);
+    playHaptic([15, 30, 20]);
+    playSynthAudio('chime');
+  };
+}
+
+// Initialize all gesture listeners on load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initPullToRefresh();
+    initCalendarSwipe();
+    initNavMainLongPress();
+  });
+} else {
+  initPullToRefresh();
+  initCalendarSwipe();
+  initNavMainLongPress();
+}
+
 </script>
 
 <!-- Full-Screen Lock Overlay (Phase 3: Privacy & Biometric Lock) -->
@@ -8711,6 +9612,89 @@ if (document.readyState === 'loading') {
 
 <!-- Floating Calendar Micro-Card Tooltip -->
 <div id="cal-hover-tooltip"></div>
+
+<!-- Pull to Refresh Floating Spinner -->
+<div id="pull-refresh-indicator" class="pull-refresh-indicator" aria-hidden="true">
+  <div class="pull-refresh-crescent">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><polyline points="21 3 21 9 15 9"/></svg>
+  </div>
+</div>
+
+<!-- Golden Star Burst Particle Canvas -->
+<canvas id="burst-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:99999;display:none;"></canvas>
+
+<!-- Quick Capture Speed-Dial Shelf -->
+<div id="quick-capture-backdrop" class="quick-capture-backdrop" onclick="closeQuickCapture()"></div>
+<div id="quick-capture-shelf" class="quick-capture-shelf">
+  <div class="qc-handle"></div>
+  <div class="qc-header">
+    <span style="font-size:12.5px;font-weight:800;color:var(--text-main);display:flex;align-items:center;gap:6px;">
+      <span>⚡</span> Quick Express Actions
+    </span>
+    <button type="button" style="background:none;border:none;font-size:14px;color:var(--text-muted);cursor:pointer;padding:4px 8px;" onclick="closeQuickCapture()">✕</button>
+  </div>
+  <div class="qc-grid">
+    <div class="qc-btn" onclick="closeQuickCapture(); openExpressNumpad();">
+      <div class="qc-icon" style="background:linear-gradient(135deg, #10b981, #059669);">⚡</div>
+      <div class="qc-label">Express ₹</div>
+      <div class="qc-sub">2-tap log</div>
+    </div>
+    <div class="qc-btn" onclick="closeQuickCapture(); showPage('add'); setTimeout(() => { const el = document.getElementById('entry-amt'); if(el) el.focus(); }, 150);">
+      <div class="qc-icon" style="background:linear-gradient(135deg, #4f46e5, #4338ca);">📝</div>
+      <div class="qc-label">Full Entry</div>
+      <div class="qc-sub">Tags & notes</div>
+    </div>
+    <div class="qc-btn" onclick="closeQuickCapture(); showPage('add'); setTimeout(() => { const el = document.getElementById('receipt-upload'); if(el) el.click(); }, 150);">
+      <div class="qc-icon" style="background:linear-gradient(135deg, #0284c7, #0369a1);">📷</div>
+      <div class="qc-label">Receipt</div>
+      <div class="qc-sub">Camera / photo</div>
+    </div>
+    <div class="qc-btn" onclick="closeQuickCapture(); showPage('add'); setTimeout(() => { const b = document.querySelector('.bookmark-chip'); if(b) b.click(); }, 150);">
+      <div class="qc-icon" style="background:linear-gradient(135deg, #f59e0b, #d97706);">🔖</div>
+      <div class="qc-label">Bookmark</div>
+      <div class="qc-sub">Repeat habit</div>
+    </div>
+  </div>
+</div>
+
+<!-- Express Numpad Modal -->
+<div id="express-numpad-modal" class="modal-overlay hidden">
+  <div class="modal-backdrop" onclick="closeExpressNumpad()"></div>
+  <div class="numpad-sheet modal-bottom-sheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:12px;font-weight:800;color:var(--text-main);">⚡ Express 2-Tap Logger</span>
+      <button type="button" style="background:none;border:none;font-size:14px;color:var(--text-muted);cursor:pointer;" onclick="closeExpressNumpad()">✕</button>
+    </div>
+    
+    <div class="numpad-display" id="express-amt-display">₹0</div>
+
+    <!-- Quick Category Carousel -->
+    <div class="chips-scroll-row" id="express-cat-pills" style="margin-bottom:10px;padding:4px 0;">
+      <!-- Populated dynamically via JS -->
+    </div>
+
+    <!-- 3x4 Numpad -->
+    <div class="numpad-grid">
+      <button type="button" class="numpad-key" onclick="pressNumpad('1')">1</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('2')">2</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('3')">3</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('4')">4</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('5')">5</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('6')">6</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('7')">7</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('8')">8</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('9')">9</button>
+      <button type="button" class="numpad-key" style="color:var(--rose);" onclick="pressNumpad('C')">C</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('0')">0</button>
+      <button type="button" class="numpad-key" onclick="pressNumpad('⌫')">⌫</button>
+    </div>
+
+    <button type="button" class="btn-primary-save" id="btn-express-save" style="width:100%;" onclick="submitExpressEntry()">
+      ✓ Log Expense
+    </button>
+  </div>
+</div>
+
 </body>
 </html>
 
