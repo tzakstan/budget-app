@@ -4080,6 +4080,9 @@ function saveAllData() {
 
 // ── NAVIGATION & RENDERING ──
 function showPage(name, btn) {
+  // Always dismiss floating tooltip if open
+  if (typeof hideCalCellTooltip === 'function') hideCalCellTooltip();
+
   document.querySelectorAll('.view-page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab-btn').forEach(t => t.classList.remove('active'));
   const page = document.getElementById('page-' + name);
@@ -4087,6 +4090,12 @@ function showPage(name, btn) {
 
   const targetBtn = btn || document.querySelector(`.nav-tab-btn[data-page="${name}"]`);
   if (targetBtn) targetBtn.classList.add('active');
+
+  // Month bar visibility: ONLY visible on Dashboard ('dash') and Add ('add')
+  const monthBar = document.querySelector('.date-selector-bar');
+  if (monthBar) {
+    monthBar.style.display = (name === 'dash' || name === 'add') ? 'flex' : 'none';
+  }
 
   // Update sliding top indicator pill position (MTEPS Style)
   const pill = document.getElementById('nav-indicator-pill');
@@ -4660,6 +4669,7 @@ function shiftCalMonth(dir) {
 }
 
 function selectCalDate(dateStr) {
+  if (typeof hideCalCellTooltip === 'function') hideCalCellTooltip();
   calSelectedDate = dateStr;
   renderCalendarGrid();
   renderSelectedDayDetails();
@@ -8909,11 +8919,25 @@ function renderSubcategoryTreemap(me) {
 
 // ── STEP 4B: DAY-SCRUB CALENDAR FLOATING TOOLTIP ──
 function showCalCellTooltip(e, dStr) {
+  // 1. NEVER show on touch / mobile devices or coarse pointers
+  if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+  if (e && (e.pointerType === 'touch' || (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents))) return;
+
   const tip = document.getElementById('cal-hover-tooltip');
   if (!tip) return;
-  const expAmt = (typeof dayExpMap !== 'undefined' && dayExpMap[dStr]) ? dayExpMap[dStr] : 0;
-  const incAmt = (typeof dayIncMap !== 'undefined' && dayIncMap[dStr]) ? dayIncMap[dStr] : 0;
-  const hasPhoto = (typeof dayPhotoMap !== 'undefined' && dayPhotoMap[dStr]);
+
+  // 2. Accurately compute daily income and expense amounts directly from entries
+  let expAmt = 0, incAmt = 0, hasPhoto = false;
+  if (Array.isArray(entries)) {
+    entries.forEach(item => {
+      if (item.date === dStr) {
+        const c = catById(item.cat);
+        if (c.type === 'exp') expAmt += item.amt;
+        else if (c.type === 'income') incAmt += item.amt;
+        if (item.photo) hasPhoto = true;
+      }
+    });
+  }
   const hasNote = Boolean(typeof dayNotes !== 'undefined' && dayNotes[dStr]);
 
   const g = parseYMD(dStr);
@@ -8949,6 +8973,16 @@ function hideCalCellTooltip() {
   const tip = document.getElementById('cal-hover-tooltip');
   if (tip) tip.style.display = 'none';
 }
+
+// Global auto-dismiss listeners for the floating tooltip
+window.addEventListener('scroll', hideCalCellTooltip, { passive: true });
+window.addEventListener('touchmove', hideCalCellTooltip, { passive: true });
+document.addEventListener('touchstart', (e) => {
+  if (!e.target.closest('#cal-hover-tooltip')) hideCalCellTooltip();
+}, { passive: true });
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#cal-hover-tooltip') && !e.target.closest('.cal-cell')) hideCalCellTooltip();
+}, { passive: true });
 
 // ── STEP 5: FATIMID DAWOODI BOHRA MIQAATS DICTIONARY & COACHING ──
 const BOHRA_MIQAATS = {
