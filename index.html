@@ -2196,165 +2196,6 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   background: radial-gradient(circle, rgba(244, 63, 94, 0.18) 0%, rgba(244, 63, 94, 0) 70%);
 }
 
-/* 4. Center + Add Speed-Dial Quick-Capture Shelf */
-.quick-capture-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 1050;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.22s ease;
-}
-.quick-capture-backdrop.active { opacity: 1; pointer-events: auto; }
-
-.quick-capture-shelf {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(105%);
-  width: 100%;
-  max-width: 480px;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  border-radius: 24px 24px 0 0;
-  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.25);
-  z-index: 1060;
-  padding: 12px 18px max(24px, env(safe-area-inset-bottom, 0px));
-  box-sizing: border-box;
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.quick-capture-shelf.active {
-  transform: translateX(-50%) translateY(0);
-}
-.qc-handle {
-  width: 36px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--text-muted);
-  opacity: 0.35;
-  margin: 0 auto 12px;
-}
-.qc-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-.qc-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-.qc-btn {
-  background: var(--surface-low);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 12px 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.qc-btn:active {
-  transform: scale(0.92);
-  background: var(--border);
-}
-.qc-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 19px;
-  color: white;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-}
-.qc-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-main);
-  text-align: center;
-}
-.qc-sub {
-  font-size: 9px;
-  color: var(--text-muted);
-  text-align: center;
-  line-height: 1.1;
-}
-
-/* 5. Express Numpad Bottom Sheet Modal */
-#express-numpad-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 1100;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-#express-numpad-modal.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-.numpad-sheet {
-  background: var(--surface);
-  border-radius: 24px 24px 0 0;
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -8px 32px rgba(0,0,0,0.3);
-  padding: 14px 18px max(20px, env(safe-area-inset-bottom, 0px));
-  max-width: 480px;
-  margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
-}
-.numpad-display {
-  font-family: var(--font-mono);
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--indigo);
-  text-align: right;
-  padding: 10px 14px;
-  background: var(--surface-low);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  margin-bottom: 12px;
-}
-.numpad-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.numpad-key {
-  height: 48px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-main);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  user-select: none;
-  transition: background 0.1s ease, transform 0.1s ease;
-}
-.numpad-key:active {
-  background: var(--border);
-  transform: scale(0.94);
-}
-
 /* 6. Swipeable Transaction Rows */
 .swipe-row-wrap {
   position: relative;
@@ -2623,16 +2464,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 2. ADD ENTRY PAGE                          -->
 <!-- ========================================== -->
 <div class="view-page" id="page-add">
-  <!-- 1-Tap Quick Bookmarks Strip (Sequence 2) -->
-  <div id="add-bookmarks-container" style="margin-bottom:12px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-      <span style="font-size:11px;text-transform:uppercase;font-weight:700;color:var(--text-muted);">⭐ Quick Bookmarks (1-Tap Fill)</span>
-      <button type="button" class="quick-chip" style="font-size:10px;padding:2px 8px;" onclick="promptNewBookmark()">+ Add</button>
-    </div>
-    <div id="quick-bookmarks-strip" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;">
-      <!-- Bookmarks dynamically rendered here -->
-    </div>
-  </div>
+
 
   <!-- Fast WhatsApp / UPI Text Ingest (Category 5: WhatsApp Ingest) -->
   <div style="margin-bottom:12px;background:var(--emerald-bg);border:1px dashed var(--emerald-border);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
@@ -2731,20 +2563,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
         <input type="text" id="entry-tags" class="styled-field" placeholder="#Ziyarat #Jumoa #WeekendSpecial" />
       </div>
 
-      <!-- Receipt Photo Attachment (Sequence 2) -->
-      <div style="margin-bottom:8px;">
-        <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">📷 Receipt / Bill Attachment (Optional)</label>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <button type="button" class="quick-chip" style="padding:6px 12px;font-weight:700;" onclick="document.getElementById('entry-photo-input').click()">
-            📎 Attach Receipt Photo
-          </button>
-          <input type="file" id="entry-photo-input" accept="image/*" capture="environment" style="display:none;" onchange="handleReceiptPhotoSelect(event)" />
-          <div id="entry-photo-preview-wrap" style="display:none;align-items:center;gap:6px;">
-            <img id="entry-photo-thumb" style="width:36px;height:36px;border-radius:4px;object-fit:cover;border:1px solid var(--border);" />
-            <button type="button" class="quick-chip" style="padding:2px 6px;color:var(--rose);" onclick="removeReceiptPhoto()">✕ Remove</button>
-          </div>
-        </div>
-      </div>
+
 
       <div>
         <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px">Notes (Optional)</label>
@@ -4387,9 +4206,7 @@ function buildCatBtns() {
       <span class="name">${c.label}</span>
     </button>
   `).join('');
-  if (typeof renderBookmarksStrip === 'function') {
-    renderBookmarksStrip();
-  }
+
 }
 
 function selectCategory(id, btn) {
@@ -7403,13 +7220,7 @@ function openDetail(id) {
     `;
   }
 
-  bodyHtml += `
-    <div style="margin-top:12px;display:flex;gap:8px;">
-      <button type="button" class="quick-chip" style="flex:1;text-align:center;font-size:11.5px;padding:7px;" onclick="saveEntryAsBookmark('${esc(e.id)}')">
-        ⭐ Save as 1-Tap Bookmark
-      </button>
-    </div>
-  `;
+  
 
   document.getElementById('modal-body').innerHTML = bodyHtml;
 
@@ -8344,94 +8155,11 @@ function extractTags(text1, text2) {
   return tags;
 }
 
-// ── 2. QUICK BOOKMARKS & FAST ENTRY (Sequence 2) ──
-const DEFAULT_BOOKMARKS = [
-  { id: 'bm_milk', label: '🥛 Daily Milk', cat: 'milk', subcat: 'Daily Dairy Milk', amt: 65, where: 'Milkman' },
-  { id: 'bm_eggs', label: '🥚 Eggs', cat: 'eggs', subcat: 'Farm Eggs', amt: 90, where: 'Local Store' },
-  { id: 'bm_chai', label: '☕ Chai / Snack', cat: 'avoidable', subcat: 'Café & Coffee', amt: 80, where: 'Tea Stall' },
-  { id: 'bm_fuel', label: '🚗 Petrol / Fuel', cat: 'travel', subcat: 'Petrol / Fuel', amt: 500, where: 'Petrol Pump' },
-  { id: 'bm_subzi', label: '🥦 Daily Subzi', cat: 'fv', subcat: 'Daily Subzi', amt: 150, where: 'Vendor' },
-  { id: 'bm_bread', label: '🥖 Bread & Bakery', cat: 'staples', subcat: 'Daily Staples', amt: 40, where: 'Bakery' }
-];
-
-let bookmarks = ls('bt3_bookmarks', DEFAULT_BOOKMARKS);
-
-function renderBookmarksStrip() {
-  const container = document.getElementById('quick-bookmarks-strip');
-  if (!container) return;
-  if (!bookmarks || bookmarks.length === 0) {
-    container.innerHTML = '<span style="font-size:11px;color:var(--text-muted);">No bookmarks saved. Click + Add to save frequent expenses.</span>';
-    return;
-  }
-  container.innerHTML = bookmarks.map(b => {
-    const c = catById(b.cat);
-    return `
-      <button type="button" class="bookmark-chip" onclick="applyBookmark('${esc(b.id)}')">
-        <span>${c ? c.icon : '⭐'}</span>
-        <span>${esc(b.label || b.what)}</span>
-        <span style="font-family:var(--font-mono);color:var(--indigo);font-size:11px;">₹${b.amt}</span>
-      </button>
-    `;
-  }).join('');
-}
-
-function applyBookmark(bmId) {
-  const bm = bookmarks.find(b => b.id === bmId);
-  if (!bm) return;
-  document.getElementById('amt').value = bm.amt;
-  const catBtn = document.querySelector(`.form-cat-btn[onclick*="'${bm.cat}'"]`);
-  selectCategory(bm.cat, catBtn);
-  if (bm.subcat) {
-    selectSubCategory(bm.subcat);
-  }
-  if (bm.where) document.getElementById('where').value = bm.where;
-  if (bm.label || bm.what) document.getElementById('what').value = (bm.label || bm.what).replace(/^[^a-zA-Z0-9]+/, '');
-  showToast(`⚡ Loaded bookmark: ${bm.label || bm.what} (₹${bm.amt})`);
-}
-
-function promptNewBookmark() {
-  const amtVal = document.getElementById('amt').value.trim();
-  const amt = evalSafeMath(amtVal);
-  if (!amt || amt <= 0 || !selCat) {
-    showToast('Select category & enter amount first to bookmark');
-    return;
-  }
-  const defaultTitle = document.getElementById('what').value.trim() || `${catById(selCat).label} ₹${amt}`;
-  const title = prompt('Bookmark Title / Label:', defaultTitle);
-  if (!title || !title.trim()) return;
-
-  const newBm = {
-    id: 'bm_' + Date.now().toString(36),
-    label: title.trim(),
-    cat: selCat,
-    subcat: selSubCat || '',
-    amt: amt,
-    where: document.getElementById('where').value.trim()
-  };
-  bookmarks.push(newBm);
-  ss('bt3_bookmarks', bookmarks);
-  renderBookmarksStrip();
-  showToast(`⭐ Saved bookmark: ${newBm.label}`);
-}
-
-function saveEntryAsBookmark(entryId) {
-  const e = entries.find(x => x.id === entryId);
-  if (!e) return;
-  const label = prompt('Save as Bookmark title:', `${catById(e.cat).label} ₹${e.amt}`);
-  if (!label || !label.trim()) return;
-  const newBm = {
-    id: 'bm_' + Date.now().toString(36),
-    label: label.trim(),
-    cat: e.cat,
-    subcat: e.subcat || '',
-    amt: e.amt,
-    where: e.where || ''
-  };
-  bookmarks.push(newBm);
-  ss('bt3_bookmarks', bookmarks);
-  renderBookmarksStrip();
-  showToast(`⭐ Bookmark saved: ${newBm.label}`);
-}
+// Bookmarks feature removed per decluttering UX
+function renderBookmarksStrip() {}
+function applyBookmark() {}
+function promptNewBookmark() {}
+function saveEntryAsBookmark() {}
 
 // ── IN-LINE ARITHMETIC CALCULATOR (Sequence 2) ──
 function evalSafeMath(str) {
@@ -9392,156 +9120,7 @@ function initCalendarSwipe() {
   }, { passive: true });
 }
 
-// ── 6. QUICK CAPTURE SHELF & LONG-PRESS ON CENTER ADD ──
-function openQuickCapture() {
-  const shelf = document.getElementById('quick-capture-shelf');
-  const backdrop = document.getElementById('quick-capture-backdrop');
-  if (shelf) shelf.classList.add('active');
-  if (backdrop) backdrop.classList.add('active');
-  playHaptic(12);
-}
-
-function closeQuickCapture() {
-  const shelf = document.getElementById('quick-capture-shelf');
-  const backdrop = document.getElementById('quick-capture-backdrop');
-  if (shelf) shelf.classList.remove('active');
-  if (backdrop) backdrop.classList.remove('active');
-}
-
-function initNavMainLongPress() {
-  const btn = document.querySelector('.nav-tab-main');
-  if (!btn) return;
-
-  let timer = null;
-  let startTs = 0;
-
-  btn.addEventListener('touchstart', () => {
-    startTs = Date.now();
-    timer = setTimeout(() => {
-      openQuickCapture();
-      playSynthAudio('click');
-    }, 380);
-  }, { passive: true });
-
-  btn.addEventListener('touchend', (e) => {
-    clearTimeout(timer);
-    const dur = Date.now() - startTs;
-    if (dur < 380) {
-      showPage('add');
-      playHaptic(10);
-      playSynthAudio('click');
-    }
-  });
-
-  btn.addEventListener('mousedown', () => {
-    startTs = Date.now();
-    timer = setTimeout(() => {
-      openQuickCapture();
-      playSynthAudio('click');
-    }, 400);
-  });
-
-  btn.addEventListener('mouseup', () => {
-    clearTimeout(timer);
-    const dur = Date.now() - startTs;
-    if (dur < 400) {
-      showPage('add');
-      playSynthAudio('click');
-    }
-  });
-}
-
-// ── 7. EXPRESS 2-TAP NUMPAD MODAL ──
-let _expressAmtStr = '0';
-let _expressCatId = 'staples';
-
-function openExpressNumpad() {
-  _expressAmtStr = '0';
-  updateExpressDisplay();
-  renderExpressCatPills();
-  const modal = document.getElementById('express-numpad-modal');
-  if (modal) modal.classList.remove('hidden');
-  playHaptic(12);
-  playSynthAudio('click');
-}
-
-function closeExpressNumpad() {
-  const modal = document.getElementById('express-numpad-modal');
-  if (modal) modal.classList.add('hidden');
-}
-
-function updateExpressDisplay() {
-  const disp = document.getElementById('express-amt-display');
-  if (disp) {
-    const num = parseInt(_expressAmtStr, 10) || 0;
-    disp.textContent = '₹' + num.toLocaleString('en-IN');
-  }
-}
-
-function pressNumpad(k) {
-  playHaptic(8);
-  playSynthAudio('click');
-  if (k === 'C') {
-    _expressAmtStr = '0';
-  } else if (k === '⌫') {
-    _expressAmtStr = _expressAmtStr.slice(0, -1) || '0';
-  } else {
-    if (_expressAmtStr === '0') _expressAmtStr = k;
-    else if (_expressAmtStr.length < 8) _expressAmtStr += k;
-  }
-  updateExpressDisplay();
-}
-
-function renderExpressCatPills() {
-  const container = document.getElementById('express-cat-pills');
-  if (!container) return;
-  const coreCats = categories.filter(c => c.type === 'exp');
-  container.innerHTML = coreCats.map(c => `
-    <button type="button" class="subcat-pill ${c.id === _expressCatId ? 'active' : ''}" onclick="selectExpressCat('${c.id}', this)" style="padding:6px 12px;font-size:11.5px;">
-      ${c.icon} ${c.label}
-    </button>
-  `).join('');
-}
-
-function selectExpressCat(catId, btn) {
-  _expressCatId = catId;
-  document.querySelectorAll('#express-cat-pills .subcat-pill').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  playHaptic(8);
-  playSynthAudio('click');
-}
-
-function submitExpressEntry() {
-  const amt = parseInt(_expressAmtStr, 10);
-  if (!amt || amt <= 0) {
-    showToast('Please enter an amount');
-    return;
-  }
-  const entry = {
-    id: uid(),
-    amt: amt,
-    cat: _expressCatId,
-    what: '',
-    where: '',
-    qty: '',
-    date: todayStr(),
-    tags: [],
-    subcat: null,
-    notes: 'Logged via Express Numpad ⚡',
-    ts: Date.now()
-  };
-  entries.unshift(entry);
-  saveAllData();
-  closeExpressNumpad();
-
-  triggerGoldenBurst(window.innerWidth / 2, window.innerHeight * 0.7);
-  playHaptic([15, 30, 20]);
-  playSynthAudio('chime');
-  showToast(`⚡ ₹${amt.toLocaleString('en-IN')} logged to ${catById(_expressCatId).label}`);
-  if (typeof renderDash === 'function') renderDash();
-  if (typeof renderLog === 'function') renderLog();
-}
-
+// Quick capture & long-press removed per decluttering UX
 // ── 8. INLINE 7-DAY CATEGORY VELOCITY SPARKLINES ──
 function generateSparklineSvg(dataPoints, strokeColor = '#4f46e5') {
   if (!dataPoints || dataPoints.length === 0) return '';
@@ -9650,12 +9229,10 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initPullToRefresh();
     initCalendarSwipe();
-    initNavMainLongPress();
   });
 } else {
   initPullToRefresh();
   initCalendarSwipe();
-  initNavMainLongPress();
 }
 
 </script>
@@ -9771,78 +9348,6 @@ if (document.readyState === 'loading') {
 
 <!-- Golden Star Burst Particle Canvas -->
 <canvas id="burst-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:99999;display:none;"></canvas>
-
-<!-- Quick Capture Speed-Dial Shelf -->
-<div id="quick-capture-backdrop" class="quick-capture-backdrop" onclick="closeQuickCapture()"></div>
-<div id="quick-capture-shelf" class="quick-capture-shelf">
-  <div class="qc-handle"></div>
-  <div class="qc-header">
-    <span style="font-size:12.5px;font-weight:800;color:var(--text-main);display:flex;align-items:center;gap:6px;">
-      <span>⚡</span> Quick Express Actions
-    </span>
-    <button type="button" style="background:none;border:none;font-size:14px;color:var(--text-muted);cursor:pointer;padding:4px 8px;" onclick="closeQuickCapture()">✕</button>
-  </div>
-  <div class="qc-grid">
-    <div class="qc-btn" onclick="closeQuickCapture(); openExpressNumpad();">
-      <div class="qc-icon" style="background:linear-gradient(135deg, #10b981, #059669);">⚡</div>
-      <div class="qc-label">Express ₹</div>
-      <div class="qc-sub">2-tap log</div>
-    </div>
-    <div class="qc-btn" onclick="closeQuickCapture(); showPage('add'); setTimeout(() => { const el = document.getElementById('entry-amt'); if(el) el.focus(); }, 150);">
-      <div class="qc-icon" style="background:linear-gradient(135deg, #4f46e5, #4338ca);">📝</div>
-      <div class="qc-label">Full Entry</div>
-      <div class="qc-sub">Tags & notes</div>
-    </div>
-    <div class="qc-btn" onclick="closeQuickCapture(); showPage('add'); setTimeout(() => { const el = document.getElementById('receipt-upload'); if(el) el.click(); }, 150);">
-      <div class="qc-icon" style="background:linear-gradient(135deg, #0284c7, #0369a1);">📷</div>
-      <div class="qc-label">Receipt</div>
-      <div class="qc-sub">Camera / photo</div>
-    </div>
-    <div class="qc-btn" onclick="closeQuickCapture(); showPage('add'); setTimeout(() => { const b = document.querySelector('.bookmark-chip'); if(b) b.click(); }, 150);">
-      <div class="qc-icon" style="background:linear-gradient(135deg, #f59e0b, #d97706);">🔖</div>
-      <div class="qc-label">Bookmark</div>
-      <div class="qc-sub">Repeat habit</div>
-    </div>
-  </div>
-</div>
-
-<!-- Express Numpad Modal -->
-<div id="express-numpad-modal" class="modal-overlay hidden">
-  <div class="modal-backdrop" onclick="closeExpressNumpad()"></div>
-  <div class="numpad-sheet modal-bottom-sheet">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-      <span style="font-size:12px;font-weight:800;color:var(--text-main);">⚡ Express 2-Tap Logger</span>
-      <button type="button" style="background:none;border:none;font-size:14px;color:var(--text-muted);cursor:pointer;" onclick="closeExpressNumpad()">✕</button>
-    </div>
-    
-    <div class="numpad-display" id="express-amt-display">₹0</div>
-
-    <!-- Quick Category Carousel -->
-    <div class="chips-scroll-row" id="express-cat-pills" style="margin-bottom:10px;padding:4px 0;">
-      <!-- Populated dynamically via JS -->
-    </div>
-
-    <!-- 3x4 Numpad -->
-    <div class="numpad-grid">
-      <button type="button" class="numpad-key" onclick="pressNumpad('1')">1</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('2')">2</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('3')">3</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('4')">4</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('5')">5</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('6')">6</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('7')">7</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('8')">8</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('9')">9</button>
-      <button type="button" class="numpad-key" style="color:var(--rose);" onclick="pressNumpad('C')">C</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('0')">0</button>
-      <button type="button" class="numpad-key" onclick="pressNumpad('⌫')">⌫</button>
-    </div>
-
-    <button type="button" class="btn-primary-save" id="btn-express-save" style="width:100%;" onclick="submitExpressEntry()">
-      ✓ Log Expense
-    </button>
-  </div>
-</div>
 
 </body>
 </html>
