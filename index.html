@@ -5816,7 +5816,11 @@ function renderAnalytics() {
 }
 
 // ── AI TRANSACTION DRILLDOWN MODAL HANDLERS ──
-function openAiDrilldown(type) {
+function openAiDrilldown(type, subcat) {
+  if (type !== 'micro' && type !== 'weekend') {
+    openSubcatDrilldown(type, subcat);
+    return;
+  }
   const m = curMo(), me = moEntries();
   const expEntries = me.filter(e => catById(e.cat).type === 'exp');
   let list = [];
@@ -5856,11 +5860,11 @@ function openAiDrilldown(type) {
       const d = parseYMD(e.date);
       const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
       return `
-        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;">
+        <div class="drilldown-tx-row" onclick="closeAiDrilldownModal(); openDetail('${esc(e.id)}');" style="display:flex;align-items:center;justify-content:space-between;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;cursor:pointer;">
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="font-size:18px;">${cat.icon}</div>
             <div>
-              <div style="font-size:12px;font-weight:600;color:var(--text-main);">${e.desc || cat.label}</div>
+              <div style="font-size:12px;font-weight:600;color:var(--text-main);">${esc(e.what || e.desc || cat.label)} ${e.subcat ? `<span class="badge-tag" style="font-size:9.5px;padding:1px 5px;background:var(--surface-high);">${esc(e.subcat)}</span>` : ''}</div>
               <div style="font-size:10px;color:var(--text-muted);">${dayName}, ${e.date} • ${cat.label}</div>
             </div>
           </div>
@@ -5868,6 +5872,15 @@ function openAiDrilldown(type) {
         </div>
       `;
     }).join('');
+  }
+
+  const footerEl = document.getElementById('ai-drilldown-footer');
+  if (footerEl) {
+    footerEl.innerHTML = `
+      <button style="width:100%;padding:12px;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-main);font-weight:600;font-size:13px;cursor:pointer" onclick="closeAiDrilldownModal()">
+        Done
+      </button>
+    `;
   }
 
   const modal = document.getElementById('ai-drilldown-modal');
@@ -8808,26 +8821,32 @@ function renderSubcategoryTreemap(me) {
       </div>
     `;
     if (badge) badge.textContent = '0 Subcategories';
+    window._treemapSubcats = [];
     return;
   }
 
   const subcatMap = {};
   expEntries.forEach(e => {
     const parentCat = catById(e.cat);
-    const key = e.subcat ? `${parentCat.label} › ${e.subcat}` : `${parentCat.label}`;
+    const rawSubcat = (e.subcat || '').trim();
+    const key = rawSubcat ? `${e.cat}::${rawSubcat}` : `${e.cat}::__general__`;
     if (!subcatMap[key]) {
       subcatMap[key] = {
-        name: e.subcat || parentCat.label,
+        name: rawSubcat || `${parentCat.label} (General)`,
+        subcat: rawSubcat,
         parent: parentCat.label,
         icon: parentCat.icon,
         catId: e.cat,
-        amt: 0
+        amt: 0,
+        txCount: 0
       };
     }
     subcatMap[key].amt += e.amt;
+    subcatMap[key].txCount += 1;
   });
 
   const sortedList = Object.values(subcatMap).sort((a, b) => b.amt - a.amt);
+  window._treemapSubcats = sortedList;
   if (badge) badge.textContent = `${sortedList.length} Subcategory Tranches`;
 
   const paletteMap = {
@@ -8844,13 +8863,13 @@ function renderSubcategoryTreemap(me) {
   };
 
   let tilesHtml = '';
-  sortedList.forEach(item => {
+  sortedList.forEach((item, idx) => {
     const pctShare = Math.round((item.amt / totalSpent) * 100);
     const flexWidth = Math.max(28, Math.min(100, Math.round(pctShare * 2.2)));
     const colors = paletteMap[item.catId] || ['#4f46e5', '#3730a3'];
     
     tilesHtml += `
-      <div class="treemap-tile" style="flex: 1 1 ${flexWidth}%; background: linear-gradient(135deg, ${colors[0]}, ${colors[1]}); cursor:pointer;" onclick="openAiDrilldown('${esc(item.catId)}')" title="${esc(item.parent)}: ${esc(item.name)} (${fmt(item.amt)} · ${pctShare}%)">
+      <div class="treemap-tile" style="flex: 1 1 ${flexWidth}%; background: linear-gradient(135deg, ${colors[0]}, ${colors[1]}); cursor:pointer;" onclick="openSubcatDrilldown(${idx})" title="${esc(item.parent)}: ${esc(item.name)} (${fmt(item.amt)} · ${pctShare}% · ${item.txCount} txns)">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;font-size:11px;font-weight:700;">
           <span class="txt-truncate" style="max-width:80%;">${item.icon} ${esc(item.name)}</span>
           <span style="font-size:10px;opacity:0.9;">${pctShare}%</span>
@@ -8863,6 +8882,138 @@ function renderSubcategoryTreemap(me) {
   });
 
   container.innerHTML = tilesHtml;
+}
+
+// ── SUBCATEGORY TREEMAP DRILLDOWN MODAL HANDLER ──
+function openSubcatDrilldown(target, explicitSubcat) {
+  const m = curMo(), me = moEntries();
+  const expEntries = me.filter(e => catById(e.cat).type === 'exp');
+  
+  let item = null;
+  let catId = '';
+  let subcat = '';
+
+  if (typeof target === 'number' && window._treemapSubcats && window._treemapSubcats[target]) {
+    item = window._treemapSubcats[target];
+    catId = item.catId;
+    subcat = item.subcat || '';
+  } else if (typeof target === 'string') {
+    catId = target;
+    subcat = explicitSubcat || '';
+    if (window._treemapSubcats) {
+      item = window._treemapSubcats.find(s => s.catId === catId && (subcat ? s.subcat.toLowerCase() === subcat.toLowerCase() : true)) || null;
+    }
+  }
+
+  const parentCat = catById(catId);
+  const catLabel = parentCat ? parentCat.label : (item ? item.parent : catId);
+  const catIcon = parentCat ? parentCat.icon : (item ? item.icon : '📌');
+  const subcatDisplayName = subcat ? subcat : (item ? item.name : `${catLabel} (General)`);
+
+  // Filter matching expenses
+  let list = [];
+  if (subcat) {
+    list = expEntries.filter(e => e.cat === catId && (e.subcat || '').trim().toLowerCase() === subcat.trim().toLowerCase());
+  } else {
+    list = expEntries.filter(e => e.cat === catId && (!e.subcat || e.subcat.trim() === '' || e.subcat.trim().toLowerCase() === catLabel.toLowerCase()));
+    if (list.length === 0) {
+      list = expEntries.filter(e => e.cat === catId);
+    }
+  }
+
+  const totalSpent = expEntries.reduce((s, e) => s + e.amt, 0);
+  const subcatTotal = list.reduce((s, e) => s + e.amt, 0);
+  const pctOfTotal = totalSpent > 0 ? Math.round((subcatTotal / totalSpent) * 100) : 0;
+  const avgTx = list.length > 0 ? Math.round(subcatTotal / list.length) : 0;
+
+  const fullTitle = subcat ? `${catIcon} ${catLabel} › ${subcat}` : `${catIcon} ${catLabel}`;
+  const titleEl = document.getElementById('ai-drilldown-title');
+  const badgeEl = document.getElementById('ai-drilldown-badge');
+  const subEl = document.getElementById('ai-drilldown-sub');
+  const listEl = document.getElementById('ai-drilldown-list');
+  const footerEl = document.getElementById('ai-drilldown-footer');
+
+  if (titleEl) titleEl.textContent = fullTitle;
+  if (badgeEl) badgeEl.textContent = `${fmt(subcatTotal)} (${pctOfTotal}%)`;
+  if (subEl) subEl.textContent = `${list.length} transaction${list.length === 1 ? '' : 's'} recorded • Avg ${fmt(avgTx)}/spend • Tap any row for full receipt & details`;
+
+  if (listEl) {
+    if (list.length === 0) {
+      listEl.innerHTML = `
+        <div style="text-align:center;color:var(--text-muted);font-size:12px;padding:24px;">
+          No individual transactions found for this subcategory.
+        </div>
+      `;
+    } else {
+      list.sort((a, b) => b.date.localeCompare(a.date));
+      listEl.innerHTML = list.map(e => {
+        const d = parseYMD(e.date);
+        const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+        const hd = gregToHijriDisplay(d);
+        const hijriStr = `${hd.d} ${HM_SHORT[hd.m - 1]}`;
+        const metaParts = [e.where, e.qty, e.notes].filter(Boolean);
+        const metaText = metaParts.length > 0 ? metaParts.join(' • ') : '';
+        const payCat = e.paymentCat ? catById(e.paymentCat) : null;
+        const payLabel = payCat ? `${payCat.icon} ${payCat.label}` : '';
+        const mainDesc = e.what || e.desc || subcatDisplayName;
+
+        return `
+          <div class="drilldown-tx-row" onclick="closeAiDrilldownModal(); openDetail('${esc(e.id)}');" style="display:flex;align-items:center;justify-content:space-between;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;cursor:pointer;transition:transform 0.12s ease,border-color 0.12s ease;">
+            <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+              <div style="font-size:18px;flex-shrink:0;">${catIcon}</div>
+              <div style="min-width:0;flex:1;">
+                <div style="font-size:12.5px;font-weight:600;color:var(--text-main);display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
+                  <span class="txt-truncate" style="max-width:180px;">${esc(mainDesc)}</span>
+                  ${e.subcat ? `<span class="badge-tag" style="font-size:9.5px;padding:1px 5px;background:var(--surface-high);">${esc(e.subcat)}</span>` : ''}
+                  ${e.photo ? '<span title="Receipt Attached" style="font-size:10px;">📷</span>' : ''}
+                </div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">
+                  ${dayName}, ${e.date} (${hijriStr})${metaText ? ' • ' + esc(metaText) : ''}
+                </div>
+              </div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;margin-left:8px;">
+              <div style="font-family:var(--font-mono);font-size:13.5px;font-weight:700;color:var(--rose);">${fmt(e.amt)}</div>
+              ${payLabel ? `<div style="font-size:9.5px;color:var(--text-dim);margin-top:1px;">${esc(payLabel)}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  if (footerEl) {
+    footerEl.innerHTML = `
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="quick-chip" style="flex:1;text-align:center;padding:10px;font-weight:700;font-size:12px;" onclick="closeAiDrilldownModal(); quickAddForSubcat('${esc(catId)}', '${esc(subcat)}');">
+          ➕ Log ${esc(subcat || catLabel)}
+        </button>
+        <button type="button" style="flex:1;padding:10px;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-main);font-weight:600;font-size:13px;cursor:pointer" onclick="closeAiDrilldownModal()">
+          Done
+        </button>
+      </div>
+    `;
+  }
+
+  const modal = document.getElementById('ai-drilldown-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function quickAddForSubcat(catId, subcat) {
+  showPage('add');
+  selCat = catId;
+  document.querySelectorAll('.form-cat-btn').forEach(b => {
+    b.classList.toggle('selected', b.getAttribute('onclick')?.includes(`'${catId}'`));
+  });
+  if (typeof renderSubcategoriesForCategory === 'function') {
+    renderSubcategoriesForCategory(catId);
+  }
+  if (subcat && typeof selectSubCategory === 'function') {
+    selectSubCategory(subcat);
+  }
+  updPreview();
+  const amtInput = document.getElementById('amt');
+  if (amtInput) amtInput.focus();
 }
 
 // ── STEP 4B: DAY-SCRUB CALENDAR FLOATING TOOLTIP ──
@@ -9559,9 +9710,11 @@ if (document.readyState === 'loading') {
     </div>
     <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:12px;" id="ai-drilldown-sub">Examining transactions flagged by Behavioral Intelligence.</div>
     <div id="ai-drilldown-list" style="max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;"></div>
-    <button style="width:100%;margin-top:16px;padding:12px;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-main);font-weight:600;font-size:13px;cursor:pointer" onclick="closeAiDrilldownModal()">
-      Done
-    </button>
+    <div id="ai-drilldown-footer" style="margin-top:16px;">
+      <button style="width:100%;padding:12px;background:var(--surface-low);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-main);font-weight:600;font-size:13px;cursor:pointer" onclick="closeAiDrilldownModal()">
+        Done
+      </button>
+    </div>
   </div>
 </div>
 
