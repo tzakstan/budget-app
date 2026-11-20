@@ -2486,45 +2486,6 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     Data migrated to version 3.0 successfully.
   </div>
   
-  <!-- 5-Headline Executive KPI Strip (@kpi-dashboard-design) -->
-  <div class="kpi-exec-grid" id="dash-exec-kpis">
-    <div class="kpi-exec-card">
-      <div class="kpi-exec-header">
-        <span class="kpi-exec-label">Spendable Capital</span>
-        <span style="font-size:13px;">💰</span>
-      </div>
-      <div class="kpi-exec-val font-tabular" id="kpi-spendable-capital">₹0</div>
-      <div class="kpi-exec-delta delta-emerald" id="kpi-projected-surplus-badge">On Track</div>
-    </div>
-    
-    <div class="kpi-exec-card">
-      <div class="kpi-exec-header">
-        <span class="kpi-exec-label">Daily Runway</span>
-        <span style="font-size:13px;">🛡️</span>
-      </div>
-      <div class="kpi-exec-val font-tabular" id="kpi-daily-runway">₹0/d</div>
-      <div class="kpi-exec-delta delta-indigo" id="kpi-runway-days-badge">0d Left</div>
-    </div>
-    
-    <div class="kpi-exec-card">
-      <div class="kpi-exec-header">
-        <span class="kpi-exec-label">Bohra Pacing Drift</span>
-        <span style="font-size:13px;">⚖️</span>
-      </div>
-      <div class="kpi-exec-val font-tabular" id="kpi-pacing-drift-val">0%</div>
-      <div class="kpi-exec-delta delta-emerald" id="kpi-pacing-status-badge">Aligned</div>
-    </div>
-
-    <div class="kpi-exec-card">
-      <div class="kpi-exec-header">
-        <span class="kpi-exec-label">Discretionary Leak</span>
-        <span style="font-size:13px;">☕</span>
-      </div>
-      <div class="kpi-exec-val font-tabular" id="kpi-leakage-val">₹0</div>
-      <div class="kpi-exec-delta delta-amber" id="kpi-leakage-pct-badge">0% of Burn</div>
-    </div>
-  </div>
-
   <!-- Bohra Month First-Use Banner (@ui-states) -->
   <div id="dash-first-use-banner" class="ui-first-use-card" style="display:none;">
     <div style="font-weight:800;font-size:13px;color:var(--indigo);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
@@ -2646,20 +2607,6 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       <span class="badge-tag tag-indigo">4 Cycles</span>
     </div>
     <div id="dashboard-weekly-rows"></div>
-  </div>
-
-  <!-- Category Depletion Risk Snapshot -->
-  <div class="metric-card">
-    <div class="card-header-flex">
-      <div class="card-heading">Category Snapshot</div>
-      <span class="badge-tag tag-amber" id="category-risk-pill">At Risk First</span>
-    </div>
-    <div id="dashboard-category-rows"></div>
-    <div style="text-align:center;margin-top:8px">
-      <button style="background:none;border:none;font-size:11px;font-weight:600;color:var(--indigo);cursor:pointer" onclick="toggleAllCategories(this)">
-        View all categories ▾
-      </button>
-    </div>
   </div>
 
   <!-- Payment Methods & Credit Cards (Isolated from cash burn) -->
@@ -4361,14 +4308,16 @@ function renderDash() {
     `;
   }).join('');
 
-  // Category Snapshot (Progressive Disclosure)
-  renderCategorySnapshot(me);
+  // Category Snapshot (Progressive Disclosure - only if container exists)
+  if (document.getElementById('dashboard-category-rows')) renderCategorySnapshot(me);
 
   // Payment Cards
   renderPaymentCards(me);
 }
 
 function renderCategorySnapshot(me) {
+  const container = document.getElementById('dashboard-category-rows');
+  if (!container) return;
   const catList = categories.filter(c => c.type === 'exp');
   const catStats = catList.map(cat => {
     const s = me.filter(e => e.cat === cat.id).reduce((a, e) => a + e.amt, 0);
@@ -4380,7 +4329,6 @@ function renderCategorySnapshot(me) {
   catStats.sort((a, b) => b.ratio - a.ratio);
 
   const displayed = showAllCategoriesOnDash ? catStats : catStats.slice(0, 3);
-  const container = document.getElementById('dashboard-category-rows');
   container.innerHTML = displayed.map(item => {
     const isOver = item.spent > item.budget;
     const isWarn = item.ratio >= 0.85 && !isOver;
