@@ -2386,6 +2386,56 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   line-height: 1;
 }
 
+
+/* ── STRICT COLUMN FLOW & RESPONSIVE CONSTRAINTS FOR ANALYTICS ── */
+#page-analytics {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+.analytics-cards-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+.analytics-sortable-card {
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 16px 12px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+.analytics-sortable-card .card-header-flex {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-bottom: 8px;
+}
+.analytics-sortable-card.is-minimized .card-header-flex {
+  margin-bottom: 0 !important;
+}
+.analytics-card-body {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: block;
+}
+.analytics-sortable-card.is-minimized .analytics-card-body {
+  display: none !important;
+}
+.card-header-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+}
+
 </style>
 </head>
 <body>
@@ -2581,6 +2631,18 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 
 
 
+    <div class="form-section-title">Date & Calendar Sync</div>
+  <div class="input-card-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:11px;text-transform:uppercase;font-weight:700;color:var(--text-muted)">Gregorian Date</span>
+      <span class="badge-tag tag-amber">Dawoodi Bohra Hijri</span>
+    </div>
+    <input type="date" id="entry-date" class="styled-field" oninput="updPreview()"/>
+    <div style="font-size:11px;font-family:var(--font-mono);color:var(--text-muted);margin-top:6px;text-align:center;padding:5px;background:var(--surface-low);border-radius:6px" id="form-date-preview">
+      —
+    </div>
+  </div>
+
   <div class="form-section-title">Amount (₹)</div>
   <div class="input-card-box">
     <div class="currency-input-wrap">
@@ -2722,22 +2784,22 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- ========================================== -->
 <div class="view-page" id="page-analytics">
   <!-- Customizable Analytics Toolbar -->
-  <div class="analytics-toolbar" style="margin-bottom:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+  <div class="analytics-toolbar" style="margin-bottom:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04);flex-wrap:wrap;">
     <div style="display:flex;align-items:center;gap:8px;">
       <span style="font-size:16px;">📊</span>
       <div>
         <div style="font-size:12px;font-weight:800;color:var(--text-main);line-height:1.2;">Analytics Reports</div>
-        <div style="font-size:10.5px;color:var(--text-muted);line-height:1.2;">Long-press &amp; drag or use ▲/▼ to arrange</div>
+        <div style="font-size:10.5px;color:var(--text-muted);line-height:1.2;">Drag ⠿ or tap − to minimize reports</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;">
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
       <button type="button" class="quick-chip" id="btn-toggle-all-analytics" onclick="toggleAllAnalyticsCards()" style="font-size:11px;padding:5px 9px;font-weight:700;display:flex;align-items:center;gap:4px;" title="Minimize or expand all reports">
         <span id="toggle-all-analytics-icon">⊟</span> <span id="toggle-all-analytics-label">Collapse All</span>
       </button>
-      <button type="button" class="quick-chip" id="btn-reorder-analytics"  onclick="toggleAnalyticsReorderMode()" style="font-size:11px;padding:5px 10px;font-weight:700;display:flex;align-items:center;gap:4px;">
+      <button type="button" class="quick-chip" id="btn-reorder-analytics" onclick="toggleAnalyticsReorderMode()" style="font-size:11px;padding:5px 9px;font-weight:700;display:flex;align-items:center;gap:4px;">
         <span>↕️</span> <span id="reorder-analytics-label">Reorder</span>
       </button>
-      <button type="button" class="quick-chip" id="btn-reset-analytics-order" onclick="resetAnalyticsCardOrder()" style="display:none;font-size:11px;padding:5px 9px;color:var(--rose);border-color:var(--rose-border);" title="Reset to default order">
+      <button type="button" class="quick-chip" id="btn-reset-analytics-order" onclick="resetAnalyticsCardOrder()" style="display:none;font-size:11px;padding:5px 8px;color:var(--rose);border-color:var(--rose-border);" title="Reset to default order">
         ↺ Reset
       </button>
     </div>
@@ -2749,20 +2811,21 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   </div>
 
   <div id="analytics-cards-container" class="analytics-cards-container">
-<div class="metric-card analytics-sortable-card" id="analytics-card-runway" data-card-id="runway">
+  <div class="metric-card analytics-sortable-card" id="analytics-card-runway" data-card-id="runway">
     <div class="card-header-flex">
       <div class="card-heading" onclick="toggleAnalyticsCardCollapse('runway')" style="cursor:pointer;" title="Click to minimize or expand">🛫 Runway Forecast</div>
-      <div class="card-header-right"><span class="badge-tag tag-emerald" id="runway-status-badge">On Track</span>
-        <div class="card-reorder-ctrls" title="Reorder report">
+      <div class="card-header-right">
+        <span class="badge-tag tag-emerald" id="runway-status-badge">On Track</span>
+        <div class="card-reorder-ctrls" title="Reorder or minimize report">
           <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('runway', -1)" title="Move up" aria-label="Move card up">▲</button>
           <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('runway', 1)" title="Move down" aria-label="Move card down">▼</button>
           <button type="button" class="card-nudge-btn card-minimize-btn" onclick="toggleAnalyticsCardCollapse('runway')" title="Minimize / Expand report" aria-label="Minimize or Expand"><span id="card-collapse-icon-runway">−</span></button>
           <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
         </div>
       </div>
-    <div class="analytics-card-body" id="analytics-card-body-runway">
     </div>
-    <div style="padding:10px 0;text-align:center;">
+    <div class="analytics-card-body" id="analytics-card-body-runway">
+      <div style="padding:10px 0;text-align:center;">
       <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Projected Depletion</div>
       <div style="font-family:var(--font-serif);font-size:28px;font-weight:600;color:var(--text-main);" id="runway-days-left">0 Days</div>
       <div style="font-size:11px;font-family:var(--font-mono);margin-top:4px;color:var(--text-muted)" id="runway-projection-text">Based on ₹0/d burn rate</div>
@@ -2770,25 +2833,23 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     <div class="progress-rail" style="height:4px;margin-top:12px;background:var(--surface-low)">
       <div class="progress-fill" id="runway-progress-bar" style="width:0%"></div>
     </div>
-      </div>
-</div>
-
-  <!-- 2. Expense Share Donut Chart Card -->
-  
-<div class="metric-card analytics-sortable-card" id="analytics-card-donut" data-card-id="donut">
+    </div>
+  </div>
+  <div class="metric-card analytics-sortable-card" id="analytics-card-donut" data-card-id="donut">
     <div class="card-header-flex">
       <div class="card-heading" onclick="toggleAnalyticsCardCollapse('donut')" style="cursor:pointer;" title="Click to minimize or expand">🍩 Expense Share Breakdown</div>
-      <div class="card-header-right"><span class="badge-tag tag-indigo" id="donut-top-badge">Budget Share</span>
-        <div class="card-reorder-ctrls" title="Reorder report">
+      <div class="card-header-right">
+        <span class="badge-tag tag-indigo" id="donut-top-badge">Budget Share</span>
+        <div class="card-reorder-ctrls" title="Reorder or minimize report">
           <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('donut', -1)" title="Move up" aria-label="Move card up">▲</button>
           <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('donut', 1)" title="Move down" aria-label="Move card down">▼</button>
           <button type="button" class="card-nudge-btn card-minimize-btn" onclick="toggleAnalyticsCardCollapse('donut')" title="Minimize / Expand report" aria-label="Minimize or Expand"><span id="card-collapse-icon-donut">−</span></button>
           <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
         </div>
       </div>
-    <div class="analytics-card-body" id="analytics-card-body-donut">
     </div>
-    <div id="donut-top-hog-banner" style="margin-top:8px;margin-bottom:6px;"></div>
+    <div class="analytics-card-body" id="analytics-card-body-donut">
+      <div id="donut-top-hog-banner" style="margin-top:8px;margin-bottom:6px;"></div>
     <div class="donut-wrap" id="analytics-donut-wrap">
       <div class="donut-svg-box">
         <svg id="analytics-donut-svg" viewBox="0 0 220 220" width="210" height="210"></svg>
@@ -2798,25 +2859,23 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     <div id="analytics-donut-legend" style="margin-top:6px;"></div>
     <!-- Interactive Category Drill-Down Box -->
     <div id="analytics-donut-drilldown" class="donut-drilldown-card" style="display:none;"></div>
-      </div>
-</div>
-
-  <!-- Multi-Cycle Bohra Trend & Pacing Card (claude-d3js-skill) -->
-  
-<div class="metric-card analytics-sortable-card" id="analytics-card-trend" data-card-id="trend">
+    </div>
+  </div>
+  <div class="metric-card analytics-sortable-card" id="analytics-card-trend" data-card-id="trend">
     <div class="card-header-flex">
       <div class="card-heading" onclick="toggleAnalyticsCardCollapse('trend')" style="cursor:pointer;" title="Click to minimize or expand">📊 Fatimid Cycle Pacing Trend</div>
-      <div class="card-header-right"><span class="badge-tag tag-indigo" id="trend-cycle-badge">Bohra Cycles</span>
-        <div class="card-reorder-ctrls" title="Reorder report">
+      <div class="card-header-right">
+        <span class="badge-tag tag-indigo" id="trend-cycle-badge">Bohra Cycles</span>
+        <div class="card-reorder-ctrls" title="Reorder or minimize report">
           <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('trend', -1)" title="Move up" aria-label="Move card up">▲</button>
           <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('trend', 1)" title="Move down" aria-label="Move card down">▼</button>
           <button type="button" class="card-nudge-btn card-minimize-btn" onclick="toggleAnalyticsCardCollapse('trend')" title="Minimize / Expand report" aria-label="Minimize or Expand"><span id="card-collapse-icon-trend">−</span></button>
           <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
         </div>
       </div>
-    <div class="analytics-card-body" id="analytics-card-body-trend">
     </div>
-    <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:10px;" id="trend-summary-text">
+    <div class="analytics-card-body" id="analytics-card-body-trend">
+      <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:10px;" id="trend-summary-text">
       Weekly burn curve across the 4 Bohra cycles of this month.
     </div>
     <div class="trend-svg-container">
@@ -2824,69 +2883,63 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     </div>
     <div id="analytics-trend-legend" style="display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:10.5px;font-weight:700;"></div>
     <div id="analytics-trend-cycle-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;"></div>
-      </div>
-</div>
-
-  <!-- Income vs Expense Waterfall & Asset Trajectory (Sequence 3) -->
-  
-<div class="metric-card analytics-sortable-card" id="analytics-card-predictive" data-card-id="predictive">
+    </div>
+  </div>
+  <div class="metric-card analytics-sortable-card" id="analytics-card-predictive" data-card-id="predictive">
     <div class="card-header-flex">
       <div class="card-heading" onclick="toggleAnalyticsCardCollapse('predictive')" style="cursor:pointer;" title="Click to minimize or expand">⚠️ Predictive Breach & Inflation Early Warning</div>
-      <div class="card-header-right"><span class="badge-tag tag-amber" id="predictive-breach-badge">Pacing Alert</span>
-        <div class="card-reorder-ctrls" title="Reorder report">
+      <div class="card-header-right">
+        <span class="badge-tag tag-amber" id="predictive-breach-badge">Pacing Alert</span>
+        <div class="card-reorder-ctrls" title="Reorder or minimize report">
           <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('predictive', -1)" title="Move up" aria-label="Move card up">▲</button>
           <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('predictive', 1)" title="Move down" aria-label="Move card down">▼</button>
           <button type="button" class="card-nudge-btn card-minimize-btn" onclick="toggleAnalyticsCardCollapse('predictive')" title="Minimize / Expand report" aria-label="Minimize or Expand"><span id="card-collapse-icon-predictive">−</span></button>
           <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
         </div>
       </div>
-    <div class="analytics-card-body" id="analytics-card-body-predictive">
     </div>
-    <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
+    <div class="analytics-card-body" id="analytics-card-body-predictive">
+      <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
       Forward-looking mathematical projections based on your active elapsed days.
     </div>
     <div id="analytics-predictive-alerts-container"></div>
-      </div>
-</div>
-
-  <!-- Hierarchical Subcategory Spending Treemap (Step 4: UI/UX Pro Max) -->
-  
-<div class="metric-card analytics-sortable-card" id="analytics-card-treemap" data-card-id="treemap">
+    </div>
+  </div>
+  <div class="metric-card analytics-sortable-card" id="analytics-card-treemap" data-card-id="treemap">
     <div class="card-header-flex">
       <div class="card-heading" onclick="toggleAnalyticsCardCollapse('treemap')" style="cursor:pointer;" title="Click to minimize or expand">🗺️ Subcategory Spending Treemap</div>
-      <div class="card-header-right"><span class="badge-tag tag-indigo" id="treemap-subcat-badge">2-Tier Breakdown</span>
-        <div class="card-reorder-ctrls" title="Reorder report">
+      <div class="card-header-right">
+        <span class="badge-tag tag-indigo" id="treemap-subcat-badge">2-Tier Breakdown</span>
+        <div class="card-reorder-ctrls" title="Reorder or minimize report">
           <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('treemap', -1)" title="Move up" aria-label="Move card up">▲</button>
           <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('treemap', 1)" title="Move down" aria-label="Move card down">▼</button>
           <button type="button" class="card-nudge-btn card-minimize-btn" onclick="toggleAnalyticsCardCollapse('treemap')" title="Minimize / Expand report" aria-label="Minimize or Expand"><span id="card-collapse-icon-treemap">−</span></button>
           <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
         </div>
       </div>
-    <div class="analytics-card-body" id="analytics-card-body-treemap">
     </div>
-    <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
+    <div class="analytics-card-body" id="analytics-card-body-treemap">
+      <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
       Proportional visual distribution of expense capital across hierarchical subcategories.
     </div>
     <div id="analytics-treemap-container" class="treemap-grid"></div>
-      </div>
-</div>
-
-  <!-- 3. AI Behavioral Engine & Cross-Month Intelligence Card -->
-  
-<div class="metric-card analytics-sortable-card" id="analytics-card-ai" data-card-id="ai">
+    </div>
+  </div>
+  <div class="metric-card analytics-sortable-card" id="analytics-card-ai" data-card-id="ai">
     <div class="card-header-flex">
       <div class="card-heading" onclick="toggleAnalyticsCardCollapse('ai')" style="cursor:pointer;" title="Click to minimize or expand">🧠 AI Behavioral & Cross-Month Intelligence</div>
-      <div class="card-header-right"><span class="badge-tag tag-indigo" id="ai-engine-status-badge">Deterministic AI</span>
-        <div class="card-reorder-ctrls" title="Reorder report">
+      <div class="card-header-right">
+        <span class="badge-tag tag-indigo" id="ai-engine-status-badge">Deterministic AI</span>
+        <div class="card-reorder-ctrls" title="Reorder or minimize report">
           <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('ai', -1)" title="Move up" aria-label="Move card up">▲</button>
           <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('ai', 1)" title="Move down" aria-label="Move card down">▼</button>
           <button type="button" class="card-nudge-btn card-minimize-btn" onclick="toggleAnalyticsCardCollapse('ai')" title="Minimize / Expand report" aria-label="Minimize or Expand"><span id="card-collapse-icon-ai">−</span></button>
           <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
         </div>
       </div>
-    <div class="analytics-card-body" id="analytics-card-body-ai">
     </div>
-    <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:6px;">
+    <div class="analytics-card-body" id="analytics-card-body-ai">
+      <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:6px;">
       Spending psychology diagnostics, pacing cadence & longitudinal trajectory.
     </div>
 
@@ -2921,26 +2974,23 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     <div id="analytics-insights-container" style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
       <!-- Insights injected here -->
     </div>
-      </div>
-</div>
-
-  
-  <!-- 💬 Ask Your Budget (Natural Language Query & Coach) -->
-  
-<div class="metric-card analytics-sortable-card" id="analytics-card-ask" data-card-id="ask">
+    </div>
+  </div>
+  <div class="metric-card analytics-sortable-card" id="analytics-card-ask" data-card-id="ask">
     <div class="card-header-flex">
       <div class="card-heading" onclick="toggleAnalyticsCardCollapse('ask')" style="cursor:pointer;" title="Click to minimize or expand">💬 Ask Your Budget</div>
-      <div class="card-header-right"><span class="badge-tag tag-indigo" id="ask-budget-badge">Natural Language</span>
-        <div class="card-reorder-ctrls" title="Reorder report">
+      <div class="card-header-right">
+        <span class="badge-tag tag-indigo" id="ask-budget-badge">Natural Language</span>
+        <div class="card-reorder-ctrls" title="Reorder or minimize report">
           <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('ask', -1)" title="Move up" aria-label="Move card up">▲</button>
           <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('ask', 1)" title="Move down" aria-label="Move card down">▼</button>
           <button type="button" class="card-nudge-btn card-minimize-btn" onclick="toggleAnalyticsCardCollapse('ask')" title="Minimize / Expand report" aria-label="Minimize or Expand"><span id="card-collapse-icon-ask">−</span></button>
           <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
         </div>
       </div>
-    <div class="analytics-card-body" id="analytics-card-body-ask">
     </div>
-    <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:10px;">
+    <div class="analytics-card-body" id="analytics-card-body-ask">
+      <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:10px;">
       Ask any question in plain words about your expenses, categories, or trends.
     </div>
 
@@ -2976,25 +3026,23 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 
     <!-- Results Container -->
     <div id="ask-budget-results" style="display:none;margin-top:14px;border-top:1px dashed var(--border);padding-top:12px;"></div>
-      </div>
-</div>
-
-
-<div class="metric-card analytics-sortable-card" id="analytics-card-velocity" data-card-id="velocity">
+    </div>
+  </div>
+  <div class="metric-card analytics-sortable-card" id="analytics-card-velocity" data-card-id="velocity">
     <div class="card-header-flex">
       <div class="card-heading" onclick="toggleAnalyticsCardCollapse('velocity')" style="cursor:pointer;" title="Click to minimize or expand">Capital Velocity Breakdown</div>
-      <div class="card-header-right"><span class="badge-tag tag-indigo">Current Cycle</span>
-        <div class="card-reorder-ctrls" title="Reorder report">
+      <div class="card-header-right">
+        <span class="badge-tag tag-indigo">Current Cycle</span>
+        <div class="card-reorder-ctrls" title="Reorder or minimize report">
           <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('velocity', -1)" title="Move up" aria-label="Move card up">▲</button>
           <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('velocity', 1)" title="Move down" aria-label="Move card down">▼</button>
           <button type="button" class="card-nudge-btn card-minimize-btn" onclick="toggleAnalyticsCardCollapse('velocity')" title="Minimize / Expand report" aria-label="Minimize or Expand"><span id="card-collapse-icon-velocity">−</span></button>
           <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
         </div>
       </div>
-    <div class="analytics-card-body" id="analytics-card-body-velocity">
     </div>
-    
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center;margin-bottom:14px;">
+    <div class="analytics-card-body" id="analytics-card-body-velocity">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center;margin-bottom:14px;">
        <div style="background:var(--emerald-bg);padding:10px;border-radius:var(--radius-sm);color:var(--emerald);border:1px solid var(--emerald-border)">
          <div style="font-size:10px;text-transform:uppercase;font-weight:700">Total Income</div>
          <div style="font-size:18px;font-weight:700;font-family:var(--font-mono);margin-top:4px" id="analytics-total-inc">₹0</div>
@@ -3015,9 +3063,8 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:8px">SPENDING BY CATEGORY</div>
       <div id="analytics-category-progress"></div>
     </div>
-      </div>
-</div>
-
+    </div>
+  </div>
   </div>
 </div>
 
@@ -3707,7 +3754,16 @@ let savingsLog = ls('bt3_savingsLog', [
   { date: '2026-04-05', dateLabel: '05 Apr 2026', avoidable: 600, daily: 500, total: 1100 }
 ]);
 let dayNotes = ls('bt3_dayNotes', {});
-let curMoIdx = 0;
+function getInitialActiveMonthIndex() {
+  try {
+    const todayStr = ymd(new Date());
+    const idx = months.findIndex(m => todayStr >= m.gregStart && todayStr <= m.gregEnd);
+    return idx !== -1 ? idx : Math.max(0, months.length - 1);
+  } catch(e) {
+    return 0;
+  }
+}
+let curMoIdx = getInitialActiveMonthIndex();
 let showAllCategoriesOnDash = false;
 
 // Auto Migration logic
@@ -4136,6 +4192,30 @@ function updateHeaderDates() {
 }
 
 // ── DASHBOARD RENDER ──
+
+// ── INSTANT DASHBOARD INITIALIZATION (Fix initial ₹0 balance) ──
+function initDashboardVitals() {
+  try {
+    const todayStr = ymd(new Date());
+    const activeIdx = months.findIndex(m => todayStr >= m.gregStart && todayStr <= m.gregEnd);
+    if (activeIdx !== -1) curMoIdx = activeIdx;
+    else curMoIdx = Math.max(0, months.length - 1);
+  } catch(e) {}
+
+  try { if (typeof accrueDaily === 'function') accrueDaily(); } catch(e) {}
+  try { if (typeof updateHeaderDates === 'function') updateHeaderDates(); } catch(e) {}
+  try { if (typeof renderDash === 'function') renderDash(); } catch(e) {}
+  try { if (typeof syncPicker === 'function') syncPicker(); } catch(e) {}
+}
+
+// Trigger immediately upon script evaluation
+initDashboardVitals();
+
+// Also trigger on DOMContentLoaded if not yet ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDashboardVitals);
+}
+
 function renderDash() {
   updateHeaderDates();
   const m = curMo(), me = moEntries();
@@ -4421,21 +4501,25 @@ function populatePaymentMethods() {
 
 function syncPicker() {
   const el = document.getElementById('entry-date');
+  if (!el) return;
   if (!el.value) el.value = ymd(new Date());
   updPreview();
 }
 
 function updPreview() {
-  const val = document.getElementById('entry-date').value;
-  if (!val) { document.getElementById('form-date-preview').textContent = '—'; return; }
+  const el = document.getElementById('entry-date');
+  const preview = document.getElementById('form-date-preview');
+  if (!el || !preview) return;
+  const val = el.value;
+  if (!val) { preview.textContent = '—'; return; }
   try {
     const g = parseYMD(val);
     const h = gregToHijriDisplay(g);
     const gregStr = g.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
     const hijriStr = h.d + ' ' + HM[h.m - 1] + ' ' + h.y + ' AH';
-    document.getElementById('form-date-preview').textContent = `${gregStr}  •  🌙 ${hijriStr}`;
+    preview.textContent = `${gregStr}  •  🌙 ${hijriStr}`;
   } catch {
-    document.getElementById('form-date-preview').textContent = 'Invalid date';
+    preview.textContent = 'Invalid date';
   }
 }
 
