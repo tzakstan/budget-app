@@ -2273,6 +2273,99 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 26px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
 }
 
+
+/* ── 9. CUSTOMIZABLE ANALYTICS CARDS REORDERING ── */
+.analytics-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+.analytics-sortable-card {
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.22s ease, opacity 0.22s ease;
+  touch-action: pan-y;
+  position: relative;
+}
+.analytics-sortable-card.is-dragging {
+  opacity: 0.92;
+  transform: scale(1.02);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22), 0 0 0 2px var(--indigo);
+  z-index: 999;
+}
+.analytics-drop-placeholder {
+  border: 2px dashed var(--indigo);
+  background: var(--indigo-light);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  opacity: 0.6;
+  pointer-events: none;
+  transition: height 0.15s ease;
+}
+.card-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-reorder-ctrls {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+.card-reorder-ctrls:hover, .analytics-reorder-active .card-reorder-ctrls {
+  opacity: 1;
+}
+.card-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: grab;
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transition: all 0.15s ease;
+}
+.card-drag-handle:active {
+  cursor: grabbing;
+  background: var(--indigo);
+  color: white;
+}
+.card-nudge-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 9px;
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+.card-nudge-btn:hover {
+  background: var(--indigo);
+  color: #fff;
+  border-color: var(--indigo);
+}
+.card-nudge-btn:active {
+  transform: scale(0.9);
+}
+.analytics-reorder-active .analytics-sortable-card {
+  border: 1px solid var(--indigo-border);
+}
+
 </style>
 </head>
 <body>
@@ -2608,11 +2701,41 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <!-- 4. ANALYTICS PAGE                          -->
 <!-- ========================================== -->
 <div class="view-page" id="page-analytics">
-  <!-- 1. Runway Forecasting Card -->
-  <div class="metric-card">
+  <!-- Customizable Analytics Toolbar -->
+  <div class="analytics-toolbar" style="margin-bottom:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:16px;">📊</span>
+      <div>
+        <div style="font-size:12px;font-weight:800;color:var(--text-main);line-height:1.2;">Analytics Reports</div>
+        <div style="font-size:10.5px;color:var(--text-muted);line-height:1.2;">Long-press &amp; drag or use ▲/▼ to arrange</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button type="button" class="quick-chip" id="btn-reorder-analytics" onclick="toggleAnalyticsReorderMode()" style="font-size:11px;padding:5px 10px;font-weight:700;display:flex;align-items:center;gap:4px;">
+        <span>↕️</span> <span id="reorder-analytics-label">Reorder</span>
+      </button>
+      <button type="button" class="quick-chip" id="btn-reset-analytics-order" onclick="resetAnalyticsCardOrder()" style="display:none;font-size:11px;padding:5px 9px;color:var(--rose);border-color:var(--rose-border);" title="Reset to default order">
+        ↺ Reset
+      </button>
+    </div>
+  </div>
+
+  <div id="analytics-reorder-hint" style="display:none;margin-bottom:10px;padding:8px 12px;background:var(--indigo-light);border:1px dashed var(--indigo-border);border-radius:var(--radius-sm);font-size:11px;color:var(--indigo);font-weight:600;display:flex;justify-content:space-between;align-items:center;">
+    <span>⠿ <b>Reorder Mode</b>: Drag card by handle ⠿ or tap ▲/▼ arrows to reposition.</span>
+    <button type="button" class="quick-chip" style="font-size:10.5px;padding:2px 8px;background:var(--indigo);color:white;border:none;" onclick="toggleAnalyticsReorderMode()">✓ Done</button>
+  </div>
+
+  <div id="analytics-cards-container" class="analytics-cards-container">
+<div class="metric-card analytics-sortable-card" id="analytics-card-runway" data-card-id="runway">
     <div class="card-header-flex">
       <div class="card-heading">🛫 Runway Forecast</div>
-      <span class="badge-tag tag-emerald" id="runway-status-badge">On Track</span>
+      <div class="card-header-right"><span class="badge-tag tag-emerald" id="runway-status-badge">On Track</span>
+        <div class="card-reorder-ctrls" title="Reorder report">
+          <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('runway', -1)" title="Move up" aria-label="Move card up">▲</button>
+          <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('runway', 1)" title="Move down" aria-label="Move card down">▼</button>
+          <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
+        </div>
+      </div>
     </div>
     <div style="padding:10px 0;text-align:center;">
       <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Projected Depletion</div>
@@ -2625,10 +2748,17 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   </div>
 
   <!-- 2. Expense Share Donut Chart Card -->
-  <div class="metric-card">
+  
+<div class="metric-card analytics-sortable-card" id="analytics-card-donut" data-card-id="donut">
     <div class="card-header-flex">
       <div class="card-heading">🍩 Expense Share Breakdown</div>
-      <span class="badge-tag tag-indigo" id="donut-top-badge">Budget Share</span>
+      <div class="card-header-right"><span class="badge-tag tag-indigo" id="donut-top-badge">Budget Share</span>
+        <div class="card-reorder-ctrls" title="Reorder report">
+          <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('donut', -1)" title="Move up" aria-label="Move card up">▲</button>
+          <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('donut', 1)" title="Move down" aria-label="Move card down">▼</button>
+          <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
+        </div>
+      </div>
     </div>
     <div id="donut-top-hog-banner" style="margin-top:8px;margin-bottom:6px;"></div>
     <div class="donut-wrap" id="analytics-donut-wrap">
@@ -2643,10 +2773,17 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   </div>
 
   <!-- Multi-Cycle Bohra Trend & Pacing Card (claude-d3js-skill) -->
-  <div class="metric-card" id="analytics-trend-card">
+  
+<div class="metric-card analytics-sortable-card" id="analytics-card-trend" data-card-id="trend">
     <div class="card-header-flex">
       <div class="card-heading">📊 Fatimid Cycle Pacing Trend</div>
-      <span class="badge-tag tag-indigo" id="trend-cycle-badge">Bohra Cycles</span>
+      <div class="card-header-right"><span class="badge-tag tag-indigo" id="trend-cycle-badge">Bohra Cycles</span>
+        <div class="card-reorder-ctrls" title="Reorder report">
+          <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('trend', -1)" title="Move up" aria-label="Move card up">▲</button>
+          <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('trend', 1)" title="Move down" aria-label="Move card down">▼</button>
+          <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
+        </div>
+      </div>
     </div>
     <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:10px;" id="trend-summary-text">
       Weekly burn curve across the 4 Bohra cycles of this month.
@@ -2659,22 +2796,17 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   </div>
 
   <!-- Income vs Expense Waterfall & Asset Trajectory (Sequence 3) -->
-  <div class="metric-card" id="analytics-waterfall-card">
-    <div class="card-header-flex">
-      <div class="card-heading">🌊 Income & Expense Waterfall</div>
-      <span class="badge-tag tag-emerald" id="waterfall-surplus-badge">+₹0 Net Surplus</span>
-    </div>
-    <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
-      Step-by-step capital cascade from effective income down to final month-end surplus.
-    </div>
-    <div id="analytics-waterfall-container"></div>
-  </div>
-
-  <!-- Predictive Budget Breach Warning by Day X (Sequence 4) -->
-  <div class="metric-card" id="analytics-predictive-breach-card">
+  
+<div class="metric-card analytics-sortable-card" id="analytics-card-predictive" data-card-id="predictive">
     <div class="card-header-flex">
       <div class="card-heading">⚠️ Predictive Breach & Inflation Early Warning</div>
-      <span class="badge-tag tag-amber" id="predictive-breach-badge">Pacing Alert</span>
+      <div class="card-header-right"><span class="badge-tag tag-amber" id="predictive-breach-badge">Pacing Alert</span>
+        <div class="card-reorder-ctrls" title="Reorder report">
+          <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('predictive', -1)" title="Move up" aria-label="Move card up">▲</button>
+          <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('predictive', 1)" title="Move down" aria-label="Move card down">▼</button>
+          <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
+        </div>
+      </div>
     </div>
     <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
       Forward-looking mathematical projections based on your active elapsed days.
@@ -2683,10 +2815,17 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   </div>
 
   <!-- Hierarchical Subcategory Spending Treemap (Step 4: UI/UX Pro Max) -->
-  <div class="metric-card" id="analytics-treemap-card">
+  
+<div class="metric-card analytics-sortable-card" id="analytics-card-treemap" data-card-id="treemap">
     <div class="card-header-flex">
       <div class="card-heading">🗺️ Subcategory Spending Treemap</div>
-      <span class="badge-tag tag-indigo" id="treemap-subcat-badge">2-Tier Breakdown</span>
+      <div class="card-header-right"><span class="badge-tag tag-indigo" id="treemap-subcat-badge">2-Tier Breakdown</span>
+        <div class="card-reorder-ctrls" title="Reorder report">
+          <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('treemap', -1)" title="Move up" aria-label="Move card up">▲</button>
+          <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('treemap', 1)" title="Move down" aria-label="Move card down">▼</button>
+          <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
+        </div>
+      </div>
     </div>
     <div style="font-size:11.5px;color:var(--text-muted);margin:4px 0 10px;">
       Proportional visual distribution of expense capital across hierarchical subcategories.
@@ -2695,10 +2834,17 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
   </div>
 
   <!-- 3. AI Behavioral Engine & Cross-Month Intelligence Card -->
-  <div class="metric-card" id="analytics-ai-engine-card">
+  
+<div class="metric-card analytics-sortable-card" id="analytics-card-ai" data-card-id="ai">
     <div class="card-header-flex">
       <div class="card-heading">🧠 AI Behavioral & Cross-Month Intelligence</div>
-      <span class="badge-tag tag-indigo" id="ai-engine-status-badge">Deterministic AI</span>
+      <div class="card-header-right"><span class="badge-tag tag-indigo" id="ai-engine-status-badge">Deterministic AI</span>
+        <div class="card-reorder-ctrls" title="Reorder report">
+          <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('ai', -1)" title="Move up" aria-label="Move card up">▲</button>
+          <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('ai', 1)" title="Move down" aria-label="Move card down">▼</button>
+          <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
+        </div>
+      </div>
     </div>
     <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:6px;">
       Spending psychology diagnostics, pacing cadence & longitudinal trajectory.
@@ -2739,10 +2885,17 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 
   
   <!-- 💬 Ask Your Budget (Natural Language Query & Coach) -->
-  <div class="metric-card" id="analytics-ask-budget-card">
+  
+<div class="metric-card analytics-sortable-card" id="analytics-card-ask" data-card-id="ask">
     <div class="card-header-flex">
       <div class="card-heading">💬 Ask Your Budget</div>
-      <span class="badge-tag tag-indigo" id="ask-budget-badge">Natural Language</span>
+      <div class="card-header-right"><span class="badge-tag tag-indigo" id="ask-budget-badge">Natural Language</span>
+        <div class="card-reorder-ctrls" title="Reorder report">
+          <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('ask', -1)" title="Move up" aria-label="Move card up">▲</button>
+          <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('ask', 1)" title="Move down" aria-label="Move card down">▼</button>
+          <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
+        </div>
+      </div>
     </div>
     <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;margin-bottom:10px;">
       Ask any question in plain words about your expenses, categories, or trends.
@@ -2782,10 +2935,17 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
     <div id="ask-budget-results" style="display:none;margin-top:14px;border-top:1px dashed var(--border);padding-top:12px;"></div>
   </div>
 
-<div class="metric-card">
+
+<div class="metric-card analytics-sortable-card" id="analytics-card-velocity" data-card-id="velocity">
     <div class="card-header-flex">
       <div class="card-heading">Capital Velocity Breakdown</div>
-      <span class="badge-tag tag-indigo">Current Cycle</span>
+      <div class="card-header-right"><span class="badge-tag tag-indigo">Current Cycle</span>
+        <div class="card-reorder-ctrls" title="Reorder report">
+          <button type="button" class="card-nudge-btn card-nudge-up" onclick="moveAnalyticsCard('velocity', -1)" title="Move up" aria-label="Move card up">▲</button>
+          <button type="button" class="card-nudge-btn card-nudge-down" onclick="moveAnalyticsCard('velocity', 1)" title="Move down" aria-label="Move card down">▼</button>
+          <div class="card-drag-handle" draggable="true" title="Hold or drag to reorder" aria-label="Drag Handle">⠿</div>
+        </div>
+      </div>
     </div>
     
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center;margin-bottom:14px;">
@@ -2809,6 +2969,8 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
       <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:8px">SPENDING BY CATEGORY</div>
       <div id="analytics-category-progress"></div>
     </div>
+  </div>
+
   </div>
 </div>
 
@@ -9140,12 +9302,233 @@ if (_origSaveEntry) {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initPullToRefresh();
+    initAnalyticsSortable();
     initCalendarSwipe();
   });
 } else {
   initPullToRefresh();
   initCalendarSwipe();
 }
+
+
+// ── CUSTOMIZABLE ANALYTICS CARDS REORDERING (DRAG & DROP / LONG-PRESS) ──
+const DEFAULT_ANALYTICS_ORDER = ['runway', 'donut', 'trend', 'predictive', 'treemap', 'ai', 'ask', 'velocity'];
+let isAnalyticsReorderMode = false;
+
+function getAnalyticsCardOrder() {
+  const saved = ls('bt3_analytics_order', null);
+  if (Array.isArray(saved) && saved.length > 0) {
+    const valid = saved.filter(id => id !== 'waterfall' && DEFAULT_ANALYTICS_ORDER.includes(id));
+    DEFAULT_ANALYTICS_ORDER.forEach(id => {
+      if (!valid.includes(id)) valid.push(id);
+    });
+    return valid;
+  }
+  return [...DEFAULT_ANALYTICS_ORDER];
+}
+
+function saveAnalyticsCardOrder() {
+  const container = document.getElementById('analytics-cards-container');
+  if (!container) return;
+  const cards = container.querySelectorAll('.analytics-sortable-card');
+  const order = Array.from(cards).map(c => c.getAttribute('data-card-id')).filter(Boolean);
+  ss('bt3_analytics_order', order);
+  const resetBtn = document.getElementById('btn-reset-analytics-order');
+  if (resetBtn) resetBtn.style.display = 'inline-flex';
+}
+
+function applyAnalyticsCardOrder() {
+  const container = document.getElementById('analytics-cards-container');
+  if (!container) return;
+  const order = getAnalyticsCardOrder();
+  order.forEach(cardId => {
+    const cardEl = container.querySelector(`[data-card-id="${cardId}"]`);
+    if (cardEl) {
+      container.appendChild(cardEl);
+    }
+  });
+}
+
+function resetAnalyticsCardOrder() {
+  ss('bt3_analytics_order', [...DEFAULT_ANALYTICS_ORDER]);
+  applyAnalyticsCardOrder();
+  showToast('↺ Analytics order reset to default');
+  playHaptic(15);
+  const resetBtn = document.getElementById('btn-reset-analytics-order');
+  if (resetBtn) resetBtn.style.display = 'none';
+}
+
+function toggleAnalyticsReorderMode() {
+  isAnalyticsReorderMode = !isAnalyticsReorderMode;
+  const container = document.getElementById('analytics-cards-container');
+  const hint = document.getElementById('analytics-reorder-hint');
+  const label = document.getElementById('reorder-analytics-label');
+  const resetBtn = document.getElementById('btn-reset-analytics-order');
+
+  if (container) container.classList.toggle('analytics-reorder-active', isAnalyticsReorderMode);
+  if (hint) hint.style.display = isAnalyticsReorderMode ? 'flex' : 'none';
+  if (label) label.textContent = isAnalyticsReorderMode ? 'Done' : 'Reorder';
+  if (resetBtn) resetBtn.style.display = isAnalyticsReorderMode ? 'inline-flex' : 'none';
+  playHaptic(10);
+  if (!isAnalyticsReorderMode) {
+    saveAnalyticsCardOrder();
+    showToast('✓ Custom analytics order saved');
+  }
+}
+
+function moveAnalyticsCard(cardId, direction) {
+  const container = document.getElementById('analytics-cards-container');
+  if (!container) return;
+  const card = container.querySelector(`[data-card-id="${cardId}"]`);
+  if (!card) return;
+
+  if (direction === -1 && card.previousElementSibling) {
+    container.insertBefore(card, card.previousElementSibling);
+    playHaptic(12);
+  } else if (direction === 1 && card.nextElementSibling) {
+    container.insertBefore(card.nextElementSibling, card);
+    playHaptic(12);
+  }
+  saveAnalyticsCardOrder();
+  showToast('✓ Card moved');
+}
+
+function initAnalyticsSortable() {
+  const container = document.getElementById('analytics-cards-container');
+  if (!container) return;
+
+  applyAnalyticsCardOrder();
+
+  let draggedCard = null;
+  let placeholder = null;
+  let longPressTimer = null;
+  let startX = 0, startY = 0;
+  let isDragging = false;
+
+  // 1. Desktop HTML5 Drag & Drop on Drag Handles
+  container.addEventListener('dragstart', (e) => {
+    const handle = e.target.closest('.card-drag-handle');
+    const card = e.target.closest('.analytics-sortable-card');
+    if (!card) return;
+    draggedCard = card;
+    card.classList.add('is-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', card.getAttribute('data-card-id') || '');
+    playHaptic(12);
+  });
+
+  container.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if (!draggedCard) return;
+    const overCard = e.target.closest('.analytics-sortable-card');
+    if (overCard && overCard !== draggedCard) {
+      const rect = overCard.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+      if (e.clientY < midY) {
+        container.insertBefore(draggedCard, overCard);
+      } else {
+        container.insertBefore(draggedCard, overCard.nextSibling);
+      }
+    }
+  });
+
+  container.addEventListener('dragend', () => {
+    if (draggedCard) {
+      draggedCard.classList.remove('is-dragging');
+      draggedCard = null;
+      saveAnalyticsCardOrder();
+      playHaptic(18);
+      showToast('✓ Order updated');
+    }
+  });
+
+  // 2. Mobile Touch Long-Press & Drag Handler
+  container.querySelectorAll('.analytics-sortable-card').forEach(card => {
+    const header = card.querySelector('.card-header-flex') || card;
+
+    header.addEventListener('touchstart', (e) => {
+      if (e.target.closest('button, input, a, select, textarea')) return;
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      draggedCard = card;
+
+      longPressTimer = setTimeout(() => {
+        isDragging = true;
+        playHaptic(20);
+        card.classList.add('is-dragging');
+        placeholder = document.createElement('div');
+        placeholder.className = 'analytics-drop-placeholder';
+        placeholder.style.height = `${card.offsetHeight}px`;
+        card.parentNode.insertBefore(placeholder, card.nextSibling);
+      }, 220);
+    }, { passive: true });
+
+    header.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      const deltaX = Math.abs(touch.clientX - startX);
+      const deltaY = Math.abs(touch.clientY - startY);
+
+      if (!isDragging) {
+        if (deltaX > 8 || deltaY > 8) {
+          clearTimeout(longPressTimer);
+          draggedCard = null;
+        }
+        return;
+      }
+
+      if (e.cancelable) e.preventDefault();
+
+      const elBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (!elBelow) return;
+      const targetCard = elBelow.closest('.analytics-sortable-card');
+
+      if (targetCard && targetCard !== draggedCard && placeholder) {
+        const rect = targetCard.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        if (touch.clientY < midY) {
+          container.insertBefore(placeholder, targetCard);
+          container.insertBefore(draggedCard, placeholder);
+        } else {
+          container.insertBefore(placeholder, targetCard.nextSibling);
+          container.insertBefore(draggedCard, placeholder);
+        }
+      }
+    }, { passive: false });
+
+    header.addEventListener('touchend', () => {
+      clearTimeout(longPressTimer);
+      if (isDragging && draggedCard) {
+        isDragging = false;
+        draggedCard.classList.remove('is-dragging');
+        if (placeholder && placeholder.parentNode) {
+          placeholder.parentNode.removeChild(placeholder);
+        }
+        placeholder = null;
+        draggedCard = null;
+        saveAnalyticsCardOrder();
+        playHaptic(22);
+        showToast('✓ Order updated');
+      }
+      draggedCard = null;
+    });
+
+    header.addEventListener('touchcancel', () => {
+      clearTimeout(longPressTimer);
+      if (isDragging && draggedCard) {
+        isDragging = false;
+        draggedCard.classList.remove('is-dragging');
+        if (placeholder && placeholder.parentNode) {
+          placeholder.parentNode.removeChild(placeholder);
+        }
+        placeholder = null;
+        draggedCard = null;
+      }
+    });
+  });
+}
+
+function renderWaterfallChart() {} // Waterfall feature removed per user request
 
 </script>
 
