@@ -2466,26 +2466,7 @@ select.styled-field { -webkit-appearance: none; appearance: none; }
 <div class="view-page" id="page-add">
 
 
-  <!-- Fast WhatsApp / UPI Text Ingest (Category 5: WhatsApp Ingest) -->
-  <div style="margin-bottom:12px;background:var(--emerald-bg);border:1px dashed var(--emerald-border);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
-    <div style="font-size:11px;color:var(--emerald);font-weight:700;display:flex;align-items:center;gap:6px;">
-      <span>💬</span> Fast WhatsApp / UPI Ingest
-    </div>
-    <button class="quick-chip" id="btn-wa-paste" style="font-size:11px;padding:4px 10px;background:var(--surface);border-color:var(--emerald-border);color:var(--emerald);font-weight:700;" onclick="pasteFromWhatsApp()">
-      📋 Paste &amp; Auto-Fill
-    </button>
-  </div>
-  <div class="form-section-title">Date & Calendar Sync</div>
-  <div class="input-card-box">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-      <span style="font-size:11px;text-transform:uppercase;font-weight:700;color:var(--text-muted)">Gregorian Date</span>
-      <span class="badge-tag tag-amber">Dawoodi Bohra Hijri</span>
-    </div>
-    <input type="date" id="entry-date" class="styled-field" oninput="updPreview()"/>
-    <div style="font-size:11px;font-family:var(--font-mono);color:var(--text-muted);margin-top:6px;text-align:center;padding:5px;background:var(--surface-low);border-radius:6px" id="form-date-preview">
-      —
-    </div>
-  </div>
+
 
   <div class="form-section-title">Amount (₹)</div>
   <div class="input-card-box">
@@ -7639,78 +7620,9 @@ document.addEventListener('visibilitychange', () => {
 });
 
 
-// ── FAST WHATSAPP / UPI TEXT PARSER (Category 5: WhatsApp Ingest) ──
-async function pasteFromWhatsApp() {
-  let text = '';
-  try {
-    if (navigator.clipboard && navigator.clipboard.readText) {
-      text = await navigator.clipboard.readText();
-    }
-  } catch (err) {
-    console.warn('[Clipboard] Error reading clipboard:', err);
-  }
-
-  if (!text) {
-    text = prompt('Paste your WhatsApp message, UPI SMS, or receipt text:');
-  }
-
-  if (!text || !text.trim()) {
-    showToast('No text provided to parse.');
-    return;
-  }
-
-  parseAndFillExpenseText(text);
-}
-
-function parseAndFillExpenseText(rawText) {
-  let amt = null;
-  const amtMatch = rawText.match(/(?:(?:rs\.?|inr|₹|spent|paid)\s*([\d,]+(?:\.\d{1,2})?))|([\d,]+(?:\.\d{1,2})?)\s*(?:rs|inr|₹)/i)
-    || rawText.match(/\b([\d,]{2,7}(?:\.\d{1,2})?)\b/);
-
-  if (amtMatch) {
-    const rawNum = (amtMatch[1] || amtMatch[2] || amtMatch[0]).replace(/,/g, '');
-    amt = parseFloat(rawNum);
-  }
-
-  if (amt && amt > 0) {
-    document.getElementById('amt').value = amt;
-  }
-
-  let desc = '';
-  const vendorMatch = rawText.match(/(?:to|at|for|paid to)\s+([A-Za-z0-9\s&'-]+?)(?:\s+(?:on|via|ref|upi|using)|\.|\n|$)/i);
-  if (vendorMatch && vendorMatch[1]) {
-    desc = vendorMatch[1].trim();
-  } else {
-    desc = rawText.replace(/(?:rs\.?|inr|₹|paid|spent|transferred)\s*[\d,.]+/gi, '').trim().slice(0, 40);
-  }
-
-  if (desc) {
-    const whatEl = document.getElementById('what');
-    if (whatEl) whatEl.value = desc;
-  }
-
-  const lower = rawText.toLowerCase();
-  let matchedCatId = null;
-
-  if (lower.includes('milk') || lower.includes('doodh')) matchedCatId = 'milk';
-  else if (lower.includes('egg') || lower.includes('anda')) matchedCatId = 'eggs';
-  else if (lower.includes('veg') || lower.includes('fruit') || lower.includes('sabzi') || lower.includes('bhaji')) matchedCatId = 'fv';
-  else if (lower.includes('grocer') || lower.includes('ration') || lower.includes('rice') || lower.includes('wheat') || lower.includes('oil')) matchedCatId = 'staples';
-  else if (lower.includes('doctor') || lower.includes('med') || lower.includes('pharma') || lower.includes('clinic')) matchedCatId = 'medical';
-  else if (lower.includes('uber') || lower.includes('ola') || lower.includes('rickshaw') || lower.includes('taxi') || lower.includes('petrol') || lower.includes('fuel')) matchedCatId = 'travel';
-  else if (lower.includes('bill') || lower.includes('wifi') || lower.includes('recharge') || lower.includes('rent')) matchedCatId = 'recurring';
-
-  if (matchedCatId) {
-    selCat = matchedCatId;
-    document.querySelectorAll('.cat-btn').forEach(b => {
-      b.classList.toggle('selected', b.getAttribute('onclick')?.includes(`'${matchedCatId}'`));
-    });
-    updPreview();
-    showToast(`✓ Auto-filled ${amt ? '₹' + amt : ''} (${catById(matchedCatId).label})`);
-  } else {
-    showToast(`✓ Extracted ${amt ? '₹' + amt : 'details'}. Select a category to save.`);
-  }
-}
+// Fast WhatsApp / UPI Ingest removed per decluttering UX
+function pasteFromWhatsApp() {}
+function parseAndFillExpenseText() {}
 
 window.addEventListener('load', () => {
   updateSecurityUI();
